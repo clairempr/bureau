@@ -1,7 +1,7 @@
 The Bureau
 ==========
 
-Freedmen's Bureau Personnel
+Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands
 
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
