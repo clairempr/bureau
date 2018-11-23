@@ -51,9 +51,6 @@ coverage.xml
 *.pot
 
 # Django stuff:
-config/settings/local.py
-config/settings/production.py
-config/settings/test.py
 staticfiles/
 
 # Sphinx documentation
