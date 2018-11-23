@@ -67,6 +67,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'rest_framework',
+    'cities_light',
 ]
 LOCAL_APPS = [
     'bureau.users.apps.UsersAppConfig',
@@ -248,3 +249,7 @@ SOCIALACCOUNT_ADAPTER = 'bureau.users.adapters.SocialAccountAdapter'
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['US']
+# Only populate with states for now
+CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1',]
