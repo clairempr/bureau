@@ -21,6 +21,9 @@ class Regiment(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ['state', 'vrc', 'us', 'usct', 'number', 'name']
+
 
 class Employee(models.Model):
     """
@@ -56,6 +59,12 @@ class Employee(models.Model):
 
     def __str__(self):
         return '{}, {}'.format(self.last_name, self.first_name)
+
+    def bureau_state_list(self):
+        return '\n'.join([state.name for state in self.bureau_states.all()])
+
+    class Meta:
+        ordering = ['last_name', 'first_name']
 
 
 
