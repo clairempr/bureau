@@ -1,7 +1,7 @@
-from cities_light.models import Region
-
 import uuid
 from django.db import models
+
+from places.models import Region
 
 
 class Regiment(models.Model):
@@ -17,6 +17,9 @@ class Regiment(models.Model):
     us = models.BooleanField(default=False)
     usct = models.BooleanField(default=False)
     vrc = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
 
 
 class Employee(models.Model):
@@ -49,6 +52,10 @@ class Employee(models.Model):
         related_name="employees",
         related_query_name="employee",
     )
+
+    def __str__(self):
+        return '{}, {}'.format(self.last_name, self.first_name)
+
 
 
 

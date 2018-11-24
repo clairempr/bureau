@@ -71,6 +71,7 @@ THIRD_PARTY_APPS = [
 ]
 LOCAL_APPS = [
     'bureau.users.apps.UsersAppConfig',
+    'places', #  Have to name it this way for django-cities-light settings
     'bureau.personnel.apps.PersonnelConfig',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -247,8 +248,11 @@ ACCOUNT_ADAPTER = 'bureau.users.adapters.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'bureau.users.adapters.SocialAccountAdapter'
 
 
-# Your stuff...
+# My stuff...
 # ------------------------------------------------------------------------------
+
+# django-cities-light configuration
+CITIES_LIGHT_APP_NAME = 'places'
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['US']
 # Only populate with states for now
