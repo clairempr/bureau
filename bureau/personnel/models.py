@@ -44,13 +44,14 @@ class Employee(models.Model):
     vrc = models.BooleanField(default=False)
     vrc_units = models.ManyToManyField(
         Regiment,
-        related_name="employees",
-        related_query_name="employee",
+        related_name='employees',
+        related_query_name='employee',
     )
     bureau_states = models.ManyToManyField(
         Region,
-        related_name="employees",
-        related_query_name="employee",
+        limit_choices_to={'bureau_operations': True},
+        related_name='employees',
+        related_query_name='employee',
     )
 
     def __str__(self):
