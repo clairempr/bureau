@@ -258,3 +258,8 @@ CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['US']
 # Only populate with states for now
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1',]
+
+# Disable built-in cities_light migrations
+MIGRATION_MODULES = {
+    'cities_light': None
+}
