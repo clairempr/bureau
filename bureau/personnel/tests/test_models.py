@@ -16,11 +16,8 @@ class EmployeeTestCase(TestCase):
         If Employee is a member of a VRC unit, 'vrc' should be True
         """
 
-        employee = EmployeeFactory()
+        employee = EmployeeFactory(vrc=False)
         employee.regiments.set([RegimentFactory(vrc=True)])
         employee.save()
         self.assertTrue(Employee.objects.get(pk=employee.id).vrc,
                         "Employee in VRC unit should have 'vrc' set to true after saving")
-
-
-
