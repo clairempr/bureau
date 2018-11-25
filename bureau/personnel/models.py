@@ -24,17 +24,22 @@ class Employee(models.Model):
     gender = models.CharField(max_length=1,choices=GENDER_CHOICES,default=MALE)
     notes = models.TextField(blank=True)
     vrc = models.BooleanField(default=False)
-    vrc_units = models.ManyToManyField(
+    regiments = models.ManyToManyField(
         Regiment,
         related_name='employees',
         related_query_name='employee',
+        blank=True,
     )
     bureau_states = models.ManyToManyField(
         Region,
         limit_choices_to={'bureau_operations': True},
         related_name='employees',
         related_query_name='employee',
+        blank=True,
     )
+
+    class Meta:
+        ordering = ['last_name', 'first_name']
 
     def __str__(self):
         return '{}, {}'.format(self.last_name, self.first_name)
@@ -42,8 +47,6 @@ class Employee(models.Model):
     def bureau_state_list(self):
         return '\n'.join([state.name for state in self.bureau_states.all()])
 
-    class Meta:
-        ordering = ['last_name', 'first_name']
 
 
 

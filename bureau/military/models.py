@@ -19,8 +19,9 @@ class Regiment(models.Model):
     usct = models.BooleanField(default=False)
     vrc = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['state', 'vrc', 'us', 'usct', 'number', 'name']
+
     def __str__(self):
         return self.name
 
-    class Meta:
-        ordering = ['state', 'vrc', 'us', 'usct', 'number', 'name']
