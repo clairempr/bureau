@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ('gender', models.CharField(choices=[('F', 'Female'), ('M', 'Male')], default='M', max_length=1)),
                 ('notes', models.TextField(blank=True)),
                 ('vrc', models.BooleanField(default=False)),
-                ('bureau_states', models.ManyToManyField(related_name='employees', related_query_name='employee', to='cities_light.Region')),
+                ('bureau_states', models.ManyToManyField(related_name='employees', related_query_name='employee', to='places.Region')),
             ],
         ),
         migrations.CreateModel(
@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
                 ('us', models.BooleanField(default=False)),
                 ('usct', models.BooleanField(default=False)),
                 ('vrc', models.BooleanField(default=False)),
-                ('state', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='cities_light.Region')),
+                ('state', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='places.Region')),
             ],
         ),
         migrations.AddField(
