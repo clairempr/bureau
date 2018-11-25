@@ -71,7 +71,8 @@ THIRD_PARTY_APPS = [
 ]
 LOCAL_APPS = [
     'bureau.users.apps.UsersAppConfig',
-    'places', #  Have to name it this way for django-cities-light settings
+    'places',
+    'military',
     'bureau.personnel.apps.PersonnelConfig',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
