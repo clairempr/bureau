@@ -1,0 +1,110 @@
+[
+  {
+    "model": "military.regiment",
+    "pk": "10340e4c-b3b0-43c8-8280-19f6148b413e",
+    "fields": {
+      "number": 13,
+      "name": "13th Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "160a9c18-cf6b-4dec-a45d-aec888405264",
+    "fields": {
+      "number": 16,
+      "name": "16th Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "33fe434a-edab-427e-8c56-0610bed8db6f",
+    "fields": {
+      "number": 7,
+      "name": "7th Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "4255b2d0-5a67-4c16-994b-3bdd679c5f25",
+    "fields": {
+      "number": 9,
+      "name": "9th Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "5a86d8e4-2def-4d68-b3f5-86bf7062771c",
+    "fields": {
+      "number": 4,
+      "name": "4th Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "760510f1-7d16-45b9-aebe-263ae93d4599",
+    "fields": {
+      "number": 3,
+      "name": "3rd Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "91e59dbf-4945-4009-a49a-e3f2e1f968d3",
+    "fields": {
+      "number": 44,
+      "name": "44th U.S. Infantry",
+      "state": null,
+      "us": true,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "d384b40b-12a6-490a-bbcb-5d5e362edce0",
+    "fields": {
+      "number": 19,
+      "name": "19th Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  },
+  {
+    "model": "military.regiment",
+    "pk": "e46d913b-299a-4124-a32e-be58c613e4f0",
+    "fields": {
+      "number": 20,
+      "name": "20th Regiment, Veteran Reserve Corps",
+      "state": null,
+      "us": false,
+      "usct": false,
+      "vrc": true
+    }
+  }
+]
