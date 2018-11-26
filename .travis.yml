@@ -1,21 +1,27 @@
-language: python
-#python:
-#  "3.6"
-#
-## command to install dependencies
-#install:
-#  - pip install -r requirements/local.txt
-#
-## command to run tests
-#script:
-#  - python manage.py test
+sudo: required
 
 services:
   - docker
 
+language: python
+
+python: 3.6
+
+env:
+  - TOX_ENV=py36
+
 before_install:
-  - docker build compose/local/django
-  - docker ps -a
+  - docker-compose -v
+  - docker -v
 
 script:
-  - docker-compose -f local.yml up django run manage.py test
+  - tox -e $TOX_ENV
+  - sh tests/test_docker.sh
+
+install:
+  - pip install tox
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
