@@ -1,7 +1,7 @@
 The Bureau
 ==========
 
-Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands
+Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, with emphasis on Veteran Reserve Corps membership.
 
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
