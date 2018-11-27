@@ -7,6 +7,10 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
 
+.. image:: https://travis-ci.org/clairempr/bureau.svg?branch=master
+    :target: https://travis-ci.org/clairempr/bureau?branch=master
+    :alt: Build Status
+
 
 :License: Apache Software License 2.0
 
