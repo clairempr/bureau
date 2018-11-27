@@ -17,7 +17,8 @@ before_install:
 script:
 #  - tox -e $TOX_ENV
   - sh tests/test_docker.sh
-  - docker-compose -f local.yml run --rm django python manage.py test
+#  - docker-compose -f local.yml run --rm django python manage.py test
+  - django python manage.py test
 
 install:
   - pip install tox
