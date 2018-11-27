@@ -1,29 +1,11 @@
-sudo: required
-
-services:
-  - docker
-
-language: python
-
-python: 3.6
-
-#env:
-#  - TOX_ENV=py36
-
+sudo: true
 before_install:
-  - docker-compose -v
-  - docker -v
-
-script:
-#  - tox -e $TOX_ENV
-  - sh tests/test_docker.sh
-#  - docker-compose -f local.yml run --rm django python manage.py test
-  - django python manage.py test
-
-install:
-  - pip install tox
-
-notifications:
-  email:
-    on_success: change
-    on_failure: always
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq build-essential gettext python-dev zlib1g-dev libpq-dev xvfb
+  - sudo apt-get install -qq libtiff4-dev libjpeg8-dev libfreetype6-dev liblcms1-dev libwebp-dev
+  - sudo apt-get install -qq graphviz-dev python-setuptools python3-dev python-virtualenv python-pip
+  - sudo apt-get install -qq firefox automake libtool libreadline6 libreadline6-dev libreadline-dev
+  - sudo apt-get install -qq libsqlite3-dev libxml2 libxml2-dev libssl-dev libbz2-dev wget curl llvm
+language: python
+python:
+  - "3.6"
