@@ -12,7 +12,7 @@ python:
 services:
   - postgresql
 env:
-  -DATABASE_URL = postgres://postgres@localhost/test_db USE_DOCKER=no
+  - DATABASE_URL = postgres://postgres@localhost/test_db USE_DOCKER=no
 install:
   - pip install -r requirements/local.txt
 before_script:
