@@ -22,8 +22,14 @@ before_install:
 language: python
 python:
   - "3.6"
+services:
+  - postgresql
+env:
+  - DATABASE_URL="localhost"
 install:
   - pip install -r requirements/local.txt
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
 script:
   - python manage.py test
 
