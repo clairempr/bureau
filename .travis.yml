@@ -1,16 +1,3 @@
-#sudo: required
-#
-#language: python
-#
-#python:
-#  - "3.6"
-#
-#services:
-#  - docker
-#
-#before_install:
-#  - docker-compose -f local.yml build
-
 sudo: true
 before_install:
   - sudo apt-get update -qq
@@ -25,7 +12,8 @@ python:
 services:
   - postgresql
 env:
-  - DATABASE_URL="localhost"
+  - DATABASE_URL=localhost
+  - USE_DOCKER=no
 install:
   - pip install -r requirements/local.txt
 before_script:
