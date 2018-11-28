@@ -22,5 +22,6 @@ before_install:
 language: python
 python:
   - "3.6"
-script:
-  - python manage.py test
+services:
+  - docker
+
