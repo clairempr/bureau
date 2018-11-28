@@ -12,11 +12,11 @@ python:
 services:
   - postgresql
 env:
-  - DATABASE_URL=localhost USE_DOCKER=no
+  -DATABASE_URL = postgres://postgres@localhost/test_db USE_DOCKER=no
 install:
   - pip install -r requirements/local.txt
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -c 'create database test_db;' -U postgres
 script:
   - python manage.py test
 
