@@ -329,3 +329,7 @@ bureau/media/
 .ipython/
 .env
 .envs/*
+
+
+# My stuff
+db_backups/
