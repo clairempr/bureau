@@ -2,6 +2,7 @@
 BUREAU_STATES = [
     'AL',
     'AR',
+    'DC',
     'DE',
     'FL',
     'GA',
@@ -15,5 +16,5 @@ BUREAU_STATES = [
     'TN',
     'TX',
     'VA',
-    'DC',
+    'WV',
 ]

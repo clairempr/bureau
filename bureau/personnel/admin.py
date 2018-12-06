@@ -5,7 +5,7 @@ from django.contrib import admin
 from .models import Employee
 
 class FirstLetterListFilter(admin.SimpleListFilter):
-    title = 'First letter'
+    title = 'first letter'
     parameter_name = 'letter'
 
     def lookups(self, request, model_admin):
