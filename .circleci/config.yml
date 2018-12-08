@@ -18,8 +18,6 @@ jobs:
 #        key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
     - run:
         command: |  # use pipenv to install dependencies
-          sudo pip install pipenv
-#          pipenv install
           sudo pip install -r requirements/local.txt
 #    - save_cache:
 #        key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
