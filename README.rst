@@ -11,6 +11,8 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
     :target: https://travis-ci.org/clairempr/bureau?branch=master
     :alt: Build Status
 
+[![CircleCI](https://circleci.com/gh/clairempr/bureau.svg?style=svg)](https://circleci.com/gh/clairempr/bureau)
+
 
 :License: Apache Software License 2.0
 
