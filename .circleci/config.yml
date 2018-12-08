@@ -20,7 +20,7 @@ jobs:
         command: |  # use pipenv to install dependencies
           sudo pip install pipenv
           pipenv install
-          pip install -r requirements/local.txt
+          sudo pip install -r requirements/local.txt
 #    - save_cache:
 #        key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
 #        paths:
