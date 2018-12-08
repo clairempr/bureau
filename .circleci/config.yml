@@ -14,26 +14,13 @@ jobs:
     - checkout  # checkout source code to working directory
     - run: sudo chown -R circleci:circleci /usr/local/bin
     - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
-#    - restore_cache:  # ensure this step occurs *before* installing dependencies
-#        key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
     - run:
         command: |  # use pipenv to install dependencies
           sudo pip install -r requirements/local.txt
-#    - save_cache:
-#        key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
-#        paths:
-#          - ".venv"
-#          - "/usr/local/bin"
-#          - "/usr/local/lib/python3.6/site-packages"
     - run:
         command: |
           python manage.py test
-       #          pipenv run "python manage.py test"
-    - store_test_results:
-        path: test-results
-    - store_artifacts:
-        path: test-results
-        destination: tr1
+
 
 
 
