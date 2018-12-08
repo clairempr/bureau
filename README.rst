@@ -9,9 +9,11 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
 
 .. image:: https://travis-ci.org/clairempr/bureau.svg?branch=master
     :target: https://travis-ci.org/clairempr/bureau?branch=master
-    :alt: Build Status
+    :alt: Travis CI Build Status
 
-[![CircleCI](https://circleci.com/gh/clairempr/bureau.svg?style=svg)](https://circleci.com/gh/clairempr/bureau)
+.. image:: https://circleci.com/gh/clairempr/bureau.svg?style=svg
+    :target: https://circleci.com/gh/clairempr/bureau
+    :alt: CircleCI Build Status
 
 
 :License: Apache Software License 2.0
