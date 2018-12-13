@@ -73,7 +73,7 @@ LOCAL_APPS = [
     'bureau.users.apps.UsersAppConfig',
     'places',
     'military',
-    'bureau.personnel.apps.PersonnelConfig',
+    'personnel',
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -82,7 +82,9 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
 MIGRATION_MODULES = {
-    'sites': 'bureau.contrib.sites.migrations'
+    'sites': 'bureau.contrib.sites.migrations',
+    # Disable built-in cities_light migrations
+    'cities_light': None
 }
 
 # AUTHENTICATION
@@ -259,7 +261,3 @@ CITIES_LIGHT_INCLUDE_COUNTRIES = ['US']
 # Only populate with states for now
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1',]
 
-# Disable built-in cities_light migrations
-MIGRATION_MODULES = {
-    'cities_light': None
-}

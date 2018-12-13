@@ -2,8 +2,8 @@ from django.test import TestCase
 
 from places.tests.factories import RegionFactory
 
-from ..admin import EmployeeAdmin
-from .factories import EmployeeFactory
+from personnel.admin import EmployeeAdmin
+from personnel.tests.factories import EmployeeFactory
 
 
 class EmployeeAdminTestCase(TestCase):

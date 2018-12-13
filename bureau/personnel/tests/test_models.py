@@ -2,8 +2,7 @@ from django.test import TestCase
 
 from military.tests.factories import RegimentFactory
 
-from ..models import Employee
-from .factories import EmployeeFactory
+from personnel.tests.factories import EmployeeFactory
 
 
 class EmployeeTestCase(TestCase):
@@ -19,5 +18,6 @@ class EmployeeTestCase(TestCase):
         employee = EmployeeFactory(vrc=False)
         employee.regiments.set([RegimentFactory(vrc=True)])
         employee.save()
-        self.assertTrue(Employee.objects.get(pk=employee.id).vrc,
+        employee.refresh_from_db()
+        self.assertTrue(employee.vrc,
                         "Employee in VRC unit should have 'vrc' set to true after saving")
