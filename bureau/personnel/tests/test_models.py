@@ -10,6 +10,15 @@ class EmployeeTestCase(TestCase):
     Test Employee model
     """
 
+    def test_str(self):
+        """
+        If __str__ should return Employee.last_name, Employee.first_name
+        """
+
+        employee = EmployeeFactory()
+        self.assertEqual(str(employee), '{}, {}'.format(employee.last_name, employee.first_name),
+                        "Employee.__str__ should be equal to Employee.last_name, Employee.first_name")
+
     def test_vrc(self):
         """
         If Employee is a member of a VRC unit, 'vrc' should be True
