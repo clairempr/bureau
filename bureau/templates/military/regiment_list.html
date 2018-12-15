@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}Regiments{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Regiments</h2>
+
+  <div class="list-group">
+    {% for regiment in regiment_list %}
+      <div class="list-group-item">
+        <h4 class="list-group-item-heading">{{ regiment.name }} ({{ regiment.employees.count }} members)</h4>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
+
