@@ -41,6 +41,9 @@ class FirstLetterListFilterTestCase(TestCase):
     """
 
     def test_lookups(self):
+        employee_c = EmployeeFactory(last_name='Curren')
+        employee_h = EmployeeFactory(last_name='Howard')
+
         modeladmin = EmployeeAdmin(Employee, site)
 
         request = RequestFactory().get('/')
@@ -50,3 +53,15 @@ class FirstLetterListFilterTestCase(TestCase):
         filterspec = changelist.get_filters(request)[0][1]
         expected = [(letter, letter) for letter in list(string.ascii_uppercase)]
         self.assertEqual(sorted(filterspec.lookup_choices), sorted(expected))
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {employee_c, employee_h})
+
+        # Look for employees whose last name starts with C
+        request = RequestFactory().get('/', {'letter': 'C'})
+        changelist = modeladmin.get_changelist_instance(request)
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {employee_c})
