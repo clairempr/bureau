@@ -19,6 +19,7 @@ class FirstLetterListFilter(admin.SimpleListFilter):
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'bureau_state', 'vrc')
     list_filter = ('vrc', FirstLetterListFilter, 'bureau_states', 'regiments')
+    search_fields = ('last_name', 'first_name', 'notes')
     list_per_page = 75
     save_on_top = True
 
