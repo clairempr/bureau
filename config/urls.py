@@ -25,6 +25,10 @@ urlpatterns = [
         "military/",
         include("bureau.military.urls", namespace="military"),
     ),
+    path(
+        "places/",
+        include("bureau.places.urls", namespace="places"),
+    ),
 ] + static(
     settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
 )

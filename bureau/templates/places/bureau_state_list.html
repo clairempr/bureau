@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}Bureau States{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h2>Bureau States</h2>
+
+  <div class="list-group">
+    {% for state in region_list %}
+      <div class="list-group-item">
+        <h4 class="list-group-item-heading">{{ state.name }} ({{ state.employees.count }} employees)</h4>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
+
