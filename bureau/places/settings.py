@@ -6,6 +6,8 @@ BUREAU_STATES = [
     'DE',
     'FL',
     'GA',
+    'IL',
+    'KS',
     'KY',
     'LA',
     'MD',
