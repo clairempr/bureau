@@ -72,6 +72,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'bureau.users.apps.UsersAppConfig',
     'places',
+    'medical',
     'military',
     'personnel',
 ]
