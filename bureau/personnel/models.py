@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 
+from medical.models import Ailment
 from military.models import Regiment
 from places.models import Region
 
@@ -23,6 +24,12 @@ class Employee(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     gender = models.CharField(max_length=1,choices=GENDER_CHOICES,default=MALE)
     notes = models.TextField(blank=True)
+    ailments = models.ManyToManyField(
+        Ailment,
+        related_name='employees',
+        related_query_name='employee',
+        blank=True,
+    )
     vrc = models.BooleanField(default=False)
     regiments = models.ManyToManyField(
         Regiment,

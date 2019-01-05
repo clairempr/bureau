@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Ailment, AilmentType
+
+admin.site.register(Ailment)
+admin.site.register(AilmentType)
