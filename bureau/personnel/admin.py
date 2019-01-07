@@ -16,9 +16,27 @@ class FirstLetterListFilter(admin.SimpleListFilter):
             return queryset.filter(last_name__startswith=self.value())
         return queryset
 
+class USCTListFilter(admin.SimpleListFilter):
+    title = 'USCT'
+    parameter_name = 'regiments'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if self.value() == 'Yes':
+                return queryset.filter(regiments__usct__exact=True)
+            elif self.value() == 'No':
+                return queryset.filter(regiments__usct__exact=False)
+        return queryset
+
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'bureau_state', 'vrc')
-    list_filter = ('vrc', FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments')
+    list_filter = ('vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments')
     search_fields = ('last_name', 'first_name', 'notes')
     list_per_page = 75
     save_on_top = True
