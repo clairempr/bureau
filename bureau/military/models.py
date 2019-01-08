@@ -14,6 +14,7 @@ class Regiment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     number = models.IntegerField(blank=True)
     name = models.CharField(max_length=100, blank=True)
+    notes = models.TextField(blank=True)
     state = models.ForeignKey(Region, models.SET_NULL, null=True, blank=True)
     us = models.BooleanField(default=False)
     usct = models.BooleanField(default=False)
