@@ -18,7 +18,7 @@ class FirstLetterListFilter(admin.SimpleListFilter):
 
 class USCTListFilter(admin.SimpleListFilter):
     title = 'USCT'
-    parameter_name = 'regiments'
+    parameter_name = 'usct'
 
     def lookups(self, request, model_admin):
         return (

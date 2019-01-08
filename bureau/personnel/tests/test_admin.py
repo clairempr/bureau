@@ -8,7 +8,7 @@ from django.test import Client, RequestFactory, TestCase
 from military.tests.factories import RegimentFactory
 from places.tests.factories import RegionFactory
 
-from personnel.admin import EmployeeAdmin
+from personnel.admin import EmployeeAdmin, FirstLetterListFilter, USCTListFilter
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 
@@ -69,6 +69,50 @@ class FirstLetterListFilterTestCase(TestCase):
     """
 
     def test_lookups(self):
+        usct_regiment = RegimentFactory(usct=True)
+        usct_employee = EmployeeFactory(last_name='Dodge')
+        usct_employee.regiments.add(usct_regiment)
+
+        vrc_regiment = RegimentFactory(vrc=True)
+        vrc_employee = EmployeeFactory(last_name='MacNulty')
+        vrc_employee.regiments.add(vrc_regiment)
+
+        modeladmin = EmployeeAdmin(Employee, site)
+
+        request = RequestFactory().get('/')
+        changelist = modeladmin.get_changelist_instance(request)
+
+        # Make sure that all capital letters are present in the list filter
+        filter = USCTListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
+        expected = [(choice, choice) for choice in ['Yes', 'No']]
+        self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {usct_employee, vrc_employee})
+
+        # Look for employees who were members of a USCT regiment
+        request = RequestFactory().get('/', {'usct': 'Yes'})
+        changelist = modeladmin.get_changelist_instance(request)
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {usct_employee})
+
+        # Look for employees who were not members of a USCT regiment
+        request = RequestFactory().get('/', {'usct': 'No'})
+        changelist = modeladmin.get_changelist_instance(request)
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {vrc_employee})
+
+class USCTListFilterTestCase(TestCase):
+    """
+    Test list filter for membership in a USCT regiment
+    """
+
+    def test_lookups(self):
         employee_c = EmployeeFactory(last_name='Curren')
         employee_h = EmployeeFactory(last_name='Howard')
 
@@ -78,9 +122,9 @@ class FirstLetterListFilterTestCase(TestCase):
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure that all capital letters are present in the list filter
-        filterspec = changelist.get_filters(request)[0][1]
+        filter = FirstLetterListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
         expected = [(letter, letter) for letter in list(string.ascii_uppercase)]
-        self.assertEqual(sorted(filterspec.lookup_choices), sorted(expected))
+        self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
