@@ -11,8 +11,22 @@ class Regiment(models.Model):
     to enable fine-grained filtering of Bureau employees' military service
     """
 
+    ARTILLERY = 'ART'
+    CAVALRY = 'CAV'
+    INFANTRY = 'INF'
+    BRANCH_CHOICES = (
+        (INFANTRY, 'Infantry'),
+        (CAVALRY, 'Cavalry'),
+        (ARTILLERY, 'Artillery'),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     number = models.IntegerField(blank=True)
+    branch = models.CharField(
+        max_length=3,
+        choices=BRANCH_CHOICES,
+        default=INFANTRY,
+    )
     name = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)
     state = models.ForeignKey(Region, models.SET_NULL, null=True, blank=True)
