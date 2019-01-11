@@ -18,6 +18,11 @@ class Region(AbstractRegion):
     whether or not Freedmen's Bureau was active there
     """
     bureau_operations = models.BooleanField(default=False)
+
+    def percent_vrc_employees(self):
+        total = self.employees.count()
+        return self.employees.filter(vrc=True).count() / total * 100 if total else 0
+
 connect_default_signals(Region)
 
 
