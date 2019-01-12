@@ -9,8 +9,8 @@
     <div class="list-group">
       {% for state in region_list %}
         <div class="list-group-item">
-          <h4 class="list-group-item-heading">{{ state.name }} ({{ state.employees.count }}
-            employee{{ state.employees.count|pluralize }}, {{ state.percent_vrc_employees|floatformat }}% VRC)</h4>
+          <h4 class="list-group-item-heading">{{ state.name }} ({{ state.employees_employed.count }}
+            employee{{ state.employees_employed.count|pluralize }}, {{ state.percent_vrc_employees|floatformat }}% VRC)</h4>
         </div>
       {% endfor %}
     </div>

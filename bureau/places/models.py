@@ -20,8 +20,8 @@ class Region(AbstractRegion):
     bureau_operations = models.BooleanField(default=False)
 
     def percent_vrc_employees(self):
-        total = self.employees.count()
-        return self.employees.filter(vrc=True).count() / total * 100 if total else 0
+        total = self.employees_employed.count()
+        return self.employees_employed.filter(vrc=True).count() / total * 100 if total else 0
 
 connect_default_signals(Region)
 

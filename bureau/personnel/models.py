@@ -40,8 +40,8 @@ class Employee(models.Model):
     bureau_states = models.ManyToManyField(
         Region,
         limit_choices_to={'bureau_operations': True},
-        related_name='employees',
-        related_query_name='employee',
+        related_name='employees_employed',
+        related_query_name='employee_employed',
         blank=True,
     )
 
