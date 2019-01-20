@@ -4,6 +4,25 @@ from django.contrib import admin
 
 from .models import Employee
 
+
+class DateOfBirthFilledFilter(admin.SimpleListFilter):
+    title = 'Date of birth filled'
+    parameter_name = 'date_of_birth'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('Yes', 'Yes'),
+            ('No', 'No'),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value():
+            if self.value() == 'Yes':
+                return queryset.filter(date_of_birth__isnull=False)
+            elif self.value() == 'No':
+                return queryset.filter(date_of_birth__isnull=True)
+        return queryset
+
 class FirstLetterListFilter(admin.SimpleListFilter):
     title = 'first letter'
     parameter_name = 'letter'
@@ -36,7 +55,7 @@ class USCTListFilter(admin.SimpleListFilter):
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'bureau_state', 'vrc')
-    list_filter = ('vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
+    list_filter = (DateOfBirthFilledFilter, 'vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
                    'confederate')
     search_fields = ('last_name', 'first_name', 'notes')
     list_per_page = 75
