@@ -68,6 +68,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount',
     'rest_framework',
     'cities_light',
+    'partial_date',
 ]
 LOCAL_APPS = [
     'bureau.users.apps.UsersAppConfig',

@@ -1,5 +1,8 @@
 import uuid
+
 from django.db import models
+
+from partial_date import PartialDateField
 
 from medical.models import Ailment
 from military.models import Regiment
@@ -11,7 +14,7 @@ class Employee(models.Model):
     with extra fields for Veteran Reserve Corps service
     """
 
-    # Several Bureau clerks were women. Make it easy to search for them with gender field.
+    # Several Bureau clerks and agents were women. Make it easy to search for them with gender field.
     FEMALE = 'F'
     MALE = 'M'
     GENDER_CHOICES = (
@@ -22,15 +25,11 @@ class Employee(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     last_name = models.CharField(max_length=100, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
+
+    # Date of birth uses PartialDateField because often only the year is known
+    date_of_birth = PartialDateField(null=True, blank=True)
     gender = models.CharField(max_length=1,choices=GENDER_CHOICES,default=MALE)
     notes = models.TextField(blank=True)
-    ailments = models.ManyToManyField(
-        Ailment,
-        related_name='employees',
-        related_query_name='employee',
-        blank=True,
-    )
-    vrc = models.BooleanField(default=False)
     regiments = models.ManyToManyField(
         Regiment,
         related_name='employees',
@@ -44,6 +43,20 @@ class Employee(models.Model):
         related_query_name='employee_employed',
         blank=True,
     )
+    # Keep track of which Bureau employees were considered "colored" because they were underrepresented
+    colored = models.BooleanField(default=False)
+    # A few Bureau employees had supposedly been in the Confederate service
+    confederate = models.BooleanField(default=False)
+    vrc = models.BooleanField(default=False)
+    # A significant proportion of the Bureau's employees had some sort of physical disability due to
+    # war injuries or chronic disease
+    ailments = models.ManyToManyField(
+        Ailment,
+        related_name='employees',
+        related_query_name='employee',
+        blank=True,
+    )
+
 
     class Meta:
         ordering = ['last_name', 'first_name']
