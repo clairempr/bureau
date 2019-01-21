@@ -1,4 +1,5 @@
-# States/areas where Freedmen's Bureau carried out operations
+# States/areas where Freedmen's Bureau carried out operations,
+# including what is now Oklahoma (then called Indian Territory or Cherokee Nation)
 BUREAU_STATES = [
     'AL',
     'AR',
@@ -14,6 +15,7 @@ BUREAU_STATES = [
     'MS',
     'MO',
     'NC',
+    'OK',
     'SC',
     'TN',
     'TX',

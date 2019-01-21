@@ -5,7 +5,7 @@ from django.contrib import admin
 from .models import Employee
 
 
-class DateOfBirthFilledFilter(admin.SimpleListFilter):
+class DateOfBirthFilledListFilter(admin.SimpleListFilter):
     title = 'Date of birth filled'
     parameter_name = 'date_of_birth'
 
@@ -55,7 +55,7 @@ class USCTListFilter(admin.SimpleListFilter):
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'bureau_state', 'vrc')
-    list_filter = (DateOfBirthFilledFilter, 'vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
+    list_filter = (DateOfBirthFilledListFilter, 'vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
                    'confederate')
     search_fields = ('last_name', 'first_name', 'notes')
     list_per_page = 75

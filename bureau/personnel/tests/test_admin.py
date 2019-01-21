@@ -8,7 +8,7 @@ from django.test import Client, RequestFactory, TestCase
 from military.tests.factories import RegimentFactory
 from places.tests.factories import RegionFactory
 
-from personnel.admin import EmployeeAdmin, FirstLetterListFilter, USCTListFilter
+from personnel.admin import DateOfBirthFilledListFilter, EmployeeAdmin, FirstLetterListFilter, USCTListFilter
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 
@@ -63,53 +63,50 @@ class EmployeeAdminTestCase(TestCase):
         self.assertTrue(Employee.objects.first().vrc,
                 "Employee in VRC unit should have 'vrc' set to true after saving")
 
-class FirstLetterListFilterTestCase(TestCase):
+
+class DateOfBirthFilledListFilterTestCase(TestCase):
     """
-    Test list filter for first letter of last name
+    Test list filter for whether date_of_birth is filled
     """
 
     def test_lookups(self):
-        usct_regiment = RegimentFactory(usct=True)
-        usct_employee = EmployeeFactory(last_name='Dodge')
-        usct_employee.regiments.add(usct_regiment)
-
-        vrc_regiment = RegimentFactory(vrc=True)
-        vrc_employee = EmployeeFactory(last_name='MacNulty')
-        vrc_employee.regiments.add(vrc_regiment)
+        employee_dob = EmployeeFactory(last_name='Howard', date_of_birth='1830-11-08')
+        employee_no_dob = EmployeeFactory(last_name='Barker')
 
         modeladmin = EmployeeAdmin(Employee, site)
 
         request = RequestFactory().get('/')
         changelist = modeladmin.get_changelist_instance(request)
 
-        # Make sure that all capital letters are present in the list filter
-        filter = USCTListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
+        # Make sure that Yes and No are present in the list filter
+        filter = DateOfBirthFilledListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
         expected = [(choice, choice) for choice in ['Yes', 'No']]
         self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
-        self.assertSetEqual(set(queryset), {usct_employee, vrc_employee})
+        self.assertSetEqual(set(queryset), {employee_dob, employee_no_dob})
 
-        # Look for employees who were members of a USCT regiment
-        request = RequestFactory().get('/', {'usct': 'Yes'})
+        # Look for employees with date_of_birth filled
+        request = RequestFactory().get('/', {'date_of_birth': 'Yes'})
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
-        self.assertSetEqual(set(queryset), {usct_employee})
+        self.assertSetEqual(set(queryset), {employee_dob})
 
-        # Look for employees who were not members of a USCT regiment
-        request = RequestFactory().get('/', {'usct': 'No'})
+        # Look for employees with date_of_birth not filled
+        request = RequestFactory().get('/', {'date_of_birth': 'No'})
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
-        self.assertSetEqual(set(queryset), {vrc_employee})
+        self.assertSetEqual(set(queryset), {employee_no_dob})
 
-class USCTListFilterTestCase(TestCase):
+
+class FirstLetterListFilterTestCase(TestCase):
     """
-    Test list filter for membership in a USCT regiment
+    Test list filter for first letter of last name
     """
 
     def test_lookups(self):
@@ -137,3 +134,49 @@ class USCTListFilterTestCase(TestCase):
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), {employee_c})
+
+
+class USCTListFilterTestCase(TestCase):
+    """
+    Test list filter for membership in a USCT regiment
+    """
+
+    def test_lookups(self):
+        usct_regiment = RegimentFactory(usct=True)
+        usct_employee = EmployeeFactory(last_name='Dodge')
+        usct_employee.regiments.add(usct_regiment)
+
+        vrc_regiment = RegimentFactory(vrc=True)
+        vrc_employee = EmployeeFactory(last_name='MacNulty')
+        vrc_employee.regiments.add(vrc_regiment)
+
+        modeladmin = EmployeeAdmin(Employee, site)
+
+        request = RequestFactory().get('/')
+        changelist = modeladmin.get_changelist_instance(request)
+
+        # Make sure that Yes and No are present in the list filter
+        filter = USCTListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
+        expected = [(choice, choice) for choice in ['Yes', 'No']]
+        self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {usct_employee, vrc_employee})
+
+        # Look for employees who were members of a USCT regiment
+        request = RequestFactory().get('/', {'usct': 'Yes'})
+        changelist = modeladmin.get_changelist_instance(request)
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {usct_employee})
+
+        # Look for employees who were not members of a USCT regiment
+        request = RequestFactory().get('/', {'usct': 'No'})
+        changelist = modeladmin.get_changelist_instance(request)
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {vrc_employee})
+
