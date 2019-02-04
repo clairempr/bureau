@@ -48,9 +48,9 @@ class USCTListFilter(admin.SimpleListFilter):
     def queryset(self, request, queryset):
         if self.value():
             if self.value() == 'Yes':
-                return queryset.filter(regiments__usct__exact=True)
+                return queryset.filter(regiments__usct__exact=True).distinct()
             elif self.value() == 'No':
-                return queryset.filter(regiments__usct__exact=False)
+                return queryset.filter(regiments__usct__exact=False).distinct()
         return queryset
 
 class EmployeeAdmin(admin.ModelAdmin):
