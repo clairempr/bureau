@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}Statistics{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+  <link href="https://fonts.googleapis.com/css?family=Diplomata+SC|Gravitas+One|Pirata+One|Rozha+One|Rye|Sancreek"
+        rel="stylesheet">
+{% endblock css %}
+
+{% block content %}
+
+  <div class="container">
+    <h1 style="font-family: 'Sancreek';">Statistics</h1>
+
+    <div class="row">
+      <div class="col">
+        <div class="card border-0" style="width: 28rem;">
+          <div class="card-body">
+            <h3 class="card-title" style="font-family: 'Diplomata SC';">
+              <span class="display-4">{{ employee_count }} </span><span class="text-uppercase"><span
+              style="font-size: larger">e</span>mployees</span>
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <br><br><br><br>
+        <h2 class="large font-italic" style="font-family: 'Rozha One';">Of whom...</h2>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col"></div>
+
+      <div class="col">
+        <div class="card border-0" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title">
+              <span class="display-4">{{ vrc_count }} </span><span class="text-uppercase">
+              <span style="font-size: larger">I</span>n the
+              <span style="font-size: larger">V</span>eteran <span style="font-size: larger">R</span>eserve
+              <span style="font-size: larger">C</span>orps</span>
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card border-0" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title" style="font-family: 'Gravitas One';">
+              <span class="display-4">{{ colored_count }} </span><span class="text-uppercase"><span
+              style="font-size: larger">I</span>dentified as "<span style="font-size: larger">C</span>olored"</span>
+            </h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="card border-0" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title" style="font-family: 'Rye';">
+              <span class="display-4">{{ female_count }}</span> <span
+              style="font-size: larger">L</span>ADIES
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-4"></div>
+      <div class="col">
+        <div class="card border-0" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title" style="font-family: 'Pirata One';">
+              <span class="display-4" style="font-size: larger">
+                {{ confederate_count }} Formerly in the Confederate service</span>
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock content %}

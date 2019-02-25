@@ -22,6 +22,7 @@
     
 
     <!-- Your stuff: Third-party CSS libraries go here -->
+    <link href="https://fonts.googleapis.com/css?family=Gentium Basic" rel="stylesheet">
     
     <!-- This file stores project-specific CSS -->
     
@@ -34,8 +35,7 @@
   </head>
 
   <body>
-
-    <div class="m-b-1">
+    <div class="m-b-1 font-weight-bold" style="font-family: 'Gentium Basic'; font-size: 1.5em;">
       <nav class="navbar navbar-expand-md navbar-light bg-light">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -46,6 +46,9 @@
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
               <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'personnel:statistics' %}">Statistics</a>
             </li>
             <li class="nav-item active">
               <a class="nav-link" href="{% url 'places:bureau_state_list' %}">Bureau States</a>

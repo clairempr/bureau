@@ -26,6 +26,10 @@ urlpatterns = [
         include("bureau.military.urls", namespace="military"),
     ),
     path(
+        "personnel/",
+        include("bureau.personnel.urls", namespace="personnel"),
+    ),
+    path(
         "places/",
         include("bureau.places.urls", namespace="places"),
     ),
