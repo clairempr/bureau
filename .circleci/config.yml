@@ -21,12 +21,12 @@ jobs:
           sudo pip install -r requirements/local.txt
     - run:
         command: |
-          python manage.py test 
+          python manage.py test
     - run:
         command: |
           coverage run manage.py test
     - codecov/upload:
-        file: {{ coverage_report_filepath }}
+        file: .coverage
 
 
 
