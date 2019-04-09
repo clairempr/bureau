@@ -20,6 +20,9 @@ jobs:
         command: |  # use pipenv to install dependencies
           sudo pip install -r requirements/local.txt
     - run:
+        command: |  # use pipenv to install dependencies
+          sudo pip install coveralls
+    - run:
         command: |
           python manage.py test
     - run:
