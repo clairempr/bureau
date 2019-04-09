@@ -25,11 +25,8 @@ jobs:
     - run:
         command: |
           coverage run manage.py test
-    - run:
-        command: |
-          coverage html
     - codecov/upload:
-        file: htmlcov/
+        file: .coverage
 
 
 
