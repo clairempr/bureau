@@ -27,7 +27,9 @@ jobs:
           coverage run manage.py test
     - codecov/upload:
         file: .coverage
-
+    - run:
+       command: |
+          coveralls
 
 
 
