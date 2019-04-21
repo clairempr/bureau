@@ -1,16 +1,28 @@
+import uuid
+
 from cities_light.abstract_models import (AbstractCity, AbstractRegion,
                                           AbstractCountry)
+from cities_light.exceptions import InvalidItems
 from cities_light.receivers import connect_default_signals
-from cities_light.signals import region_items_post_import
+from cities_light.settings import ICity, IRegion
+from cities_light.signals import city_items_pre_import, region_items_pre_import, region_items_post_import
 
 from django.db import models
 
-from .settings import BUREAU_STATES
+from .settings import BUREAU_STATES, LOAD_CITIES_FROM_COUNTRIES, LOAD_REGIONS_FROM_COUNTRIES
 
 
 class City(AbstractCity):
     pass
 connect_default_signals(City)
+
+# Signal to import only cities from certain countries
+def filter_city_import(sender, items, **kwargs):
+    if items[ICity.countryCode] not in LOAD_CITIES_FROM_COUNTRIES:
+        raise InvalidItems()
+
+city_items_pre_import.connect(filter_city_import)
+
 
 class Region(AbstractRegion):
     """
@@ -25,14 +37,53 @@ class Region(AbstractRegion):
 
 connect_default_signals(Region)
 
+# Signal to import only regions from certain countries
+def filter_region_import(sender, items, **kwargs):
+    if items[IRegion.code][:2] not in LOAD_REGIONS_FROM_COUNTRIES:
+        raise InvalidItems()
+
+region_items_pre_import.connect(filter_region_import)
 
 # Signal to set bureau_operations to True in selected states post-import
 def set_region_fields(sender, instance, items, **kwargs):
-    if instance.geoname_code in BUREAU_STATES:
+    if instance.country == 'US' and instance.geoname_code in BUREAU_STATES:
         instance.bureau_operations = True
+
 region_items_post_import.connect(set_region_fields)
 
 
 class Country(AbstractCountry):
     pass
 connect_default_signals(Country)
+
+
+class Place(models.Model):
+    """
+    Place with city and region optional
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    city = models.ForeignKey(City, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
+    region = models.ForeignKey(Region, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
+    country = models.ForeignKey(Country, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
+
+
+    class Meta:
+        ordering = ['city', 'region', 'country']
+
+    def __str__(self):
+        if self.city:
+            return str(self.city)
+        elif self.region:
+            return str(self.region)
+        return str(self.country)
+
+    def save(self, *args, **kwargs):
+        # Make sure that region and country don't conflict with selected city
+        if self.city:
+            self.region = self.city.region
+            self.country = self.city.country
+        elif self.region:
+            self.country = self.region.country
+
+        super().save(*args, **kwargs)  # Call the "real" save() method.

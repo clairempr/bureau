@@ -22,3 +22,15 @@ BUREAU_STATES = [
     'VA',
     'WV',
 ]
+
+# Only load regions from a country when needed
+LOAD_REGIONS_FROM_COUNTRIES =  [
+    'US',
+    'UK',
+]
+
+# Many foreign-born Bureau employees have only a country listed, so only load cities from a country when needed
+LOAD_CITIES_FROM_COUNTRIES =  [
+    'CA',
+    'US',
+]
