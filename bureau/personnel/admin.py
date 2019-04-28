@@ -2,6 +2,8 @@ import string
 
 from django.contrib import admin
 
+from assignments.models import Assignment
+
 from .models import Employee
 
 
@@ -53,11 +55,17 @@ class USCTListFilter(admin.SimpleListFilter):
                 return queryset.filter(regiments__usct__exact=False).distinct()
         return queryset
 
+class AssignmentInline(admin.TabularInline):
+    model = Assignment
+    ordering = ('start_date',)
+    extra = 0
+
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'bureau_state', 'vrc', 'needs_backfilling')
+    list_display = ('__str__', 'bureau_state', 'vrc', 'needs_backfilling', 'place_of_birth')
     list_filter = (DateOfBirthFilledListFilter, 'vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
                    'gender','confederate', 'needs_backfilling')
     search_fields = ('last_name', 'first_name', 'notes')
+    inlines = [AssignmentInline, ]
     list_per_page = 75
     save_on_top = True
 

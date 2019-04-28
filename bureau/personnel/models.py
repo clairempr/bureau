@@ -1,8 +1,8 @@
 import uuid
 
-from django.db import models
-
 from partial_date import PartialDateField
+
+from django.db import models
 
 from medical.models import Ailment
 from military.models import Regiment
@@ -58,6 +58,8 @@ class Employee(models.Model):
 
     # Keep track of which Bureau employees were considered "colored" because they were underrepresented
     colored = models.BooleanField(default=False)
+    # A few Bureau employees were former slaves
+    former_slave = models.BooleanField(default=False)
 
     # Some Bureau employees had been in the Confederate army
     confederate = models.BooleanField(default=False)

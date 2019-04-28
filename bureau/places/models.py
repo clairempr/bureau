@@ -14,6 +14,7 @@ from .settings import BUREAU_STATES, LOAD_CITIES_FROM_COUNTRIES, LOAD_REGIONS_FR
 
 class City(AbstractCity):
     pass
+
 connect_default_signals(City)
 
 # Signal to import only cities from certain countries
@@ -51,6 +52,23 @@ def set_region_fields(sender, instance, items, **kwargs):
 
 region_items_post_import.connect(set_region_fields)
 
+class County(AbstractRegion):
+    """
+    Counties (regions with feature code 'ADM2' aren't supported by django-cities-light
+    and they're sometimes needed for birthplaces and Bureau assignments
+    """
+
+    state = models.ForeignKey(Region, null=True, blank=True, on_delete=models.PROTECT, related_name='counties')
+
+
+    class Meta(Region.Meta):
+        unique_together = ('country', 'state', 'name')
+        verbose_name = ('county')
+        verbose_name_plural = ('counties')
+
+    def __str__(self):
+        return '{name}, {state}, {country}'.format(name=self.name, state=self.state.name, country=self.country.name)
+
 
 class Country(AbstractCountry):
     pass
@@ -64,16 +82,20 @@ class Place(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     city = models.ForeignKey(City, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
+    county = models.ForeignKey(County, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
     region = models.ForeignKey(Region, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
     country = models.ForeignKey(Country, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
 
 
     class Meta:
+        unique_together = ('city', 'region', 'country')
         ordering = ['city', 'region', 'country']
 
     def __str__(self):
         if self.city:
             return str(self.city)
+        elif self.county:
+            return str(self.county)
         elif self.region:
             return str(self.region)
         return str(self.country)
@@ -83,6 +105,9 @@ class Place(models.Model):
         if self.city:
             self.region = self.city.region
             self.country = self.city.country
+        elif self.county:
+            self.region = self.county.state
+            self.country = self.county.country
         elif self.region:
             self.country = self.region.country
 

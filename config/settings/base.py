@@ -72,6 +72,7 @@ THIRD_PARTY_APPS = [
 ]
 LOCAL_APPS = [
     'bureau.users.apps.UsersAppConfig',
+    'assignments',
     'places',
     'medical',
     'military',
@@ -258,9 +259,9 @@ SOCIALACCOUNT_ADAPTER = 'bureau.users.adapters.SocialAccountAdapter'
 
 # django-cities-light configuration
 CITIES_LIGHT_APP_NAME = 'places'
-CITIES_LIGHT_CITY_SOURCES = ['http://download.geonames.org/export/dump/cities1000.zip', ]
+CITIES_LIGHT_CITY_SOURCES = ['http://download.geonames.org/export/dump/cities15000.zip', ]
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['CA', 'CH', 'DE', 'ES', 'FR', 'GB', 'IE', 'US']
-CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1', 'PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLCH', 'PPLF', 'PPLG',
-                                   'PPLH', 'PPLL', 'PPLQ', 'PPLR', 'PPLS', 'PPLW', 'PPLX']
+CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1', 'INSM', 'PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLCH', 'PPLF',
+                                   'PPLG', 'PPLH', 'PPLL', 'PPLQ', 'PPLR', 'PPLS', 'PPLW', 'PPLX']
 
