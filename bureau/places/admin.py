@@ -2,9 +2,12 @@ from cities_light.admin import CityAdmin as CitiesLightCityAdmin
 from cities_light.admin import RegionAdmin as CitiesLightRegionAdmin
 
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 
-from .forms import CityForm, RegionForm
+from .forms import CityForm, CountyForm, RegionForm
 from .models import City, County, Place, Region
+from .utils import geonames_city_lookup, geonames_county_lookup
 
 
 class InUseListFilter(admin.SimpleListFilter):
@@ -49,11 +52,29 @@ class CityAdmin(CitiesLightCityAdmin):
     list_display = CitiesLightCityAdmin.list_display + ('region', 'feature_code', 'in_use')
     list_filter = CitiesLightCityAdmin.list_filter + ('region', 'feature_code', PopulationListFilter, InUseListFilter)
     search_fields = ('name', )
-    readonly_fields = ('id', )
+    readonly_fields = ('id','geonames_lookup' )
     form = CityForm
+
+    def get_changeform_initial_data(self, request):
+        geonames_search = request.GET.get('geonames_search')
+        if geonames_search:
+            return geonames_city_lookup(geonames_search)
+
+        return {}
+
+    def get_fields(self, request, obj=None):
+        return ['geonames_lookup',] + super(CityAdmin, self).get_fields(request, obj)
 
     def in_use(self, obj):
         return obj.places.exists()
+
+    def geonames_lookup(self, obj):
+        return format_html(
+            '<a class="button" href="{}">Search</a>',
+            reverse('places:geonames_city_lookup'),
+        )
+    geonames_lookup.short_description = 'Lookup in GeoNames'
+    geonames_lookup.allow_tags = True
 
 admin.site.unregister(City)
 admin.site.register(City, CityAdmin)
@@ -75,7 +96,27 @@ class CountyAdmin(admin.ModelAdmin):
     list_display = ('name', 'state')
     list_filter = ('state', )
     search_fields = ('name', 'state',)
+    readonly_fields = ('id', 'geonames_lookup')
+    form = CountyForm
     save_on_top = True
+
+    def get_changeform_initial_data(self, request):
+        geonames_search = request.GET.get('geonames_search')
+        if geonames_search:
+            return geonames_county_lookup(geonames_search)
+
+        return {}
+
+    def get_fields(self, request, obj=None):
+        return ['geonames_lookup',] + super(CountyAdmin, self).get_fields(request, obj)
+
+    def geonames_lookup(self, obj):
+        return format_html(
+            '<a class="button" href="{}">Search</a>',
+            reverse('places:geonames_county_lookup'),
+        )
+    geonames_lookup.short_description = 'Lookup in GeoNames'
+    geonames_lookup.allow_tags = True
 
 
 admin.site.register(County, CountyAdmin)

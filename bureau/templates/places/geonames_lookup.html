@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}GeoNames Lookup{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>GeoNames {{ lookup_type|title }} Lookup</h2>
+
+<form method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Search" />
+</form>
+  </div>
+{% endblock content %}
