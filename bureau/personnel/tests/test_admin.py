@@ -55,8 +55,12 @@ class EmployeeAdminTestCase(TestCase):
         # Oops, we're forgetting to set vrc to True, even though he's in a VRC unit! Hope save_model catches it...
         self.client.post(
             reverse('admin:personnel_employee_add'),
-            {'last_name': 'Dodge', 'first_name': 'Charles', 'gender': 'M', 'vrc': False,
-             'regiments': [RegimentFactory(vrc=True).id]},
+            {'id': 1, 'last_name': 'Dodge', 'first_name': 'Charles', 'gender': 'M', 'vrc': False,
+             'regiments': [RegimentFactory(vrc=True).id],
+             'assignments-TOTAL_FORMS': '0',
+             'assignments-INITIAL_FORMS': '0',
+             'assignments-MAX_NUM_FORMS': '1',
+             'assignments-MIN_NUM_FORMS': '1'},
             follow=True,
         )
 

@@ -2,7 +2,7 @@ import string
 
 from django.contrib import admin
 
-from assignments.models import Assignment
+from assignments.models import Assignment, Place, Position
 
 from .models import Employee
 
@@ -55,10 +55,19 @@ class USCTListFilter(admin.SimpleListFilter):
                 return queryset.filter(regiments__usct__exact=False).distinct()
         return queryset
 
+
 class AssignmentInline(admin.TabularInline):
     model = Assignment
     ordering = ('start_date',)
     extra = 0
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "places":
+            kwargs["queryset"] = Place.objects.filter(region__bureau_operations=True).order_by('__str__')
+        if db_field.name == "position":
+            kwargs["queryset"] = Position.objects.all().order_by('title')
+        return super(AssignmentInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'bureau_state', 'vrc', 'needs_backfilling', 'place_of_birth')

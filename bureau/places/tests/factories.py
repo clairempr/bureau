@@ -1,6 +1,6 @@
 from factory import DjangoModelFactory, Faker, SubFactory
 
-from ..models import Country, Region
+from ..models import Country, Place, Region
 
 
 class CountryFactory(DjangoModelFactory):
@@ -12,6 +12,15 @@ class CountryFactory(DjangoModelFactory):
 
     class Meta:
         model = Country
+
+
+class PlaceFactory(DjangoModelFactory):
+    """
+    Base Place factory
+    """
+
+    class Meta:
+        model = Place
 
 
 class RegionFactory(DjangoModelFactory):
