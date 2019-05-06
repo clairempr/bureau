@@ -70,7 +70,7 @@ class AssignmentInline(admin.TabularInline):
 
 
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'bureau_state', 'vrc', 'needs_backfilling', 'place_of_birth')
+    list_display = ('__str__', 'bureau_state', 'vrc', 'needs_backfilling', 'place_of_birth', 'age_in_1865',)
     list_filter = (DateOfBirthFilledListFilter, 'vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
                    'gender','confederate', 'needs_backfilling')
     search_fields = ('last_name', 'first_name', 'notes')
@@ -87,6 +87,9 @@ class EmployeeAdmin(admin.ModelAdmin):
 
     def bureau_state(self, obj):
         return obj.bureau_state_list()
+
+    def age_in_1865(self, obj):
+        return obj.calculate_age(1865)
 
 
 admin.site.register(Employee, EmployeeAdmin)

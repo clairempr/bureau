@@ -8,6 +8,16 @@ from medical.models import Ailment
 from military.models import Regiment
 from places.models import Place, Region
 
+
+class EmployeeManager(models.Manager):
+
+    def birthplace_known(self, **kwargs):
+        return self.exclude(place_of_birth__isnull=True).filter(**kwargs)
+
+    def foreign_born(self, **kwargs):
+        return self.birthplace_known().exclude(place_of_birth__country__code2='US').filter(**kwargs)
+
+
 class Employee(models.Model):
     """
     Freedmen's Bureau employee, military or civilian, 
@@ -83,6 +93,7 @@ class Employee(models.Model):
     # Keep track of which employees have already been backfilled when adding new fields
     needs_backfilling = models.BooleanField(default=False)
 
+    objects = EmployeeManager()
 
     class Meta:
         ordering = ['last_name', 'first_name']
@@ -98,6 +109,11 @@ class Employee(models.Model):
 
     def bureau_state_list(self):
         return '\n'.join([state.name for state in self.bureau_states.all()])
+
+    def calculate_age(self, year):
+        if self.date_of_birth:
+            return year - self.date_of_birth.date.year
+        return None
 
 
 

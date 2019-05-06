@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}VRC Statistics{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>VRC Statistics</h2>
+
+    <table class="table">
+      <thead class="">
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">VRC</th>
+        <th scope="col">non-VRC</th>
+        <th scope="col">Everyone</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <th scope="row">Average age</th>
+        <td>{{ average_age.vrc|floatformat }}</td>
+        <td>{{ average_age.non_vrc|floatformat }}</td>
+        <td>{{ average_age.everyone|floatformat }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Median age</th>
+        <td>{{ median_age.vrc|floatformat }}</td>
+        <td>{{ median_age.non_vrc|floatformat }}</td>
+        <td>{{ median_age.everyone|floatformat }}</td>
+      </tr>
+      <tr>
+        <th scope="row">Foreign born</th>
+        <td>{{ foreign_born_vrc|floatformat }}%</td>
+        <td>{{ foreign_born_non_vrc|floatformat }}%</td>
+        <td>{{ foreign_born_everyone|floatformat }}%</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock content %}
