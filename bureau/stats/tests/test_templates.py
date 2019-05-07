@@ -3,11 +3,11 @@ from django.test import TestCase
 
 class StatisticsTemplateTestCase(TestCase):
     """
-    Test template of personnel.Views.StatisticsView
+    Test template of stats.Views.GeneralView
     """
 
     def setUp(self):
-        self.template = 'personnel/statistics.html'
+        self.template = 'stats/general.html'
 
     def test_statistics_template(self):
         context = {'employee_count': 1,

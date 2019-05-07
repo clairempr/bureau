@@ -17,6 +17,12 @@ class EmployeeManager(models.Manager):
     def foreign_born(self, **kwargs):
         return self.birthplace_known().exclude(place_of_birth__country__code2='US').filter(**kwargs)
 
+    def vrc(self, **kwargs):
+        return self.filter(vrc=True).filter(**kwargs)
+
+    def non_vrc(self, **kwargs):
+        return self.filter(vrc=False).filter(**kwargs)
+
 
 class Employee(models.Model):
     """

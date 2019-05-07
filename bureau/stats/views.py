@@ -2,6 +2,7 @@ import statistics
 
 from django.views.generic.base import TemplateView
 
+from medical.models import Ailment
 from personnel.models import Employee
 
 class GeneralView(TemplateView):
@@ -40,15 +41,22 @@ class VRCView(TemplateView):
 
         foreign_born_vrc = Employee.objects.foreign_born(vrc=True).count()
         foreign_born_non_vrc = Employee.objects.foreign_born(vrc=False).count()
-        vrc_with_birthplace = Employee.objects.birthplace_known(vrc=True).count()
-        non_vrc_with_birthplace = Employee.objects.birthplace_known(vrc=False).count()
+        foreign_born = {'vrc': foreign_born_vrc / Employee.objects.birthplace_known(vrc=True).count() * 100,
+                        'non_vrc': foreign_born_non_vrc / Employee.objects.birthplace_known(vrc=False).count() * 100,
+                        'everyone': (foreign_born_vrc + foreign_born_non_vrc) / employees_with_dob.count() * 100}
+
+        employee_count = Employee.objects.count()
+        ailments = [{'name': ailment.name,
+                     'vrc': Employee.objects.vrc(ailments=ailment).count() / Employee.objects.vrc().count() * 100,
+                     'non_vrc': Employee.objects.non_vrc(ailments=ailment).count() / Employee.objects.non_vrc().count() * 100,
+                     'everyone': Employee.objects.filter(ailments=ailment).count() / employee_count * 100} for
+                    ailment in Ailment.objects.all()]
 
         context = super().get_context_data(**kwargs)
         context['average_age'] = average_age
         context['median_age'] = median_age
-        context['foreign_born_vrc'] = foreign_born_vrc / vrc_with_birthplace * 100
-        context['foreign_born_non_vrc'] = foreign_born_non_vrc / non_vrc_with_birthplace * 100
-        context['foreign_born_everyone'] = (foreign_born_vrc + foreign_born_non_vrc) / (vrc_with_birthplace + non_vrc_with_birthplace) * 100
+        context['foreign_born'] = foreign_born
+        context['ailments'] = ailments
         return context
 
 
