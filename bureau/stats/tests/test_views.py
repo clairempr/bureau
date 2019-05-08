@@ -16,7 +16,7 @@ class StatisticsViewTestCase(TestCase):
         EmployeeFactory(vrc=True)
         EmployeeFactory(vrc=True)
 
-        response = self.client.get(reverse('personnel:statistics'))
+        response = self.client.get(reverse('stats:general'))
         self.assertEqual(response.context['employee_count'], 5,
                          'employee_count should be in context')
 
@@ -30,5 +30,5 @@ class StatisticsViewTestCase(TestCase):
                          'vrc_count should be in context')
 
     def test_template_used(self):
-        response = self.client.get(reverse('personnel:statistics'))
-        self.assertTemplateUsed(response, 'personnel/statistics.html')
+        response = self.client.get(reverse('stats:general'))
+        self.assertTemplateUsed(response, 'stats/general.html')
