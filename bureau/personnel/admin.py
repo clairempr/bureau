@@ -60,10 +60,9 @@ class AssignmentInline(admin.TabularInline):
     model = Assignment
     ordering = ('start_date',)
     extra = 0
+    raw_id_fields = ('places',)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "places":
-            kwargs["queryset"] = Place.objects.filter(region__bureau_operations=True).order_by('__str__')
         if db_field.name == "position":
             kwargs["queryset"] = Position.objects.all().order_by('title')
         return super(AssignmentInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
@@ -74,6 +73,7 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_filter = (DateOfBirthFilledListFilter, 'vrc', USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
                    'gender','confederate', 'needs_backfilling')
     search_fields = ('last_name', 'first_name', 'notes')
+    raw_id_fields = ('place_of_birth', 'place_of_residence', 'place_of_death',)
     inlines = [AssignmentInline, ]
     list_per_page = 75
     save_on_top = True
