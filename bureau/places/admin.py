@@ -95,7 +95,7 @@ admin.site.register(Region, RegionAdmin)
 class CountyAdmin(admin.ModelAdmin):
     list_display = ('name', 'state')
     list_filter = ('state', )
-    search_fields = ('name', 'state',)
+    search_fields = ('name', 'state__name',)
     readonly_fields = ('id', 'geonames_lookup')
     form = CountyForm
     save_on_top = True

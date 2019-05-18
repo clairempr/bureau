@@ -43,7 +43,7 @@ class VRCView(TemplateView):
         foreign_born_non_vrc = Employee.objects.foreign_born(vrc=False).count()
         foreign_born = {'vrc': foreign_born_vrc / Employee.objects.birthplace_known(vrc=True).count() * 100,
                         'non_vrc': foreign_born_non_vrc / Employee.objects.birthplace_known(vrc=False).count() * 100,
-                        'everyone': (foreign_born_vrc + foreign_born_non_vrc) / employees_with_dob.count() * 100}
+                        'everyone': (foreign_born_vrc + foreign_born_non_vrc) / Employee.objects.birthplace_known().count() * 100}
 
         employee_count = Employee.objects.count()
         ailments = [{'name': ailment.name,
