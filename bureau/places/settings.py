@@ -32,5 +32,6 @@ LOAD_REGIONS_FROM_COUNTRIES =  [
 # Many foreign-born Bureau employees have only a country listed, so only load cities from a country when needed
 LOAD_CITIES_FROM_COUNTRIES =  [
     'CA',
+    'ES',
     'US',
 ]

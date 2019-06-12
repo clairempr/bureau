@@ -264,5 +264,5 @@ CITIES_LIGHT_CITY_SOURCES = ['http://download.geonames.org/export/dump/cities150
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['CA', 'CH', 'DE', 'ES', 'FR', 'GB', 'IE', 'US']
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1', 'ISL', 'INSM', 'PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLCH',
-                                   'PPLF', 'PPLG', 'PPLH', 'PPLL', 'PPLQ', 'PPLR', 'PPLS', 'PPLW', 'PPLX']
+                                   'PPLF', 'PPLG', 'PPLH', 'PPLL', 'PPLQ', 'PPLR', 'PPLS', 'PPLW', 'PPLX', 'S']
 

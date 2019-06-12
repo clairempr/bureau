@@ -67,7 +67,12 @@ class County(AbstractRegion):
         verbose_name_plural = ('counties')
 
     def __str__(self):
-        return '{name}, {state}, {country}'.format(name=self.name, state=self.state.name, country=self.country.name)
+        """
+        Not all counties (Irish, for example) will have a state set
+        """
+        if self.state:
+            return '{name}, {state}, {country}'.format(name=self.name, state=self.state.name, country=self.country.name)
+        return '{name}, {country}'.format(name=self.name, country=self.country.name)
 
 
 class Country(AbstractCountry):
