@@ -33,5 +33,6 @@ LOAD_REGIONS_FROM_COUNTRIES =  [
 LOAD_CITIES_FROM_COUNTRIES =  [
     'CA',
     'ES',
+    'UK',
     'US',
 ]
