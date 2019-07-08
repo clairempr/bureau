@@ -129,8 +129,13 @@ class PlaceAdmin(admin.ModelAdmin):
     fields = ('id', 'city', 'county', 'region', 'country')
     readonly_fields = ('id', )
     raw_id_fields = ('city', 'county')
+    ordering = ('city', 'region', 'country')
     list_per_page = 75
     save_on_top = True
+
+    list_select_related = (
+        'region', 'country', 'city'
+    )
 
     def save_model(self, request, obj, form, change):
         # Make sure that region and country don't conflict with selected city

@@ -94,7 +94,6 @@ class Place(models.Model):
 
     class Meta:
         unique_together = ('city', 'region', 'country')
-        ordering = ['city', 'region', 'country']
 
     def __str__(self):
         if self.city:
