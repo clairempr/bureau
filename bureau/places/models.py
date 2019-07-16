@@ -7,6 +7,7 @@ from cities_light.receivers import connect_default_signals
 from cities_light.settings import ICity, IRegion
 from cities_light.signals import city_items_pre_import, region_items_pre_import, region_items_post_import
 
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from .settings import BUREAU_STATES, LOAD_CITIES_FROM_COUNTRIES, LOAD_REGIONS_FROM_COUNTRIES
@@ -103,6 +104,12 @@ class Place(models.Model):
         elif self.region:
             return str(self.region)
         return str(self.country)
+
+    def clean(self):
+        super().clean()
+        if not (self.city or self.county or self.region or self.country):
+            raise ValidationError('This is absolutely nowhere. Fill at least one field.')
+
 
     def save(self, *args, **kwargs):
         # Make sure that region and country don't conflict with selected city
