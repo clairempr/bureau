@@ -14,7 +14,7 @@ class Position(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    title = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=100, unique=True, blank=True)
 
     class Meta:
         ordering = ['title', ]
@@ -28,7 +28,12 @@ class Assignment(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    position = models.ForeignKey(Position, null=True, blank=True, on_delete=models.PROTECT, related_name='assignments')
+    positions = models.ManyToManyField(
+        Position,
+        related_name='assignments',
+        related_query_name='assignment',
+        blank=True,
+    )
     description = models.CharField(max_length=150, blank=True)
     places = models.ManyToManyField(
         Place,
@@ -44,8 +49,11 @@ class Assignment(models.Model):
     end_date = PartialDateField(null=True, blank=True)
 
     def __str__(self):
-        return '{position}, {places}, {start} - {end}'.format(position=self.position, places=self.place_list(),
+        return '{positions}, {places}, {start} - {end}'.format(positions=self.position_list(), places=self.place_list(),
                                                             start=self.start_date, end=self.end_date)
 
     def place_list(self):
         return ' and '.join([str(place) for place in self.places.all()])
+
+    def position_list(self):
+        return ' and '.join([str(position) for position in self.positions.all()])
