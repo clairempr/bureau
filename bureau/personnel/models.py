@@ -113,6 +113,14 @@ class Employee(models.Model):
             self.vrc = True
         super().save(*args, **kwargs)  # Call the "real" save() method.
 
+    def age_at_death(self):
+        """
+        Quick and dirty calculation just using birth and death years, if filled
+        """
+        if self.date_of_birth and self.date_of_death:
+            return self.date_of_death.date.year - self.date_of_birth.date.year
+        return None
+
     def bureau_state_list(self):
         return '\n'.join([state.name for state in self.bureau_states.all()])
 

@@ -262,7 +262,7 @@ SOCIALACCOUNT_ADAPTER = 'bureau.users.adapters.SocialAccountAdapter'
 CITIES_LIGHT_APP_NAME = 'places'
 CITIES_LIGHT_CITY_SOURCES = ['http://download.geonames.org/export/dump/cities15000.zip', ]
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en']
-CITIES_LIGHT_INCLUDE_COUNTRIES = ['CA', 'CH', 'CN', 'DE', 'ES', 'FR', 'GB', 'HU', 'IE', 'US']
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['CA', 'CH', 'CN', 'CO', 'DE', 'ES', 'FR', 'GB', 'HU', 'IE', 'US']
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1', 'ADM3', 'ISL', 'INSM', 'PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC',
                                    'PPLCH', 'PPLF', 'PPLG', 'PPLH', 'PPLL', 'PPLQ', 'PPLR', 'PPLS', 'PPLW', 'PPLX', 'S']
 

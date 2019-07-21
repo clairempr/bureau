@@ -25,20 +25,39 @@ class VRCView(TemplateView):
     template_name = 'stats/vrc.html'
 
     def get_context_data(self, **kwargs):
+        # Employees with date of birth filled
         employees_with_dob = Employee.objects.exclude(date_of_birth='')
+        # Employees with date of death filled
+        employees_with_dob_and_dod = Employee.objects.exclude(date_of_death='').exclude(date_of_birth='')
 
+
+        # Age in 1865
         ages_vrc = list(map(lambda x: x.calculate_age(1865), employees_with_dob.filter(vrc=True)))
         ages_non_vrc = list(map(lambda x: x.calculate_age(1865), employees_with_dob.filter(vrc=False)))
         ages_everyone = ages_vrc + ages_non_vrc
 
-        average_age ={'vrc': statistics.mean(ages_vrc),
+        average_age_in_1865 ={'vrc': statistics.mean(ages_vrc),
                       'non_vrc': statistics.mean(ages_non_vrc),
                       'everyone': statistics.mean(ages_everyone) }
 
-        median_age = {'vrc': statistics.median(ages_vrc),
+        median_age_in_1865 = {'vrc': statistics.median(ages_vrc),
                       'non_vrc': statistics.median(ages_non_vrc),
                       'everyone': statistics.median(ages_everyone)}
 
+        # Age at time of death
+        ages_vrc_at_death = list(map(lambda x: x.age_at_death(), employees_with_dob_and_dod.filter(vrc=True)))
+        ages_non_vrc_at_death = list(map(lambda x: x.age_at_death(), employees_with_dob_and_dod.filter(vrc=False)))
+        ages_everyone_at_death = ages_vrc_at_death + ages_non_vrc_at_death
+
+        average_age_at_death ={'vrc': statistics.mean(ages_vrc_at_death),
+                      'non_vrc': statistics.mean(ages_non_vrc_at_death),
+                      'everyone': statistics.mean(ages_everyone_at_death) }
+
+        median_age_at_death = {'vrc': statistics.median(ages_vrc_at_death),
+                      'non_vrc': statistics.median(ages_non_vrc_at_death),
+                      'everyone': statistics.median(ages_everyone_at_death)}
+
+        # Foreign born
         foreign_born_vrc = Employee.objects.foreign_born(vrc=True).count()
         foreign_born_non_vrc = Employee.objects.foreign_born(vrc=False).count()
         foreign_born = {'vrc': foreign_born_vrc / Employee.objects.birthplace_known(vrc=True).count() * 100,
@@ -53,8 +72,10 @@ class VRCView(TemplateView):
                     ailment in Ailment.objects.all()]
 
         context = super().get_context_data(**kwargs)
-        context['average_age'] = average_age
-        context['median_age'] = median_age
+        context['average_age_in_1865'] = average_age_in_1865
+        context['median_age_in_1865'] = median_age_in_1865
+        context['average_age_at_death'] = average_age_at_death
+        context['median_age_at_death'] = median_age_at_death
         context['foreign_born'] = foreign_born
         context['ailments'] = ailments
         return context
