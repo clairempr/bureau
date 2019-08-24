@@ -125,7 +125,7 @@ admin.site.register(County, CountyAdmin)
 class PlaceAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'city', 'county', 'region', 'country')
     list_filter = ( 'region__bureau_operations', 'country', 'region', )
-    search_fields = ('city__name', 'county__name', 'region__name', 'country__name')
+    search_fields = ('city__name', 'city__alternate_names', 'county__name', 'region__name', 'country__name')
     fields = ('id', 'city', 'county', 'region', 'country')
     readonly_fields = ('id', )
     raw_id_fields = ('city', 'county')
