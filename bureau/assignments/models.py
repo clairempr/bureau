@@ -3,6 +3,7 @@ import uuid
 from partial_date import PartialDateField
 
 from django.db import models
+from django.db.models import Q
 
 from personnel.models import Employee
 from places.models import Place
@@ -21,6 +22,15 @@ class Position(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class AssignmentManager(models.Manager):
+
+    def during_year(self, year, **kwargs):
+        return self.filter(
+            Q(start_date__lte='{}'.format(year), end_date__gte='{}'.format(year)) |
+            Q(start_date__gte='{}'.format(year)), start_date__lt='{}'.format(year + 1))
+
 
 class Assignment(models.Model):
     """
@@ -48,10 +58,11 @@ class Assignment(models.Model):
     start_date = PartialDateField(null=True, blank=True)
     end_date = PartialDateField(null=True, blank=True)
 
+    objects = AssignmentManager()
+
     def __str__(self):
         return '{positions}, {places}, {start} - {end}'.format(positions=self.position_list(), places=self.place_list(),
-                                                            start=self.start_date, end=self.end_date)
-
+                                                               start=self.start_date, end=self.end_date)
     def place_list(self):
         return ' and '.join([str(place) for place in self.places.all()])
 

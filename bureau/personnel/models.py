@@ -3,6 +3,7 @@ import uuid
 from partial_date import PartialDateField
 
 from django.db import models
+from django.db.models import Q
 
 from medical.models import Ailment
 from military.models import Regiment
@@ -23,6 +24,11 @@ class EmployeeManager(models.Manager):
     def non_vrc(self, **kwargs):
         return self.filter(vrc=False).filter(**kwargs)
 
+    def employed_during_year(self, year, **kwargs):
+        return self.filter(
+            Q(assignments__start_date__lte='{}'.format(year), assignments__end_date__gte='{}'.format(year)) |
+            Q(assignments__start_date__gte='{}'.format(year)),
+            assignments__start_date__lt='{}'.format(year + 1)).distinct().filter(**kwargs)
 
 class Employee(models.Model):
     """

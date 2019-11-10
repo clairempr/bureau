@@ -265,5 +265,5 @@ CITIES_LIGHT_TRANSLATION_LANGUAGES = ['en']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['CA', 'CH', 'CN', 'CO', 'CU', 'DE', 'ES', 'FR', 'GB', 'HU', 'IE', 'US']
 CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1', 'ADM3', 'CAPE', 'ISL', 'INSM', 'PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4',
                                    'PPLC', 'PPLCH', 'PPLF', 'PPLG', 'PPLH', 'PPLL', 'PPLQ', 'PPLR', 'PPLS', 'PPLW',
-                                   'PPLX', 'S']
+                                   'PPLX', 'PRK', 'S']
 
