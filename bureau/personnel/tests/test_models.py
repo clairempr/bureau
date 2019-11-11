@@ -35,6 +35,26 @@ class EmployeeManagerTestCase(TestCase):
                       Employee.objects.foreign_born(),
                       "Employee with place_of_birth in 'DE' should be in Employee.objects.foreign_born()")
 
+    def test_vrc(self):
+        """
+        Should return employees with vrc=True
+        """
+        self.assertNotIn(EmployeeFactory(vrc=False), Employee.objects.vrc(),
+                      "Employee with vrc=False shouldn't be in Employee.objects.vrc()")
+        self.assertIn(EmployeeFactory(vrc=True),
+                      Employee.objects.vrc(),
+                      "Employee with vrc=True should be in Employee.objects.vrc()")
+
+    def test_non_vrc(self):
+        """
+        Should return employees with vrc=False
+        """
+        self.assertNotIn(EmployeeFactory(vrc=True), Employee.objects.non_vrc(),
+                      "Employee with vrc=True shouldn't be in Employee.objects.non_vrc()")
+        self.assertIn(EmployeeFactory(vrc=False),
+                      Employee.objects.non_vrc(),
+                      "Employee with vrc=False should be in Employee.objects.non_vrc()")
+
 
 
 class EmployeeTestCase(TestCase):
@@ -51,7 +71,7 @@ class EmployeeTestCase(TestCase):
         self.assertEqual(str(employee), '{}, {}'.format(employee.last_name, employee.first_name),
                         "Employee.__str__ should be equal to Employee.last_name, Employee.first_name")
 
-    def test_vrc(self):
+    def test_vrc_set_on_save(self):
         """
         If Employee is a member of a VRC unit, 'vrc' should be True
         """
