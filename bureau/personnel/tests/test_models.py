@@ -37,7 +37,7 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1865-08', employee=employee)
         self.assertNotIn(employee, Employee.objects.employed_during_year(1866))
         # Check start and end dates just year
-        employee = EmployeeFactory()
+        employee = EmployeeFactory().
         AssignmentFactory(start_date='1864', end_date='1865', employee=employee)
         self.assertNotIn(employee, Employee.objects.employed_during_year(1866))
         # Check start date just year and empty end date
