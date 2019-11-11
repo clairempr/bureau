@@ -14,7 +14,7 @@ YES_NO_LOOKUPS = (
 
 
 class DateOfBirthFilledListFilter(admin.SimpleListFilter):
-    title = 'Date of birth filled'
+    title = 'date of birth filled'
     parameter_name = 'date_of_birth'
 
     def lookups(self, request, model_admin):
@@ -30,7 +30,7 @@ class DateOfBirthFilledListFilter(admin.SimpleListFilter):
 
 
 class PlaceOfBirthFilledListFilter(admin.SimpleListFilter):
-    title = 'Place of birth filled'
+    title = 'place of birth filled'
     parameter_name = 'place_of_birth'
 
     def lookups(self, request, model_admin):
@@ -50,13 +50,15 @@ class EmploymentYearListFilter(admin.SimpleListFilter):
     parameter_name = 'employment_year'
 
     def lookups(self, request, model_admin):
-        min_year = Assignment.objects.filter(start_date__isnull=False).order_by('start_date').first().start_date.date.year
-        max_year = Assignment.objects.filter(end_date__isnull=False).order_by('end_date').last().end_date.date.year
-        return [(year, year) for year in range(min_year, max_year)]
+        if Assignment.objects.exists():
+            min_year = Assignment.objects.filter(start_date__isnull=False).order_by('start_date').first().start_date.date.year
+            max_year = Assignment.objects.filter(end_date__isnull=False).order_by('end_date').last().end_date.date.year
+            return [(year, year) for year in range(min_year, max_year)]
+        return []
 
     def queryset(self, request, queryset):
         if self.value():
-            return queryset.intersection(Employee.objects.employed_during_year(int(self.value())))
+            return queryset.filter(pk__in=Employee.objects.employed_during_year(int(self.value())).values('pk'))
         return queryset
 
 
