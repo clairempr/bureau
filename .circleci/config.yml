@@ -14,15 +14,18 @@ jobs:
     - checkout  # checkout source code to working directory
     - run: sudo chown -R circleci:circleci /usr/local/bin
     - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+    - restore_cache: # restore cached dependencies
+        key: pip-env-{{ checksum "requirements.txt" }}
     - run:
-        command: |  # use pipenv to install dependencies
+        command: |  # install dependencies
           sudo pip install -r requirements/local.txt
-    - run:
-        command: |  # use pipenv to install dependencies
           sudo pip install coveralls
-    - run:
-        command: |
-          python manage.py test
+    - save_cache: # cache installed dependencies
+        key: pip-env-{{ checksum "requirements.txt" }}
+        paths:
+          - ".cache/pip"
+          - '/usr/local/bin'
+          - '/usr/local/lib/python3.6/site-packages'
     - run:
         command: |
           coverage run manage.py test
