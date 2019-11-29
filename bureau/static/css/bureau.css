@@ -20,6 +20,28 @@ main {
   flex: auto;
 }
 
+.dropdown-item {
+  font-size: 1.1rem;
+}
+
+.nav, .tablist .nav-item a {
+  color: rgba(0, 0, 0, 0.56);
+  font-family: 'Gravitas One', serif;
+}
+
+.nav-item a:hover {
+  color: #212529;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  background-color: rgba(0,0,0,.5);
+  border-radius: 0;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: rgba(0, 0, 0, 0.56);
+}
+
 .responsive-image {
   width: 100%;
   max-width: 800px;

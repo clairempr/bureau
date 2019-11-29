@@ -1,60 +1,37 @@
-{% extends "base.html" %}
-{% load static i18n %}
+{% extends "stats/base.html" %}
+
 {% block title %}VRC Statistics{% endblock %}
 
 {% block content %}
   <div class="container">
     <h2>VRC Statistics</h2>
 
-    <table class="table">
-      <thead class="">
-      <tr>
-        <th scope="col"></th>
-        <th scope="col">VRC</th>
-        <th scope="col">non-VRC</th>
-        <th scope="col">Everyone</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <th scope="row">Average age in 1865</th>
-        <td>{{ average_age_in_1865.vrc|floatformat }}</td>
-        <td>{{ average_age_in_1865.non_vrc|floatformat }}</td>
-        <td>{{ average_age_in_1865.everyone|floatformat }}</td>
-      </tr>
-      <tr>
-        <th scope="row">Median age in 1865</th>
-        <td>{{ median_age_in_1865.vrc|floatformat }}</td>
-        <td>{{ median_age_in_1865.non_vrc|floatformat }}</td>
-        <td>{{ median_age_in_1865.everyone|floatformat }}</td>
-      </tr>
-            <tr>
-        <th scope="row">Average age at death</th>
-        <td>{{ average_age_at_death.vrc|floatformat }}</td>
-        <td>{{ average_age_at_death.non_vrc|floatformat }}</td>
-        <td>{{ average_age_at_death.everyone|floatformat }}</td>
-      </tr>
-      <tr>
-        <th scope="row">Median age at death</th>
-        <td>{{ median_age_at_death.vrc|floatformat }}</td>
-        <td>{{ median_age_at_death.non_vrc|floatformat }}</td>
-        <td>{{ median_age_at_death.everyone|floatformat }}</td>
-      </tr>
-      <tr>
-        <th scope="row">Foreign born</th>
-        <td>{{ foreign_born.vrc|floatformat }}%</td>
-        <td>{{ foreign_born.non_vrc|floatformat }}%</td>
-        <td>{{ foreign_born.everyone|floatformat }}%</td>
-      </tr>
-      {% for ailment in ailments %}
-        <tr>
-          <th scope="row">{{ ailment.name }}</th>
-          <td>{{ ailment.vrc|floatformat }}%</td>
-          <td>{{ ailment.non_vrc|floatformat }}%</td>
-          <td>{{ ailment.everyone|floatformat }}%</td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
+    <ul class="nav nav-pills tablist mt-3" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="age-tab" data-toggle="tab" href="#age" role="tab"
+           aria-controls="age" aria-selected="true">Age</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="birthplace-tab" data-toggle="tab" href="#birthplace" role="tab"
+           aria-controls="birthplace" aria-selected="false">Birthplace</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="ailment-tab" data-toggle="tab" href="#ailment" role="tab"
+           aria-controls="ailment" aria-selected="false">Ailment</a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="age" role="tabpanel" aria-labelledby="age-tab">
+        {% include 'stats/partials/age_tab.html' %}
+      </div>
+      <div class="tab-pane fade" id="birthplace" role="tabpanel" aria-labelledby="birthplace-tab">
+        {% include 'stats/partials/birthplace_tab.html' %}
+      </div>
+      <div class="tab-pane fade" id="ailment" role="tabpanel" aria-labelledby="ailment-tab">
+        {% include 'stats/partials/ailment_tab.html' %}
+      </div>
+    </div>
+
   </div>
 {% endblock content %}

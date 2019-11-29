@@ -1,0 +1,11 @@
+<table class="table">
+  {% include 'stats/partials/vrc_table_head.html' %}
+  <tbody>
+    <tr>
+      <th scope="row">Foreign born</th>
+      <td>{{ foreign_born.vrc|floatformat }}%</td>
+      <td>{{ foreign_born.non_vrc|floatformat }}%</td>
+      <td>{{ foreign_born.everyone|floatformat }}%</td>
+    </tr>
+  </tbody>
+</table>
