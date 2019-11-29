@@ -17,19 +17,17 @@
 
     {% block css %}
     
-    <!-- Latest compiled and minified Bootstrap 4.1.1 CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    
+      <!-- Latest compiled and minified Bootstrap 4.1.1 CSS -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
 
-    <!-- Your stuff: Third-party CSS libraries go here -->
-    <link href="https://fonts.googleapis.com/css?family=Gentium Basic" rel="stylesheet">
-    
-    <!-- This file stores project-specific CSS -->
-    
-    <link href="{% static 'css/project.css' %}" rel="stylesheet">
-    <link href="{% static 'css/bureau.css' %}" rel="stylesheet">
-    
-    
+      <!-- Your stuff: Third-party CSS libraries go here -->
+      <link href="https://fonts.googleapis.com/css?family=Gentium Basic" rel="stylesheet">
+
+      <!-- This file stores project-specific CSS -->
+
+      <link href="{% static 'css/project.css' %}" rel="stylesheet">
+      <link href="{% static 'css/bureau.css' %}" rel="stylesheet">
+
     {% endblock %}
 
   </head>
@@ -44,26 +42,21 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
-            </li>
 
-            <li class="nav-item active">
-              <div class="dropdown show">
-                <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Statistics
                 </a>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                   <a class="dropdown-item" href="{% url 'stats:general' %}">General</a>
                   <a class="dropdown-item" href="{% url 'stats:vrc' %}">VRC</a>
                 </div>
-              </div>
             </li>
 
-            <li class="nav-item active">
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'places:bureau_state_list' %}">Bureau States</a>
             </li>
-            <li class="nav-item active">
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'military:regiment_list' %}">Regiments</a>
             </li>
             <li class="nav-item">
@@ -126,7 +119,6 @@
       <!-- place project specific Javascript in this file -->
       
       <script src="{% static 'js/project.js' %}"></script>
-      
 
     {% endblock javascript %}
   </body>
