@@ -21,8 +21,8 @@ class GeneralView(TemplateView):
 general_view = GeneralView.as_view()
 
 
-class VRCView(TemplateView):
-    template_name = 'stats/vrc.html'
+class DetailedView(TemplateView):
+    template_name = 'stats/detailed.html'
 
     def get_context_data(self, **kwargs):
         # Employees with date of birth filled
@@ -81,6 +81,6 @@ class VRCView(TemplateView):
         return context
 
 
-vrc_view = VRCView.as_view()
+detailed_view = DetailedView.as_view()
 
 
