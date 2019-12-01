@@ -1,9 +1,11 @@
 import statistics
 
+from django.db.models import Count
 from django.views.generic.base import TemplateView
 
 from medical.models import Ailment
 from personnel.models import Employee
+from places.models import Place
 
 class GeneralView(TemplateView):
     template_name = 'stats/general.html'
@@ -25,6 +27,8 @@ class DetailedView(TemplateView):
     template_name = 'stats/detailed.html'
 
     def get_context_data(self, **kwargs):
+        employee_count = Employee.objects.count()
+
         # Employees with date of birth filled
         employees_with_dob = Employee.objects.exclude(date_of_birth='')
         # Employees with date of death filled
@@ -64,7 +68,11 @@ class DetailedView(TemplateView):
                         'non_vrc': foreign_born_non_vrc / Employee.objects.birthplace_known(vrc=False).count() * 100,
                         'everyone': (foreign_born_vrc + foreign_born_non_vrc) / Employee.objects.birthplace_known().count() * 100}
 
-        employee_count = Employee.objects.count()
+        # Top places where employees were born
+        top_birthplaces = Place.objects.values('region__name', 'country__name').annotate(
+            num_employees=Count('employees_born_in')).order_by('-num_employees')[:25]
+
+        # Ailments
         ailments = [{'name': ailment.name,
                      'vrc': Employee.objects.vrc(ailments=ailment).count() / Employee.objects.vrc().count() * 100,
                      'non_vrc': Employee.objects.non_vrc(ailments=ailment).count() / Employee.objects.non_vrc().count() * 100,
@@ -77,6 +85,7 @@ class DetailedView(TemplateView):
         context['average_age_at_death'] = average_age_at_death
         context['median_age_at_death'] = median_age_at_death
         context['foreign_born'] = foreign_born
+        context['top_birthplaces'] = top_birthplaces
         context['ailments'] = ailments
         return context
 
