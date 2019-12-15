@@ -53,7 +53,7 @@ class EmploymentYearListFilter(admin.SimpleListFilter):
         if Assignment.objects.exists():
             min_year = Assignment.objects.filter(start_date__isnull=False).order_by('start_date').first().start_date.date.year
             max_year = Assignment.objects.filter(end_date__isnull=False).order_by('end_date').last().end_date.date.year
-            return [(year, year) for year in range(min_year, max_year)]
+            return [(year, year) for year in range(min_year, max_year + 1)]
         return []
 
     def queryset(self, request, queryset):
