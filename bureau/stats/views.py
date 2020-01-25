@@ -78,6 +78,10 @@ class DetailedView(TemplateView):
                      'non_vrc': Employee.objects.non_vrc(ailments=ailment).count() / Employee.objects.non_vrc().count() * 100,
                      'everyone': Employee.objects.filter(ailments=ailment).count() / employee_count * 100} for
                     ailment in Ailment.objects.all()]
+        ailments.append({'name': 'None',
+                     'vrc': Employee.objects.vrc(ailments=None).count() / Employee.objects.vrc().count() * 100,
+                     'non_vrc': Employee.objects.non_vrc(ailments=None).count() / Employee.objects.non_vrc().count() * 100,
+                     'everyone': Employee.objects.filter(ailments=None).count() / employee_count * 100})
 
         context = super().get_context_data(**kwargs)
         context['average_age_in_1865'] = average_age_in_1865
