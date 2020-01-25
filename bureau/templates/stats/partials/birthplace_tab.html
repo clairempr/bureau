@@ -1,11 +1,12 @@
 <h4 class="mt-5 mb-0">Percent foreign born</h4>
 <table class="table table-hover">
-  {% include 'stats/partials/vrc_table_head.html' %}
+  {% include 'stats/partials/vrc_usct_table_head.html' %}
   <tbody>
     <tr>
       <th scope="row">Foreign born</th>
       <td>{{ foreign_born.vrc|floatformat }}%</td>
       <td>{{ foreign_born.non_vrc|floatformat }}%</td>
+      <td>{{ foreign_born.usct|floatformat }}%</td>
       <td>{{ foreign_born.everyone|floatformat }}%</td>
     </tr>
   </tbody>

@@ -24,6 +24,9 @@ class EmployeeManager(models.Manager):
     def non_vrc(self, **kwargs):
         return self.filter(vrc=False).filter(**kwargs)
 
+    def usct(self, **kwargs):
+        return self.filter(regiments__usct__exact=True).distinct().filter(**kwargs)
+
     def employed_during_year(self, year, **kwargs):
         return self.filter(
             Q(assignments__start_date__lte='{}'.format(year), assignments__end_date__gte='{}'.format(year)) |

@@ -1,28 +1,32 @@
 <table class="table table-hover">
-  {% include 'stats/partials/vrc_table_head.html' %}
+  {% include 'stats/partials/vrc_usct_table_head.html' %}
   <tbody>
     <tr>
       <th scope="row">Average age in 1865</th>
       <td>{{ average_age_in_1865.vrc|floatformat }}</td>
       <td>{{ average_age_in_1865.non_vrc|floatformat }}</td>
+      <td>{{ average_age_in_1865.usct|floatformat }}</td>
       <td>{{ average_age_in_1865.everyone|floatformat }}</td>
     </tr>
     <tr>
       <th scope="row">Median age in 1865</th>
       <td>{{ median_age_in_1865.vrc|floatformat }}</td>
       <td>{{ median_age_in_1865.non_vrc|floatformat }}</td>
+      <td>{{ median_age_in_1865.usct|floatformat }}</td>
       <td>{{ median_age_in_1865.everyone|floatformat }}</td>
     </tr>
     <tr>
       <th scope="row">Average age at death</th>
       <td>{{ average_age_at_death.vrc|floatformat }}</td>
       <td>{{ average_age_at_death.non_vrc|floatformat }}</td>
+      <td>{{ average_age_at_death.usct|floatformat }}</td>
       <td>{{ average_age_at_death.everyone|floatformat }}</td>
     </tr>
     <tr>
       <th scope="row">Median age at death</th>
       <td>{{ median_age_at_death.vrc|floatformat }}</td>
       <td>{{ median_age_at_death.non_vrc|floatformat }}</td>
+      <td>{{ median_age_at_death.usct|floatformat }}</td>
       <td>{{ median_age_at_death.everyone|floatformat }}</td>
     </tr>
   </tbody>

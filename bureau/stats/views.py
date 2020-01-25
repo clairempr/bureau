@@ -36,36 +36,45 @@ class DetailedView(TemplateView):
 
 
         # Age in 1865
-        ages_vrc = list(map(lambda x: x.calculate_age(1865), employees_with_dob.filter(vrc=True)))
-        ages_non_vrc = list(map(lambda x: x.calculate_age(1865), employees_with_dob.filter(vrc=False)))
+        ages_vrc = calculate_ages_in_year(employees_with_dob.filter(vrc=True), 1865)
+        ages_non_vrc = calculate_ages_in_year(employees_with_dob.filter(vrc=False), 1865)
+        ages_usct = calculate_ages_in_year(employees_with_dob.intersection(Employee.objects.usct()), 1865)
         ages_everyone = ages_vrc + ages_non_vrc
 
         average_age_in_1865 ={'vrc': statistics.mean(ages_vrc),
                       'non_vrc': statistics.mean(ages_non_vrc),
+                      'usct': statistics.mean(ages_usct),
                       'everyone': statistics.mean(ages_everyone) }
 
         median_age_in_1865 = {'vrc': statistics.median(ages_vrc),
                       'non_vrc': statistics.median(ages_non_vrc),
+                      'usct': statistics.median(ages_usct),
                       'everyone': statistics.median(ages_everyone)}
 
         # Age at time of death
-        ages_vrc_at_death = list(map(lambda x: x.age_at_death(), employees_with_dob_and_dod.filter(vrc=True)))
-        ages_non_vrc_at_death = list(map(lambda x: x.age_at_death(), employees_with_dob_and_dod.filter(vrc=False)))
+        ages_vrc_at_death = calculate_ages_at_death(employees_with_dob_and_dod.filter(vrc=True))
+        ages_non_vrc_at_death = calculate_ages_at_death(employees_with_dob_and_dod.filter(vrc=False))
+        ages_usct_at_death = calculate_ages_at_death(employees_with_dob_and_dod.intersection(Employee.objects.usct()))
         ages_everyone_at_death = ages_vrc_at_death + ages_non_vrc_at_death
 
         average_age_at_death ={'vrc': statistics.mean(ages_vrc_at_death),
                       'non_vrc': statistics.mean(ages_non_vrc_at_death),
+                      'usct': statistics.mean(ages_usct_at_death),
                       'everyone': statistics.mean(ages_everyone_at_death) }
 
         median_age_at_death = {'vrc': statistics.median(ages_vrc_at_death),
                       'non_vrc': statistics.median(ages_non_vrc_at_death),
+                      'usct': statistics.median(ages_usct_at_death),
                       'everyone': statistics.median(ages_everyone_at_death)}
 
         # Foreign born
         foreign_born_vrc = Employee.objects.foreign_born(vrc=True).count()
         foreign_born_non_vrc = Employee.objects.foreign_born(vrc=False).count()
+        foreign_born_usct = Employee.objects.foreign_born().intersection(Employee.objects.usct()).count()
         foreign_born = {'vrc': foreign_born_vrc / Employee.objects.birthplace_known(vrc=True).count() * 100,
                         'non_vrc': foreign_born_non_vrc / Employee.objects.birthplace_known(vrc=False).count() * 100,
+                        'usct': foreign_born_usct / Employee.objects.birthplace_known().intersection(
+                            Employee.objects.usct()).count() * 100,
                         'everyone': (foreign_born_vrc + foreign_born_non_vrc) / Employee.objects.birthplace_known().count() * 100}
 
         # Top places where employees were born
@@ -76,11 +85,13 @@ class DetailedView(TemplateView):
         ailments = [{'name': ailment.name,
                      'vrc': Employee.objects.vrc(ailments=ailment).count() / Employee.objects.vrc().count() * 100,
                      'non_vrc': Employee.objects.non_vrc(ailments=ailment).count() / Employee.objects.non_vrc().count() * 100,
+                     'usct': Employee.objects.usct(ailments=ailment).count() / Employee.objects.usct().count() * 100,
                      'everyone': Employee.objects.filter(ailments=ailment).count() / employee_count * 100} for
                     ailment in Ailment.objects.all()]
         ailments.append({'name': 'None',
                      'vrc': Employee.objects.vrc(ailments=None).count() / Employee.objects.vrc().count() * 100,
                      'non_vrc': Employee.objects.non_vrc(ailments=None).count() / Employee.objects.non_vrc().count() * 100,
+                     'usct': Employee.objects.usct(ailments=None).count() / Employee.objects.usct().count() * 100,
                      'everyone': Employee.objects.filter(ailments=None).count() / employee_count * 100})
 
         context = super().get_context_data(**kwargs)
@@ -97,3 +108,16 @@ class DetailedView(TemplateView):
 detailed_view = DetailedView.as_view()
 
 
+def calculate_ages_at_death(employees):
+    """
+    Calculate approximate age at death for employees
+    Assumes that they have a birth year and death year filled
+    """
+    return list(map(lambda x: x.age_at_death(), employees))
+
+def calculate_ages_in_year(employees, year):
+    """
+    Calculate approximate ages for employees in the given year
+    Assumes that they have a birth year filled
+    """
+    return list(map(lambda x: x.calculate_age(year), employees))

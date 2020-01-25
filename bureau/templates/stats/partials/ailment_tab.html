@@ -1,11 +1,12 @@
 <table class="table table-hover">
-  {% include 'stats/partials/vrc_table_head.html' %}
+  {% include 'stats/partials/vrc_usct_table_head.html' %}
   <tbody>
   {% for ailment in ailments %}
     <tr>
       <th scope="row">{{ ailment.name }}</th>
       <td>{{ ailment.vrc|floatformat }}%</td>
       <td>{{ ailment.non_vrc|floatformat }}%</td>
+      <td>{{ ailment.usct|floatformat }}%</td>
       <td>{{ ailment.everyone|floatformat }}%</td>
     </tr>
   {% endfor %}
