@@ -1,5 +1,7 @@
 <table class="table table-hover">
-  {% include 'stats/partials/vrc_usct_table_head.html' %}
+  {% with ages_at_death=True %}
+    {% include 'stats/partials/vrc_usct_table_head.html' %}
+  {% endwith %}
   <tbody>
   {% for ailment in ailments %}
     <tr>
@@ -8,6 +10,8 @@
       <td>{{ ailment.non_vrc|floatformat }}%</td>
       <td>{{ ailment.usct|floatformat }}%</td>
       <td>{{ ailment.everyone|floatformat }}%</td>
+      <td>{{ ailment.average_age_at_death|floatformat }}</td>
+      <td>{{ ailment.median_age_at_death|floatformat }}</td>
     </tr>
   {% endfor %}
   </tbody>

@@ -82,17 +82,27 @@ class DetailedView(TemplateView):
             num_employees=Count('employees_born_in')).order_by('-num_employees')[:25]
 
         # Ailments
-        ailments = [{'name': ailment.name,
-                     'vrc': Employee.objects.vrc(ailments=ailment).count() / Employee.objects.vrc().count() * 100,
-                     'non_vrc': Employee.objects.non_vrc(ailments=ailment).count() / Employee.objects.non_vrc().count() * 100,
-                     'usct': Employee.objects.usct(ailments=ailment).count() / Employee.objects.usct().count() * 100,
-                     'everyone': Employee.objects.filter(ailments=ailment).count() / employee_count * 100} for
-                    ailment in Ailment.objects.all()]
+        ailments = []
+        for ailment in Ailment.objects.all():
+            ages_at_death = calculate_ages_at_death(employees_with_dob_and_dod.filter(ailments=ailment))
+            ailments.append(
+                {'name': ailment.name,
+                 'vrc': Employee.objects.vrc(ailments=ailment).count() / Employee.objects.vrc().count() * 100,
+                 'non_vrc': Employee.objects.non_vrc(ailments=ailment).count() / Employee.objects.non_vrc().count() * 100,
+                 'usct': Employee.objects.usct(ailments=ailment).count() / Employee.objects.usct().count() * 100,
+                 'everyone': Employee.objects.filter(ailments=ailment).count() / employee_count * 100,
+                 'average_age_at_death': statistics.mean(ages_at_death),
+                 'median_age_at_death': statistics.median(ages_at_death)})
+
+        ages_at_death = calculate_ages_at_death(employees_with_dob_and_dod.filter(ailments=None))
         ailments.append({'name': 'None',
-                     'vrc': Employee.objects.vrc(ailments=None).count() / Employee.objects.vrc().count() * 100,
-                     'non_vrc': Employee.objects.non_vrc(ailments=None).count() / Employee.objects.non_vrc().count() * 100,
-                     'usct': Employee.objects.usct(ailments=None).count() / Employee.objects.usct().count() * 100,
-                     'everyone': Employee.objects.filter(ailments=None).count() / employee_count * 100})
+                         'vrc': Employee.objects.vrc(ailments=None).count() / Employee.objects.vrc().count() * 100,
+                         'non_vrc': Employee.objects.non_vrc(
+                             ailments=None).count() / Employee.objects.non_vrc().count() * 100,
+                         'usct': Employee.objects.usct(ailments=None).count() / Employee.objects.usct().count() * 100,
+                         'everyone': Employee.objects.filter(ailments=None).count() / employee_count * 100,
+                         'average_age_at_death': statistics.mean(ages_at_death),
+                         'median_age_at_death': statistics.median(ages_at_death)})
 
         context = super().get_context_data(**kwargs)
         context['average_age_in_1865'] = average_age_in_1865
