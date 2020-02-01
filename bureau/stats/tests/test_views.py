@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from medical.tests.factories import AilmentFactory
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 
@@ -11,14 +12,22 @@ class DetailedViewTestCase(TestCase):
 
     def setUp(self):
         self.url = reverse('stats:detailed')
+        self.context_keys = ['average_age_in_1865', 'median_age_in_1865','average_age_at_death', 'median_age_at_death',
+                    'foreign_born', 'top_birthplaces', 'ailments']
 
     def test_get_context_data(self):
         """
         Shouldn't cause an error if there's nothing in the database
         """
+        # First test it with no data at all
         response = self.client.get(self.url)
-        for key in ['average_age_in_1865', 'median_age_in_1865','average_age_at_death', 'median_age_at_death',
-                    'foreign_born', 'top_birthplaces', 'ailments']:
+        for key in self.context_keys:
+            self.assertIn(key, response.context, "'{}' should be in context of DetailedView".format(key))
+
+        # Now test with an Ailment but no Employees
+        AilmentFactory()
+        response = self.client.get(self.url)
+        for key in self.context_keys:
             self.assertIn(key, response.context, "'{}' should be in context of DetailedView".format(key))
 
     def test_template_used(self):
