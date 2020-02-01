@@ -2,6 +2,7 @@ import string
 
 from django.contrib.admin import site
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 from django.test import Client, RequestFactory, TestCase
 
@@ -78,8 +79,11 @@ class DateOfBirthFilledListFilterTestCase(TestCase):
         employee_no_dob = EmployeeFactory(last_name='Barker')
 
         modeladmin = EmployeeAdmin(Employee, site)
+        request_factory = RequestFactory()
+        user = AnonymousUser()
 
-        request = RequestFactory().get('/')
+        request = request_factory.get('/')
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
@@ -92,7 +96,8 @@ class DateOfBirthFilledListFilterTestCase(TestCase):
         self.assertSetEqual(set(queryset), {employee_dob, employee_no_dob})
 
         # Look for employees with date_of_birth filled
-        request = RequestFactory().get('/', {'date_of_birth': 'Yes'})
+        request = request_factory.get('/', {'date_of_birth': 'Yes'})
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
@@ -100,7 +105,8 @@ class DateOfBirthFilledListFilterTestCase(TestCase):
         self.assertSetEqual(set(queryset), {employee_dob})
 
         # Look for employees with date_of_birth not filled
-        request = RequestFactory().get('/', {'date_of_birth': 'No'})
+        request = request_factory.get('/', {'date_of_birth': 'No'})
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
@@ -118,8 +124,11 @@ class FirstLetterListFilterTestCase(TestCase):
         employee_h = EmployeeFactory(last_name='Howard')
 
         modeladmin = EmployeeAdmin(Employee, site)
+        request_factory = RequestFactory()
+        user = AnonymousUser()
 
-        request = RequestFactory().get('/')
+        request = request_factory.get('/')
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure that all capital letters are present in the list filter
@@ -132,7 +141,8 @@ class FirstLetterListFilterTestCase(TestCase):
         self.assertSetEqual(set(queryset), {employee_c, employee_h})
 
         # Look for employees whose last name starts with C
-        request = RequestFactory().get('/', {'letter': 'C'})
+        request = request_factory.get('/', {'letter': 'C'})
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
@@ -156,7 +166,11 @@ class USCTListFilterTestCase(TestCase):
 
         modeladmin = EmployeeAdmin(Employee, site)
 
-        request = RequestFactory().get('/')
+        request_factory = RequestFactory()
+        user = AnonymousUser()
+
+        request = request_factory.get('/')
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
@@ -169,7 +183,8 @@ class USCTListFilterTestCase(TestCase):
         self.assertSetEqual(set(queryset), {usct_employee, vrc_employee})
 
         # Look for employees who were members of a USCT regiment
-        request = RequestFactory().get('/', {'usct': 'Yes'})
+        request = request_factory.get('/', {'usct': 'Yes'})
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
@@ -177,7 +192,8 @@ class USCTListFilterTestCase(TestCase):
         self.assertSetEqual(set(queryset), {usct_employee})
 
         # Look for employees who were not members of a USCT regiment
-        request = RequestFactory().get('/', {'usct': 'No'})
+        request = request_factory.get('/', {'usct': 'No'})
+        request.user = user
         changelist = modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
