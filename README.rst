@@ -15,7 +15,7 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
     :target: https://circleci.com/gh/clairempr/bureau
     :alt: CircleCI Build Status
 
-.. image:: https://coveralls.io/repos/github/clairempr/bureau/badge.svg?branch=master
+.. image:: https://coveralls.io/repos/github/clairempr/bureau/badge.svg?branch=HEAD
     :target: https://coveralls.io/github/clairempr/bureau?branch=master
 
 
