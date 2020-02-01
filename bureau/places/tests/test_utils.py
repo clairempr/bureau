@@ -11,7 +11,7 @@ class GeonamesLookupTestCase(TestCase):
     Tests for GeoNames lookups
     """
 
-    @patch('places.utils.geonames_lookup', autospec=True)
+    @patch('bureau.places.utils.geonames_lookup', autospec=True)
     def test_geonames_city_lookup(self, mock_geonames_lookup):
         """
         geonames_city_lookup() should call geonames_lookup() with search text
@@ -21,7 +21,7 @@ class GeonamesLookupTestCase(TestCase):
         geonames_city_lookup(search_text)
         mock_geonames_lookup.assert_called_with(search_text, settings.CITIES_LIGHT_INCLUDE_CITY_TYPES)
 
-    @patch('places.utils.geonames_lookup', autospec=True)
+    @patch('bureau.places.utils.geonames_lookup', autospec=True)
     def test_geonames_county_lookup(self, mock_geonames_lookup):
         """
         geonames_county_lookup() should call geonames_lookup() with search text and feature code 'ADM2'

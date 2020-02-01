@@ -6,7 +6,7 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 
-from .models import Country, Region
+from places.models import Country, Region
 
 def geonames_county_lookup(geonames_search):
     """
