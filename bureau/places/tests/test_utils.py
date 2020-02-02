@@ -38,6 +38,9 @@ class GeonamesLookupTestCase(TestCase):
         """
         geonames_lookup() should call requests.get()
         """
+        state = RegionFactory(name='Arkansas', country=CountryFactory(name='United States'))
+        search_text = 'Hamburg, Arkansas'
+
         response_content = {
             "totalResultsCount": 1,
             "geonames": [{"adminCode1": "AR", "lng": "-91.79763", "geonameId": 4113607, "toponymName": "Hamburg",
@@ -48,11 +51,20 @@ class GeonamesLookupTestCase(TestCase):
                           "adminName1": "Arkansas", "lat": "33.22818", "fcode": "PPLA2"}]
         }
 
-        state = RegionFactory(name='Arkansas', country=CountryFactory(name='United States'))
-        search_text = 'Hamburg, Arkansas'
-
         with patch('requests.get', autospec=True,
                    return_value=Mock(text=json.dumps(response_content), status_code=200)):
             result = geonames_lookup(search_text, feature_codes=settings.CITIES_LIGHT_INCLUDE_CITY_TYPES)
             self.assertEqual(result['name'], 'Hamburg')
             self.assertEqual(result['state'], state)
+
+        # If nothing was found (no 'geonames' in response, response should be returned to the 'alternate_names'field
+        response_content = {
+            "totalResultsCount": 0,
+        }
+
+        with patch('requests.get', autospec=True,
+                   return_value=Mock(text=json.dumps(response_content), status_code=200)):
+            result = geonames_lookup(search_text, feature_codes=settings.CITIES_LIGHT_INCLUDE_CITY_TYPES)
+            self.assertNotIn('name', result)
+            self.assertNotIn('state', result)
+            self.assertEqual(result['alternate_names'], response_content)
