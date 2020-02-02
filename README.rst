@@ -24,7 +24,7 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
 
 
 .. image:: screenshots/home.png
-   :scale: 80
+   :scale: 75
    :alt: Screenshot of main Bureau page
    
 Basic Commands
