@@ -11,6 +11,10 @@ from .utils import geonames_city_lookup, geonames_county_lookup
 
 
 class InUseListFilter(admin.SimpleListFilter):
+    """
+    Is a City actually being used in a Place?
+    """
+
     title = 'In use'
     parameter_name = 'in_use'
 
