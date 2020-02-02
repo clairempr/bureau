@@ -23,12 +23,9 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
 :License: Apache Software License 2.0
 
 
-Settings
---------
+.. image:: screenshots/home.png
+   :alt: Screenshot of main Bureau page
 
-Moved to settings_.
-
-.. _settings: http://cookiecutter-django.readthedocs.io/en/latest/settings.html
 
 Basic Commands
 --------------
@@ -69,15 +66,6 @@ Running tests with py.test
 
   $ pytest
 
-Live reloading and Sass CSS compilation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Moved to `Live reloading and SASS compilation`_.
-
-.. _`Live reloading and SASS compilation`: http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html
-
-
-
 
 
 Deployment
@@ -96,3 +84,7 @@ See detailed `cookiecutter-django Docker documentation`_.
 
 
 
+Credits
+----------
+
+Freedmen's Bureau image: Waud, Alfred R. , Artist. The Freedmen's Bureau / Drawn by A.R. Waud. Photograph. Retrieved from the Library of Congress, <www.loc.gov/item/92514996/>.
