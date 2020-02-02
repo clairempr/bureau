@@ -7,6 +7,7 @@ from urllib.parse import urlencode
 from django.conf import settings
 
 from places.models import Country, Region
+from places.settings import GEONAMES_USERNAME
 
 def geonames_county_lookup(geonames_search):
     """
@@ -26,7 +27,7 @@ def geonames_lookup(geonames_search, feature_codes=None):
     http://www.geonames.org/export/geonames-search.html
     """
     params = urlencode({'q': geonames_search, 'name_equals': geonames_search.split(',')[0], 'maxRows': 1,
-                        'username': os.environ['GEONAMES_USERNAME']})
+                        'username': GEONAMES_USERNAME})
 
     # Search for multiple feature codes in GeoNames like this: featureCode=PPLC&featureCode=PPLX
     if feature_codes:

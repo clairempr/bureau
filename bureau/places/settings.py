@@ -1,3 +1,5 @@
+import os
+
 # States/areas where Freedmen's Bureau carried out operations,
 # including what is now Oklahoma (then called Indian Territory or Cherokee Nation)
 BUREAU_STATES = [
@@ -22,6 +24,8 @@ BUREAU_STATES = [
     'VA',
     'WV',
 ]
+
+GEONAMES_USERNAME = os.environ.get('GEONAMES_USERNAME', '')
 
 # Only load regions from a country when needed
 LOAD_REGIONS_FROM_COUNTRIES =  [

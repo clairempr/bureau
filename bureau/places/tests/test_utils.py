@@ -3,7 +3,7 @@ import json
 from unittest.mock import Mock, patch
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import override_settings, TestCase
 
 from .factories import CountryFactory, RegionFactory
 from ..utils import geonames_city_lookup, geonames_county_lookup, geonames_lookup
@@ -33,6 +33,7 @@ class GeonamesLookupTestCase(TestCase):
         geonames_county_lookup(search_text)
         mock_geonames_lookup.assert_called_with(search_text, ['ADM2'])
 
+    @override_settings(GEONAMES_USERNAME='test_username')
     def test_geonames_lookup(self):
         """
         geonames_lookup() should call requests.get()
