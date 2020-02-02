@@ -2,12 +2,28 @@ from cities_light.exceptions import InvalidItems
 from cities_light.settings import ICity, IRegion
 
 from django.test import override_settings, TestCase
-from places.models import filter_city_import, filter_region_import
-
 
 from personnel.tests.factories import EmployeeFactory
+from places.models import filter_city_import, filter_region_import, set_region_fields
+from places.tests.factories import CountryFactory, CountyFactory, RegionFactory
 
-from places.tests.factories import RegionFactory
+
+class CountyTestCase(TestCase):
+    """
+    Test County model
+    """
+
+    def test_str(self):
+        """
+        If County has a state, it should be in __str__
+        """
+
+        county = CountyFactory(name='Rowan')
+        self.assertTrue(county.country.name in str(county))
+
+        state = RegionFactory()
+        county = CountyFactory(name='Rowan', state=state)
+        self.assertTrue(county.state.name in str(county))
 
 
 class ImportTestCase(TestCase):

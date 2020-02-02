@@ -1,6 +1,6 @@
-from factory import DjangoModelFactory, Faker, SubFactory
+from factory import DjangoModelFactory, Faker, LazyAttribute, SubFactory
 
-from places.models import City, Country, Place, Region
+from places.models import City, Country, County, Place, Region
 
 
 class CountryFactory(DjangoModelFactory):
@@ -26,6 +26,19 @@ class CityFactory(DjangoModelFactory):
         model = City
 
 
+
+class CountyFactory(DjangoModelFactory):
+    """
+    Base County factory
+    """
+
+    name_ascii = LazyAttribute(lambda obj: obj.name)
+    country = SubFactory(CountryFactory)
+
+    class Meta:
+        model = County
+
+
 class PlaceFactory(DjangoModelFactory):
     """
     Base Place factory
@@ -40,6 +53,7 @@ class RegionFactory(DjangoModelFactory):
     Base Region factory
     """
 
+    name = Faker('state')
     country = SubFactory(CountryFactory)
 
     class Meta:
