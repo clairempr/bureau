@@ -1,6 +1,6 @@
 from factory import DjangoModelFactory, Faker, SubFactory
 
-from ..models import Country, Place, Region
+from places.models import Country, Place, Region
 
 
 class CountryFactory(DjangoModelFactory):
