@@ -22,10 +22,9 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
 
 :License: Apache Software License 2.0
 
-
 .. image:: screenshots/home.png
+   :scale: 80
    :alt: Screenshot of main Bureau page
-
 
 Basic Commands
 --------------
