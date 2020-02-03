@@ -19,6 +19,10 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
     :target: https://coveralls.io/github/clairempr/bureau
     :alt: Test Coverage on Coveralls
 
+.. image:: https://pyup.io/repos/github/clairempr/bureau/shield.svg
+    :target: https://pyup.io/repos/github/clairempr/bureau/
+    :alt: Updates
+
 
 :License: Apache Software License 2.0
 
