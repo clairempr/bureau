@@ -5,9 +5,9 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .forms import CityForm, CountyForm, RegionForm
-from .models import City, County, Place, Region
-from .utils import geonames_city_lookup, geonames_county_lookup
+from places.forms import CityForm, CountyForm, RegionForm
+from places.models import City, County, Place, Region
+from places.utils import geonames_city_lookup, geonames_county_lookup
 
 
 class InUseListFilter(admin.SimpleListFilter):

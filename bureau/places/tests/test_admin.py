@@ -1,10 +1,43 @@
+from unittest.mock import patch
+
 from django.contrib.admin import site
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AnonymousUser, User
+
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 
 from places.admin import CityAdmin, InUseListFilter, PopulationListFilter
 from places.models import City
 from places.tests.factories import CityFactory, PlaceFactory
+
+
+User = get_user_model()
+
+
+class CityAdminTestCase(TestCase):
+    """
+    Tests for CityAdmin
+    """
+
+    @patch('places.admin.geonames_city_lookup', autospec=True)
+    def test_get_changeform_initial_data(self, mock_geonames_city_lookup):
+        """
+        If request has a GET parameter 'geonames_search', get_changeform_initial_data() should call
+        geonames_city_lookup() with those search terms and return the result
+        """
+
+        User.objects.create_superuser(username='fred', password='secret', email='email')
+        self.client.login(username='fred', password='secret')
+
+        self.client.get(reverse('admin:places_city_add'))
+        self.assertEqual(mock_geonames_city_lookup.call_count, 0,
+                         "geonames_city_lookup() shouldn't be called if no 'geonames_search' GET parameter supplied")
+
+        self.client.get(reverse('admin:places_city_add'), {'geonames_search': 'Atlanta, Georgia'})
+        self.assertEqual(mock_geonames_city_lookup.call_count, 1,
+                         "geonames_city_lookup() should be called if 'geonames_search' GET parameter supplied")
+        mock_geonames_city_lookup.reset_mock()
 
 
 class CityAdminListFilterTestCase(TestCase):
