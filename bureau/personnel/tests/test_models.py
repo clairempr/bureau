@@ -1,3 +1,5 @@
+from partial_date import PartialDate
+
 from django.test import TestCase
 
 from assignments.tests.factories import AssignmentFactory
@@ -151,6 +153,22 @@ class EmployeeTestCase(TestCase):
         employee = EmployeeFactory()
         self.assertEqual(str(employee), '{}, {}'.format(employee.last_name, employee.first_name),
                         "Employee.__str__ should be equal to Employee.last_name, Employee.first_name")
+
+    def test_age_at_death(self):
+        """
+        Should calculate the difference between death year and birth year, if both are filled
+        Otherwise it should return None
+        """
+
+        self.assertIsNone(EmployeeFactory().age_at_death(),
+                          "age_at_death() should be None for employee with no birth or death date")
+        self.assertIsNone(EmployeeFactory(date_of_birth=PartialDate('1840')).age_at_death(),
+                          "age_at_death() should be None for employee with no death date")
+        self.assertIsNone(EmployeeFactory(date_of_death=PartialDate('1890')).age_at_death(),
+                          "age_at_death() should be None for employee with no birth date")
+        self.assertEqual(
+            EmployeeFactory(date_of_birth=PartialDate('1840'), date_of_death=PartialDate('1890')).age_at_death(), 50,
+                            "age_at_death() should be death year - birth year")
 
     def test_vrc_set_on_save(self):
         """
