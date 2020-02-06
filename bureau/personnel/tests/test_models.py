@@ -170,6 +170,17 @@ class EmployeeTestCase(TestCase):
             EmployeeFactory(date_of_birth=PartialDate('1840'), date_of_death=PartialDate('1890')).age_at_death(), 50,
                             "age_at_death() should be death year - birth year")
 
+    def test_calculate_age(self):
+        """
+        Should calculate year - birth year, if birth date filled
+        Otherwise it should return None
+        """
+
+        self.assertIsNone(EmployeeFactory().calculate_age(1865),
+                          "calculate_age() should be None for employee with no birth date")
+        self.assertEqual(EmployeeFactory(date_of_birth=PartialDate('1840')).calculate_age(1865), 25,
+                          "calculate_age() should be year - birth year")
+
     def test_vrc_set_on_save(self):
         """
         If Employee is a member of a VRC unit, 'vrc' should be True
