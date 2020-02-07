@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
 from django.test import TestCase
 from django.urls import reverse
 
@@ -27,6 +28,13 @@ class HomeTemplateTestCase(TestCase):
         for text in ['My Profile', 'Sign Out']:
             self.assertContains(response, text,
                                 msg_prefix="Non-authenticated user should see '{}' in menu".format(text))
+
+        message = 'This is a message'
+        context = {'messages': [message]}
+
+        rendered = render_to_string(self.template, context)
+        self.assertInHTML(message, rendered, msg_prefix="If messages in context, they should be displayed on the page")
+
 
     def test_template_used(self):
         response = self.client.get(self.url)

@@ -66,4 +66,3 @@ class GeneralViewTestCase(TestCase):
     def test_template_used(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'stats/general.html')
-
