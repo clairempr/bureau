@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.contrib.admin import site
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser
 
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
