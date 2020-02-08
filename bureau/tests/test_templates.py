@@ -6,6 +6,27 @@ from django.urls import reverse
 User = get_user_model()
 
 
+class BaseTemplateTestCase(TestCase):
+    """
+    Test Home page
+    """
+
+    def setUp(self):
+        self.template = 'base.html'
+
+    def test_template_content(self):
+        message = 'This is a message'
+        context = {'messages': [message]}
+
+        rendered = render_to_string(self.template, context)
+        self.assertInHTML(message, rendered, msg_prefix="If messages in context, they should be displayed on the page")
+
+        content_block_placeholder = 'Use this document as a way to quick start any new project.'
+        rendered = render_to_string(self.template)
+        self.assertInHTML(content_block_placeholder, rendered,
+                          msg_prefix="Base template should contain content block placeholder text")
+
+
 class HomeTemplateTestCase(TestCase):
     """
     Test Home page
@@ -29,11 +50,6 @@ class HomeTemplateTestCase(TestCase):
             self.assertContains(response, text,
                                 msg_prefix="Non-authenticated user should see '{}' in menu".format(text))
 
-        message = 'This is a message'
-        context = {'messages': [message]}
-
-        rendered = render_to_string(self.template, context)
-        self.assertInHTML(message, rendered, msg_prefix="If messages in context, they should be displayed on the page")
 
 
     def test_template_used(self):
