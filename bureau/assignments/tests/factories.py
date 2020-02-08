@@ -1,6 +1,6 @@
 from factory import DjangoModelFactory
 
-from ..models import Assignment
+from ..models import Assignment, Position
 
 
 class AssignmentFactory(DjangoModelFactory):
@@ -10,3 +10,12 @@ class AssignmentFactory(DjangoModelFactory):
 
     class Meta:
         model = Assignment
+
+
+class PositionFactory(DjangoModelFactory):
+    """
+    Base Position factory
+    """
+
+    class Meta:
+        model = Position
