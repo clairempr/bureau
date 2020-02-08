@@ -4,6 +4,7 @@ from django.urls import reverse
 from medical.tests.factories import AilmentFactory
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
+from places.tests.factories import PlaceFactory
 
 class DetailedViewTestCase(TestCase):
     """
@@ -29,6 +30,12 @@ class DetailedViewTestCase(TestCase):
         response = self.client.get(self.url)
         for key in self.context_keys:
             self.assertIn(key, response.context, "'{}' should be in context of DetailedView".format(key))
+
+        # Test with a birthplace to see if it appears in top birthplaces
+        place = PlaceFactory()
+        EmployeeFactory(place_of_birth=place)
+        response = self.client.get(self.url)
+        self.assertIn(str(place), response.context, "Top place of birth should be in context of DetailedView")
 
     def test_template_used(self):
         response = self.client.get(self.url)

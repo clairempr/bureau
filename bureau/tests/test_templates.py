@@ -50,8 +50,6 @@ class HomeTemplateTestCase(TestCase):
             self.assertContains(response, text,
                                 msg_prefix="Non-authenticated user should see '{}' in menu".format(text))
 
-
-
     def test_template_used(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, self.template)
