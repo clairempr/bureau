@@ -57,6 +57,11 @@ class CityAdmin(CitiesLightCityAdmin):
     list_filter = CitiesLightCityAdmin.list_filter + ('region', 'feature_code', PopulationListFilter, InUseListFilter)
     search_fields = ('name', )
     readonly_fields = ('id','geonames_lookup' )
+
+    list_select_related = (
+        'region', 'country'
+    )
+
     form = CityForm
 
     def get_changeform_initial_data(self, request):
