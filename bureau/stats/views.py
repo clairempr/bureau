@@ -1,11 +1,12 @@
 import statistics
 
-from django.db.models import Count
+from django.db.models import Case, CharField, Count, F, Value, When
 from django.views.generic.base import TemplateView
 
 from medical.models import Ailment
 from personnel.models import Employee
 from places.models import Place
+from places.settings import GERMANY_COUNTRY_NAMES
 
 class GeneralView(TemplateView):
     template_name = 'stats/general.html'
@@ -80,8 +81,28 @@ class DetailedView(TemplateView):
                             (foreign_born_vrc + foreign_born_non_vrc), Employee.objects.birthplace_known().count())}
 
         # Top places where employees were born
-        top_birthplaces = Place.objects.values('region__name', 'country__name').annotate(
+        # Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of German
+        # places in the sources
+        # Group Virginia and West Virginia together, because it was all Virginia when they were born
+        top_birthplaces = Place.objects.annotate(
+            annotated_country=Case(
+                When(country__name__in=GERMANY_COUNTRY_NAMES, then=Value('Germany')),
+                default=F('country__name'), output_field=CharField(),
+            ),
+            annotated_region=Case(
+                When(region__name__in=['Virginia', 'West Virginia'], then=Value('Virginia')),
+                default=F('region__name'), output_field=CharField(),
+            ),
+        ).values_list('annotated_region', 'annotated_country').annotate(
             num_employees=Count('employees_born_in')).order_by('-num_employees')[:25]
+
+        top_deathplaces = Place.objects.annotate(
+            annotated_country=Case(
+                When(country__name__in=GERMANY_COUNTRY_NAMES, then=Value('Germany')),
+                default=F('country__name'), output_field=CharField(),
+            ),
+        ).values_list('region__name', 'annotated_country').annotate(
+            num_employees=Count('employees_died_in')).order_by('-num_employees')[:25]
 
         # Ailments
         ailments = []
@@ -116,6 +137,7 @@ class DetailedView(TemplateView):
         context['median_age_at_death'] = median_age_at_death
         context['foreign_born'] = foreign_born
         context['top_birthplaces'] = top_birthplaces
+        context['top_deathplaces'] = top_deathplaces
         context['ailments'] = ailments
         return context
 

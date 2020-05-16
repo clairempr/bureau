@@ -12,22 +12,50 @@
   </tbody>
 </table>
 
-<h4 class="mt-5 mb-0">Top birthplaces</h4>
-<table class="table table-hover">
-  <thead class="">
-    <tr>
-      <th scope="col"></th>
-      <th scope="col"></th>
-      <th scope="col">Number of employees</th>
-    </tr>
-  </thead>
-  <tbody>
-  {% for place in top_birthplaces %}
-    <tr>
-      <td>{{ forloop.counter }}</td>
-      <th scope="row">{% if place.region__name %}{{ place.region__name }}{% else %}{{ place.country__name }}{% endif %}</th>
-      <td>{{ place.num_employees }}</td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
+<div class="row">
+
+  <div class="col">
+    <h4 class="mt-5 mb-0">Top birthplaces</h4>
+    <table class="table table-hover">
+      <thead class="">
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col">Number of employees</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for region, country, count in top_birthplaces %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <th scope="row">{% if region %}{{ region }}{% else %}{{ country }}{% endif %}</th>
+          <td>{{ count }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h4 class="mt-5 mb-0">Top death places</h4>
+    <table class="table table-hover">
+      <thead class="">
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col">Number of employees</th>
+      </tr>
+      </thead>
+      <tbody>
+      {% for region, country, count in top_deathplaces %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <th scope="row">{% if region %}{{ region }}{% else %}{{ country }}{% endif %}</th>
+          <td>{{ count }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
