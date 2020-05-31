@@ -12,8 +12,8 @@
            aria-controls="age" aria-selected="true">Age</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="birthplace-tab" data-toggle="tab" href="#birthplace" role="tab"
-           aria-controls="birthplace" aria-selected="false">Birthplace</a>
+        <a class="nav-link" id="birthplace-tab" data-toggle="tab" href="#place" role="tab"
+           aria-controls="birthplace" aria-selected="false">Place of birth/death</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" id="ailment-tab" data-toggle="tab" href="#ailment" role="tab"
@@ -25,8 +25,8 @@
       <div class="tab-pane fade show active" id="age" role="tabpanel" aria-labelledby="age-tab">
         {% include 'stats/partials/age_tab.html' %}
       </div>
-      <div class="tab-pane fade" id="birthplace" role="tabpanel" aria-labelledby="birthplace-tab">
-        {% include 'stats/partials/birthplace_tab.html' %}
+      <div class="tab-pane fade" id="place" role="tabpanel" aria-labelledby="place-tab">
+        {% include 'stats/partials/place_tab.html' %}
       </div>
       <div class="tab-pane fade" id="ailment" role="tabpanel" aria-labelledby="ailment-tab">
         {% include 'stats/partials/ailment_tab.html' %}

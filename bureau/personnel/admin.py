@@ -105,8 +105,8 @@ class AssignmentInline(admin.TabularInline):
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'bureau_state', 'vrc', 'needs_backfilling', 'place_of_birth', 'age_in_1865',)
     list_filter = (DateOfBirthFilledListFilter, PlaceOfBirthFilledListFilter, EmploymentYearListFilter, 'vrc',
-                   USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments', 'colored',
-                   'gender','confederate', 'needs_backfilling')
+                   USCTListFilter, FirstLetterListFilter, 'bureau_states', 'regiments', 'ailments',
+                   'penmanship_contest', 'colored', 'gender','confederate', 'slaveholder', 'needs_backfilling')
     search_fields = ('last_name', 'first_name', 'notes')
     raw_id_fields = ('place_of_birth', 'place_of_residence', 'place_of_death',)
     inlines = [AssignmentInline, ]

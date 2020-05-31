@@ -26,12 +26,20 @@ def filter_city_import(sender, items, **kwargs):
 city_items_pre_import.connect(filter_city_import)
 
 
+class RegionManager(models.Manager):
+
+    def bureau_state(self, **kwargs):
+        return self.filter(bureau_operations=True).filter(**kwargs)
+
+
 class Region(AbstractRegion):
     """
     Extend django-cities-light Region model to keep track of 
     whether or not Freedmen's Bureau was active there
     """
     bureau_operations = models.BooleanField(default=False)
+
+    objects = RegionManager()
 
     def percent_vrc_employees(self):
         total = self.employees_employed.count()

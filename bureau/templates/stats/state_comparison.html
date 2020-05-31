@@ -1,0 +1,29 @@
+{% extends "stats/base.html" %}
+
+{% block title %}State Comparison{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>State Comparison</h2>
+
+    <div class="list-group">
+      <div class="row">
+      {% for label, set in stats %}
+
+        <div class="col">
+          <div class="list-group-item">
+            <h5>{{ label }}</h5>
+            <ol>
+              {% for state in set %}
+                <li>{{ state.name }} ({{ state.value|floatformat }})</li>
+              {% endfor %}
+            </ol>
+          </div>
+        </div>
+
+      {% endfor %}
+
+      </div>
+    </div>
+  </div>
+{% endblock content %}

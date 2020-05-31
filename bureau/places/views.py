@@ -10,7 +10,7 @@ class BureauStateListView(ListView):
     slug_field = "name"
     slug_url_kwarg = "name"
     template_name = "places/bureau_state_list.html"
-    queryset = Region.objects.filter(bureau_operations=True)
+    queryset = Region.objects.bureau_state()
 
 
 bureau_state_list_view = BureauStateListView.as_view()
