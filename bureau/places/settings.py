@@ -27,9 +27,9 @@ BUREAU_STATES = [
 
 GEONAMES_USERNAME = os.environ.get('GEONAMES_USERNAME', '')
 
-# Sometimes we want to group Germany, Prussia, Bavaria, and Saxony together, because of inconsistencies in reporting
-# of German places in the sources
-GERMANY_COUNTRY_NAMES = ['Germany', 'Prussia', 'Bavaria', 'Saxony']
+# Sometimes we want to group Germany, Prussia, Bavaria, Hessia, and Saxony together, because of inconsistencies
+# in reporting of German places in the sources
+GERMANY_COUNTRY_NAMES = ['Germany', 'Prussia', 'Bavaria', 'Hessia', 'Saxony']
 
 # Only load regions from a country when needed
 LOAD_REGIONS_FROM_COUNTRIES =  [

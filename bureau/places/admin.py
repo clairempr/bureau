@@ -55,7 +55,7 @@ class CityAdmin(CitiesLightCityAdmin):
     """
     list_display = CitiesLightCityAdmin.list_display + ('region', 'feature_code', 'in_use')
     list_filter = CitiesLightCityAdmin.list_filter + ('region', 'feature_code', PopulationListFilter, InUseListFilter)
-    search_fields = ('name', )
+    search_fields = ('name', 'alternate_names' )
     readonly_fields = ('id','geonames_lookup' )
 
     list_select_related = (
