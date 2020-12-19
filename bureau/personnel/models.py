@@ -35,7 +35,7 @@ class EmployeeManager(models.Manager):
 
 class Employee(models.Model):
     """
-    Freedmen's Bureau employee, military or civilian, 
+    Freedmen's Bureau employee, military or civilian,
     with extra fields for Veteran Reserve Corps service
     """
 
@@ -131,7 +131,7 @@ class Employee(models.Model):
         return None
 
     def bureau_state_list(self):
-        return '\n'.join([state.name for state in self.bureau_states.all()])
+        return ', '.join([state.name for state in self.bureau_states.all()])
 
     def calculate_age(self, year):
         if self.date_of_birth:
