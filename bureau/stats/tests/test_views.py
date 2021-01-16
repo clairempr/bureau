@@ -52,7 +52,7 @@ class GeneralViewTestCase(TestCase):
 
     def test_get_context_data(self):
         EmployeeFactory(colored=True)
-        EmployeeFactory(confederate=True)
+        EmployeeFactory(confederate_veteran=True)
         EmployeeFactory(gender=Employee.FEMALE)
         EmployeeFactory(vrc=True)
         EmployeeFactory(vrc=True)

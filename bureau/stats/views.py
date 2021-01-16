@@ -16,7 +16,7 @@ class GeneralView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['employee_count'] = Employee.objects.count()
         context['colored_count'] = Employee.objects.filter(colored=True).count()
-        context['confederate_count'] = Employee.objects.filter(confederate=True).count()
+        context['confederate_count'] = Employee.objects.filter(confederate_veteran=True).count()
         context['female_count'] = Employee.objects.filter(gender=Employee.FEMALE).count()
         context['vrc_count'] = Employee.objects.filter(vrc=True).count()
 
@@ -221,7 +221,7 @@ class StateComparisonView(TemplateView):
 
         # Top % ex-Confederate employees
         top_confederate_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__confederate=True)),
+            value=Cast(Count('employee_employed', filter=Q(employee_employed__confederate_veteran=True)),
                        FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
         stats.append(('% Ex-Confederate employees', top_confederate_percent))
 
