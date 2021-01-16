@@ -86,8 +86,11 @@ class Employee(models.Model):
     # A few Bureau employees were former slaves
     former_slave = models.BooleanField(default=False)
 
+    # Many Bureau employees had been in the Union army
+    union_veteran = models.BooleanField(default=False)
     # Some Bureau employees had been in the Confederate army
-    confederate = models.BooleanField(default=False)
+    confederate_veteran = models.BooleanField(default=False)
+
     # A few Bureau employees seem to have been slaveholders
     slaveholder = models.BooleanField(default=False)
 
@@ -137,10 +140,4 @@ class Employee(models.Model):
         if self.date_of_birth:
             return year - self.date_of_birth.date.year
         return None
-
-
-
-
-
-
 

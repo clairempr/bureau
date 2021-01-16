@@ -14,10 +14,12 @@ class Regiment(models.Model):
     ARTILLERY = 'ART'
     CAVALRY = 'CAV'
     INFANTRY = 'INF'
+    SHARPSHOOTERS = 'SHA'
     BRANCH_CHOICES = (
         (INFANTRY, 'Infantry'),
         (CAVALRY, 'Cavalry'),
         (ARTILLERY, 'Artillery'),
+        (SHARPSHOOTERS, 'Sharpshooters'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -33,6 +35,7 @@ class Regiment(models.Model):
     us = models.BooleanField(default=False)
     usct = models.BooleanField(default=False)
     vrc = models.BooleanField(default=False)
+    confederate = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['state', 'vrc', 'us', 'usct', 'number', 'name']
