@@ -23,7 +23,7 @@ class Regiment(models.Model):
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    number = models.IntegerField(blank=True)
+    number = models.IntegerField(null=True, blank=True)
     branch = models.CharField(
         max_length=3,
         choices=BRANCH_CHOICES,
