@@ -6,10 +6,25 @@
 <div class="container">
   <h2>Regiments</h2>
 
+  <ul class="nav nav-pills tablist mt-3" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link {% if all_regiments %}active{% endif %}" id="all-tab"
+         href="{% url 'military:regiment_list' %}"  aria-controls="all"
+         aria-selected="{% if all_regiments %}true{% else %}false{% endif %}">All</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if vrc_regiments %}active{% endif %}" id="vrc-tab"
+         href="{% url 'military:vrc_regiment_list' %}" aria-controls="vrc"
+         aria-selected="{% if vrc_regiments %}true{% else %}false{% endif %}">VRC</a>
+    </li>
+  </ul>
+
   <div class="list-group">
     {% for regiment in regiment_list %}
       <div class="list-group-item">
-        <h4 class="list-group-item-heading">{{ regiment.name }} ({{ regiment.employees.count }} members)</h4>
+        <h5 class="list-group-item-heading">
+          <a href="{% url 'military:regiment_detail' regiment.pk %}">{{ regiment.name }} ({{ regiment.employees.count }} members)</a>
+        </h5>
       </div>
     {% endfor %}
   </div>
