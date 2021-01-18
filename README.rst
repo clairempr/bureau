@@ -100,3 +100,5 @@ Sources
 * Military service records from `Fold3`: https://www.fold3.com/
 * Personal details from `Find A Grave`: https://www.findagrave.com/ and `Ancestry`: https://www.ancestry.com/
 * Field record of officers of the Veteran Reserve Corps, from the commencement to the close of the rebellion, `U.S. National Library of Medicine Digital Collections`: http://resource.nlm.nih.gov/101177853
+* Cimbala, Paul. Under the Guardianship of the Nation: The Freedmen's Bureau and the Reconstruction of Georgia, 1865-1870. University of Georgia Press, 2003.
+* Richter, William. Overreached on All Sides: The Freedmen's Bureau Administrators in Texas, 1865-1868. Texas A&M University Press, 1991.
