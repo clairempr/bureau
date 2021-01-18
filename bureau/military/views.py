@@ -13,6 +13,7 @@ regiment_detail_view = RegimentDetailView.as_view()
 class RegimentListView(ListView):
 
     model = Regiment
+    paginate_by = 25
     slug_field = "name"
     slug_url_kwarg = "name"
     regiment_type = 'all_regiments'
@@ -25,6 +26,41 @@ class RegimentListView(ListView):
 
 regiment_list_view = RegimentListView.as_view()
 
+
+class ConfederateRegimentListView(RegimentListView):
+
+    queryset = Regiment.objects.filter(confederate=True)
+    regiment_type = 'confederate_regiments'
+
+
+confederate_regiment_list_view = ConfederateRegimentListView.as_view()
+
+
+class RegularArmyRegimentListView(RegimentListView):
+
+    queryset = Regiment.objects.filter(us=True)
+    regiment_type = 'regular_army_regiments'
+
+
+regular_army_regiment_list_view = RegularArmyRegimentListView.as_view()
+
+
+class StateRegimentListView(RegimentListView):
+
+    queryset = Regiment.objects.exclude(state__isnull=True)
+    regiment_type = 'state_regiments'
+
+
+state_regiment_list_view = StateRegimentListView.as_view()
+
+
+class USCTRegimentListView(RegimentListView):
+
+    queryset = Regiment.objects.filter(usct=True)
+    regiment_type = 'usct_regiments'
+
+
+usct_regiment_list_view = USCTRegimentListView.as_view()
 
 class VRCRegimentListView(RegimentListView):
 

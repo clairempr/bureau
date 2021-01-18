@@ -2,24 +2,50 @@
 {% load static i18n %}
 {% block title %}Regiments{% endblock %}
 
+{% block css %}
+  {{ block.super }}
+  <link href="https://fonts.googleapis.com/css?family=Gravitas+One"
+        rel="stylesheet">
+{% endblock css %}
+
 {% block content %}
 <div class="container">
-  <h2>Regiments</h2>
+  <h2>Regiments of Bureau Employees</h2>
 
   <ul class="nav nav-pills tablist mt-3" role="tablist">
     <li class="nav-item">
-      <a class="nav-link {% if all_regiments %}active{% endif %}" id="all-tab"
+      <a class="nav-link {% if all_regiments %}active{% endif %}"
          href="{% url 'military:regiment_list' %}"  aria-controls="all"
          aria-selected="{% if all_regiments %}true{% else %}false{% endif %}">All</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link {% if vrc_regiments %}active{% endif %}" id="vrc-tab"
+      <a class="nav-link {% if vrc_regiments %}active{% endif %}"
          href="{% url 'military:vrc_regiment_list' %}" aria-controls="vrc"
          aria-selected="{% if vrc_regiments %}true{% else %}false{% endif %}">VRC</a>
     </li>
+    <li class="nav-item">
+      <a class="nav-link {% if usct_regiments %}active{% endif %}"
+         href="{% url 'military:usct_regiment_list' %}" aria-controls="usct"
+         aria-selected="{% if usct_regiments %}true{% else %}false{% endif %}">USCT</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if state_regiments %}active{% endif %}"
+         href="{% url 'military:state_regiment_list' %}" aria-controls="state"
+         aria-selected="{% if state_regiments %}true{% else %}false{% endif %}">State</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if regular_army_regiments %}active{% endif %}"
+         href="{% url 'military:regular_army_regiment_list' %}" aria-controls="regular"
+         aria-selected="{% if regular_army_regiments %}true{% else %}false{% endif %}">Regular Army</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link {% if confederate_regiments %}active{% endif %}"
+         href="{% url 'military:confederate_regiment_list' %}" aria-controls="confederate"
+         aria-selected="{% if confederate_regiments %}true{% else %}false{% endif %}">Confederate</a>
+    </li>
   </ul>
 
-  <div class="list-group">
+  <div class="list-group list-group-flush">
     {% for regiment in regiment_list %}
       <div class="list-group-item">
         <h5 class="list-group-item-heading">
@@ -29,5 +55,8 @@
     {% endfor %}
   </div>
 </div>
+
+{% include 'partials/pagination.html' %}
+
 {% endblock content %}
 
