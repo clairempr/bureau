@@ -1,6 +1,7 @@
 import uuid
 
 from django.db import models
+from django.urls import reverse
 
 from places.models import Region
 
@@ -42,4 +43,3 @@ class Regiment(models.Model):
 
     def __str__(self):
         return self.name
-

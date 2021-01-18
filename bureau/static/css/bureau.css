@@ -20,6 +20,15 @@ main {
   flex: auto;
 }
 
+.btn {
+  color: white;
+  font-family: 'Gravitas One', serif;
+  font-weight: 300;
+  background-color: rgba(0,0,0,.5);
+  border-radius: 0;
+  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+}
+
 .dropdown-item {
   font-size: 1.1rem;
 }

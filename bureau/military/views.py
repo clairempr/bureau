@@ -16,12 +16,21 @@ class RegimentListView(ListView):
     paginate_by = 25
     slug_field = "name"
     slug_url_kwarg = "name"
+    ordering = ('number', 'name',)
+    queryset = Regiment.objects.all()
     regiment_type = 'all_regiments'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context[self.regiment_type] = True
         return context
+
+    def get_queryset(self):
+        search_text = self.request.GET.get('search_text')
+        if search_text:
+            return self.queryset.filter(name__icontains=search_text)
+
+        return self.queryset
 
 
 regiment_list_view = RegimentListView.as_view()
@@ -38,7 +47,7 @@ confederate_regiment_list_view = ConfederateRegimentListView.as_view()
 
 class RegularArmyRegimentListView(RegimentListView):
 
-    queryset = Regiment.objects.filter(us=True)
+    queryset = Regiment.objects.filter(us=True).exclude(usct=True).exclude(branch=Regiment.SHARPSHOOTERS)
     regiment_type = 'regular_army_regiments'
 
 
