@@ -21,12 +21,20 @@ main {
 }
 
 .btn {
-  color: white;
   font-family: 'Gravitas One', serif;
   font-weight: 300;
-  background-color: rgba(0,0,0,.5);
-  border-radius: 0;
-  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+  background-color: whitesmoke;
+  border-color: black;
+  border-width: 3px;
+  border-style: double;
+}
+
+.page-header {
+  margin-top: .5rem!important;
+  margin-bottom: 1.1rem!important;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.2;
 }
 
 .dropdown-item {
@@ -43,9 +51,12 @@ main {
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  background-color: rgba(0,0,0,.5);
   border-radius: 0;
-  box-shadow: 0 5px 11px 0 rgba(0,0,0,0.18),0 4px 15px 0 rgba(0,0,0,0.15);
+  background-color: white;
+  color: black;
+  border-color: black;
+  border-width: 3px;
+  border-bottom-style: double;
 }
 
 .navbar-light .navbar-nav .nav-link {

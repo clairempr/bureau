@@ -4,8 +4,14 @@
 
 {% block content %}
 <div class="container">
-  <h2>{{ object }} Members</h2>
+  <div class="page-header">{{ object }}</div>
 
+  {% if object.notes %}
+    <h4>Notes</h4>
+    <p>{{ object.notes }}</p>
+  {% endif %}
+
+  <h4>Members</h4>
   <div class="list-group list-group-flush">
     {% for employee in object.employees.all %}
       <div class="list-group-item">

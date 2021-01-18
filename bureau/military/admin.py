@@ -5,7 +5,8 @@ from .models import Regiment
 class RegimentAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'vrc', 'us', 'usct')
     list_filter = ('vrc', 'us', 'usct', 'state',)
-    ordering = ('number', 'state', 'us', 'usct', 'vrc')
+    ordering = ('number', 'name')
+    search_fields = ('name',)
     save_on_top = True
 
 admin.site.register(Regiment, RegimentAdmin)

@@ -4,7 +4,7 @@
 
 {% block content %}
   <div class="container">
-    <h2>Detailed Statistics</h2>
+    <div class="page-header">Detailed Statistics</div>
 
     <ul class="nav nav-pills tablist mt-3" role="tablist">
       <li class="nav-item">
@@ -21,7 +21,7 @@
       </li>
     </ul>
 
-    <div class="tab-content">
+    <div class="tab-content mt-3">
       <div class="tab-pane fade show active" id="age" role="tabpanel" aria-labelledby="age-tab">
         {% include 'stats/partials/age_tab.html' %}
       </div>
