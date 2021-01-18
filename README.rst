@@ -30,7 +30,7 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
 .. image:: screenshots/home.png
    :scale: 75
    :alt: Screenshot of main Bureau page
-   
+
 Basic Commands
 --------------
 
@@ -92,3 +92,11 @@ Credits
 ----------
 
 Freedmen's Bureau image: Waud, Alfred R. , Artist. The Freedmen's Bureau / Drawn by A.R. Waud. Photograph. Retrieved from the Library of Congress, <www.loc.gov/item/92514996/>.
+
+
+Sources
+----------
+* Freedmen's Bureau Records, held and microfilmed by `The National Archives`: https://www.archives.gov/research/african-americans/freedmens-bureau, images accessed from `FamilySearch`: https://www.familysearch.org/search/collection/list/?cqs=freedmen
+* Military service records from `Fold3`: https://www.fold3.com/
+* Personal details from `Find A Grave`: https://www.findagrave.com/ and `Ancestry`: https://www.ancestry.com/
+* Field record of officers of the Veteran Reserve Corps, from the commencement to the close of the rebellion, `U.S. National Library of Medicine Digital Collections`: http://resource.nlm.nih.gov/101177853
