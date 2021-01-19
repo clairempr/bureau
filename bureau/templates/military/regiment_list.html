@@ -53,7 +53,9 @@
     {% for regiment in regiment_list %}
       <div class="list-group-item">
         <h5 class="list-group-item-heading">
-          <a href="{% url 'military:regiment_detail' regiment.pk %}">{{ regiment.name }} ({{ regiment.employees.count }} members)</a>
+          <a href="{% url 'military:regiment_detail' regiment.pk %}">
+            {{ regiment.name }} ({{ regiment.employees.count }} member{{ regiment.employees.count|pluralize }})
+          </a>
         </h5>
       </div>
     {% endfor %}
