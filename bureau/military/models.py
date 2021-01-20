@@ -14,12 +14,14 @@ class Regiment(models.Model):
 
     ARTILLERY = 'ART'
     CAVALRY = 'CAV'
+    ENGINEERS = 'ENG'
     INFANTRY = 'INF'
     SHARPSHOOTERS = 'SHA'
     BRANCH_CHOICES = (
         (INFANTRY, 'Infantry'),
         (CAVALRY, 'Cavalry'),
         (ARTILLERY, 'Artillery'),
+        (ENGINEERS, 'Engineers'),
         (SHARPSHOOTERS, 'Sharpshooters'),
     )
 
