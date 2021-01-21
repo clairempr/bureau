@@ -23,6 +23,8 @@ class RegimentListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context[self.regiment_type] = True
+        search_text = self.request.GET.get('search_text')
+        context['search_text'] = search_text if search_text else ''
         return context
 
     def get_queryset(self):

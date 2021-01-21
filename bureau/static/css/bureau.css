@@ -62,6 +62,17 @@ main {
 .navbar-light .navbar-nav .nav-link {
   color: rgba(0, 0, 0, 0.56);
 }
+.page-link {
+  color: black;
+  font-size: 1.2rem;
+}
+
+.page-item.active .page-link {
+  color: black;
+  background-color: whitesmoke;
+  border-color: rgba(0, 0, 0, 0.56);
+  border-bottom: black 3px double;
+}
 
 .responsive-image {
   width: 100%;
