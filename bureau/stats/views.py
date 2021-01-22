@@ -173,21 +173,22 @@ class StateComparisonView(TemplateView):
                        FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
         stats.append(('% USCT employees', top_usct_percent))
 
-        # Top % foreign-born employees
-        top_foreign_born_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__in=Employee.objects.foreign_born())),
-                       FloatField()) / Cast(Count('employee_employed',
-                                                  filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
-                       FloatField()) * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% Foreign-born employees', top_foreign_born_percent))
+        if Employee.objects.birthplace_known().exists():
+            # Top % foreign-born employees
+            top_foreign_born_percent = total_employees.annotate(
+                value=Cast(Count('employee_employed', filter=Q(employee_employed__in=Employee.objects.foreign_born())),
+                           FloatField()) / Cast(Count('employee_employed',
+                                                      filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
+                           FloatField()) * 100).exclude(value=0).order_by('-value')[:5]
+            stats.append(('% Foreign-born employees', top_foreign_born_percent))
 
-        # Top % employees born in that state
-        top_born_in_state_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__place_of_birth__region__id=F('id'))),
-                       FloatField()) / Cast(Count('employee_employed',
-                                                  filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
-                       FloatField()) * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% Employees born there', top_born_in_state_percent))
+            # Top % employees born in that state
+            top_born_in_state_percent = total_employees.annotate(
+                value=Cast(Count('employee_employed', filter=Q(employee_employed__place_of_birth__region__id=F('id'))),
+                           FloatField()) / Cast(Count('employee_employed',
+                                                      filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
+                                                FloatField()) * 100).exclude(value=0).order_by('-value')[:5]
+            stats.append(('% Employees born there', top_born_in_state_percent))
 
         # Top % female employees
         top_female_percent = total_employees.annotate(

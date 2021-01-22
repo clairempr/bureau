@@ -4,7 +4,7 @@ from django.urls import reverse
 from medical.tests.factories import AilmentFactory
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
-from places.tests.factories import PlaceFactory
+from places.tests.factories import CountryFactory, PlaceFactory, RegionFactory
 
 class DetailedViewTestCase(TestCase):
     """
@@ -73,3 +73,30 @@ class GeneralViewTestCase(TestCase):
     def test_template_used(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'stats/general.html')
+
+
+class StateComparisonViewTestCase(TestCase):
+    """
+    Test StateComparison
+    """
+
+    def setUp(self):
+        self.url = reverse('stats:state_comparison')
+
+    def test_get_context_data(self):
+        # Shouldn't cause an error if no data
+        response = self.client.get(self.url)
+        self.assertIsNotNone(response.context['stats'], 'stats should be in context of StateComparisonView')
+
+        state = RegionFactory(name='Sunshine State', bureau_operations=True)
+        employee = EmployeeFactory(vrc=True)
+        employee.bureau_states.add(state)
+        response = self.client.get(self.url)
+
+        for label, state_set in response.context['stats']:
+            if label == '% VRC employees':
+                self.assertEqual(state_set[0].value, 100,
+                                 "% VRC employees should be 100 if only one employee and they were VRC")
+    def test_template_used(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, 'stats/state_comparison.html')
