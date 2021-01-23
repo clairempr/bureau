@@ -16,7 +16,9 @@
     {% for employee in object.employees.all %}
       <div class="list-group-item">
         <h5 class="list-group-item-heading">
-          {{ employee }}
+          <a href="{% url 'personnel:employee_detail' employee.pk %}">
+            {{ employee }}
+          </a>
         </h5>
       </div>
     {% endfor %}

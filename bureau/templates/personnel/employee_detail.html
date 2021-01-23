@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static i18n utils_tags %}
+{% block title %}{{ object.first_name }}&nbsp;{{ object.last_name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">{{ object.first_name }}&nbsp;{{ object.last_name }}</div>
+
+  <div class="row">
+    <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Gender</h5></div>
+    <div class="col">{{ object.gender }}</div>
+  </div>
+
+  {% if object.date_of_birth or object.place_of_birth %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Born</h5></div>
+      <div class="col">
+        {% if object.date_of_birth %} {{ object.date_of_birth|partial_date }}{% endif %}
+        {% if object.place_of_birth %} in {{ object.place_of_birth }}{% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if object.date_of_death or object.place_of_death %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Died</h5></div>
+      <div class="col">
+        {% if object.date_of_death %} {{ object.date_of_death|partial_date }}{% endif %}
+        {% if object.place_of_death %} in {{ object.place_of_death }}{% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Notes</h5></div>
+    <div class="col">{{ object.notes }}</div>
+  </div>
+
+
+
+</div>
+{% endblock content %}
+
