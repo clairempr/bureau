@@ -50,6 +50,21 @@ class CityAdminListFilterTestCase(TestCase):
         self.request_factory = RequestFactory()
         self.user = AnonymousUser()
 
+    def test_in_use(self):
+        """
+        in_use() should return whether or not a City is used in a Place
+        """
+
+        city_in_a_place = CityFactory(name='Magnolia')
+        PlaceFactory(city=city_in_a_place)
+
+        city_not_in_a_place = CityFactory(name='Grenada')
+
+        self.assertTrue(self.modeladmin.in_use(city_in_a_place),
+                        "CityAdmin.in_use() should return True for City that's in a Place")
+        self.assertFalse(self.modeladmin.in_use(city_not_in_a_place),
+                         "CityAdmin.in_use() should return False for City that's not in a Place")
+
     def test_in_use_list_filter(self):
         """
         Test list filter for whether a City is being used in a Place
