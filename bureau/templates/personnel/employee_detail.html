@@ -8,7 +8,7 @@
 
   <div class="row">
     <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Gender</h5></div>
-    <div class="col">{{ object.gender }}</div>
+    <div class="col">{{ object.get_gender_display }}</div>
   </div>
 
   {% if object.date_of_birth or object.place_of_birth %}
@@ -21,13 +21,92 @@
     </div>
   {% endif %}
 
-  {% if object.date_of_death or object.place_of_death %}
+  {% if object.date_of_death or object.place_of_death or object.died_during_assignment %}
     <div class="row">
       <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Died</h5></div>
       <div class="col">
-        {% if object.date_of_death %} {{ object.date_of_death|partial_date }}{% endif %}
+        {% if object.date_of_death %}{{ object.date_of_death|partial_date }}{% endif %}
         {% if object.place_of_death %} in {{ object.place_of_death }}{% endif %}
+        {% if object.died_during_assignment %} during Bureau assignment{% endif %}
       </div>
+    </div>
+  {% endif %}
+
+  {% if object.place_of_residence %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Residence</h5></div>
+      <div class="col">{{ object.place_of_residence }}</div>
+    </div>
+  {% endif %}
+
+  {% if object.union_veteran %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Union Veteran</h5></div>
+      <div class="col">Yes</div>
+    </div>
+  {% endif %}
+
+  {% if object.confederate_veteran %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Confederate Veteran</h5></div>
+      <div class="col">Yes</div>
+    </div>
+  {% endif %}
+
+  {% if object.vrc %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">VRC Member</h5></div>
+      <div class="col">Yes</div>
+    </div>
+  {% endif %}
+
+  {% if object.regiments.exists %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Regiment{{ object.regiments.count|pluralize }}</h5></div>
+      <div class="col">
+        <ul class="list-unstyled">{% for regiment in object.regiments.all %}
+          <li>{{ regiment.name }}</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if object.colored %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Identified as "Colored"</h5></div>
+      <div class="col">Yes</div>
+    </div>
+  {% endif %}
+
+  {% if object.former_slave %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Formerly Enslaved</h5></div>
+      <div class="col">Yes</div>
+    </div>
+  {% endif %}
+
+  {% if object.slaveholder %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Former Slaveholder</h5></div>
+      <div class="col">Yes</div>
+    </div>
+  {% endif %}
+
+  {% if object.ailments.exists %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Ailment{{ object.ailments.count|pluralize }}</h5></div>
+      <div class="col">
+        <ul class="list-unstyled">{% for ailment in object.ailments.all %}
+          <li>{{ ailment.name }}</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if object.penmanship_contest %}
+    <div class="row">
+      <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Left-Hand Penmanship Contest Entry</h5></div>
+      <div class="col">Yes</div>
     </div>
   {% endif %}
 
@@ -35,8 +114,6 @@
     <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Notes</h5></div>
     <div class="col">{{ object.notes }}</div>
   </div>
-
-
 
 </div>
 {% endblock content %}
