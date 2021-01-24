@@ -99,8 +99,9 @@ Selected Sources
 * Freedmen's Bureau Records, held and microfilmed by `The National Archives`: https://www.archives.gov/research/african-americans/freedmens-bureau, images accessed from `FamilySearch`: https://www.familysearch.org/search/collection/list/?cqs=freedmen
 * Military service records from `Fold3`: https://www.fold3.com/
 * Personal details from `Find A Grave`: https://www.findagrave.com/ and `Ancestry`: https://www.ancestry.com/
-* Field record of officers of the Veteran Reserve Corps, from the commencement to the close of the rebellion, `U.S. National Library of Medicine Digital Collections`: http://resource.nlm.nih.gov/101177853
+* Field record of officers of the Veteran Reserve Corps, from the commencement to the close of the rebellion. Scriver & Swing, [1865?], Washington, D.C., `U.S. National Library of Medicine Digital Collections`, http://resource.nlm.nih.gov/101177853.
 * Bean, Christopher B. Too Great a Burden to Bear: The Struggle and Failure of the Freedmen's Bureau in Texas. Fordham University Press, 2016.
+* Cimbala, Paul A. "On the Front Line of Freedom: Freedmen's Bureau Officers and Agents in Reconstruction Georgia, 1865-1868." The Georgia Historical Quarterly, vol. 76, no. 3, 1992, pp. 577–611. JSTOR, www.jstor.org/stable/40582592.
 * Cimbala, Paul. Under the Guardianship of the Nation: The Freedmen's Bureau and the Reconstruction of Georgia, 1865-1870. University of Georgia Press, 2003.
 * Finley, Randy. From Slavery to Uncertain Freedom: The Freedman’s Bureau in Arkansas 1865-1869. The University of Arkansas Press, 1996.
 * Richter, William. Overreached on All Sides: The Freedmen's Bureau Administrators in Texas, 1865-1868. Texas A&M University Press, 1991.
