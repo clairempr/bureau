@@ -31,6 +31,20 @@ Keep track of personnel of Bureau of Refugees, Freedmen and Abandoned Lands, wit
    :scale: 75
    :alt: Screenshot of main Bureau page
 
+Background
+--------------
+
+The Bureau of Refugees, Freedmen and Abandoned Lands, commonly known as the Freedmen's Bureau, was established at the
+close of the American Civil War with the purpose of helping the newly emancipated become integrated into free society by
+establishing and inspecting schools, promoting fair and honest labor practices, ensuring that proper justice was done in
+the civil courts, and supplying clothing and rations to the needy, among other things. I first became interested in the
+Freedmen's Bureau some years ago when reading the personal correspondence of its Commissioner, General Oliver Otis Howard,
+during the period of the war and after. By the fall of 2018 I had gathered an embarrassing amount of mostly unstructured
+data on individual Bureau employees, and being a Django developer, I found that the most convenient way of making some
+sense of what I had collected.
+
+This application is... extremely specific.
+
 Basic Commands
 --------------
 
