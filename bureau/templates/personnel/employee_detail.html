@@ -110,10 +110,23 @@
     </div>
   {% endif %}
 
-  <div class="row">
+  <div class="row pb-3">
     <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Notes</h5></div>
     <div class="col">{{ object.notes }}</div>
   </div>
+
+  {% if object.assignments.exists %}
+    <div class="row">
+      <div class="col-sm-2 text-right">
+        <h5 class="font-weight-bold">Assignment{{ object.assignments.count|pluralize }}</h5>
+      </div>
+      <div class="col">
+        <ul class="list-unstyled">{% for assignment in object.assignments.all %}
+          <li>{{ assignment }}</li>{% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
 
 </div>
 {% endblock content %}
