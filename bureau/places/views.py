@@ -1,8 +1,10 @@
+from django.db.models import Case, CharField, F, When
 from django.urls import reverse_lazy
-from django.views.generic import ListView, FormView
+from django.views.generic import DetailView, FormView, ListView
 
+from assignments.models import Assignment
 from places.forms import GeoNamesLookupForm
-from places.models import City, County, Region
+from places.models import City, County, Place, Region
 
 class BureauStateListView(ListView):
 
@@ -14,6 +16,33 @@ class BureauStateListView(ListView):
 
 
 bureau_state_list_view = BureauStateListView.as_view()
+
+class BureauStateDetailView(DetailView):
+
+    model = Region
+    template_name = "places/bureau_state_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Return a list of places in that state where there was an assignment, ordering by
+        #   1) State only
+        #   2) Cities and counties together, sorted alphabetically
+        place = Place.objects.get(region=self.object, city=None, county=None)
+        assignment_list = Assignment.objects.in_place(place)
+        annotated_assignment_places_list = Place.objects.filter(assignment__in=assignment_list).distinct().annotate(
+            annotated_name=Case(
+                When(county__name__isnull=False, then=F('county__name')),
+                When(city__name__isnull=False, then=F('city__name')),
+                output_field=CharField())
+        )
+        context['assignment_places'] = annotated_assignment_places_list.order_by(F('annotated_name').asc(
+            nulls_first=True))
+
+        return context
+
+
+bureau_state_detail_view = BureauStateDetailView.as_view()
 
 
 class GeoNamesLookupBaseView(FormView):

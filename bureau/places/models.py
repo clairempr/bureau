@@ -34,7 +34,7 @@ class RegionManager(models.Manager):
 
 class Region(AbstractRegion):
     """
-    Extend django-cities-light Region model to keep track of 
+    Extend django-cities-light Region model to keep track of
     whether or not Freedmen's Bureau was active there
     """
     bureau_operations = models.BooleanField(default=False)

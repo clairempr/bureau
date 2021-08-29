@@ -31,6 +31,19 @@ class AssignmentManager(models.Manager):
             Q(start_date__lte='{}'.format(year), end_date__gte='{}'.format(year)) |
             Q(start_date__gte='{}'.format(year)), start_date__lt='{}'.format(year + 1))
 
+    def in_place(self, place, **kwargs):
+        """
+        Return assignments in a particular place, according to how specific the place is
+        """
+        assignments = self.filter(places__country=place.country)
+        if place.region:
+            assignments = assignments.filter(places__region=place.region)
+        if place.county:
+            assignments = assignments.filter(places__county=place.county)
+        elif place.city:
+            assignments = assignments.filter(places__city=place.city)
+        return assignments
+
 
 class Assignment(models.Model):
     """
