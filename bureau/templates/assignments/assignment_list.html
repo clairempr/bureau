@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static i18n utils_tags %}
+{% block title %}Assignments{% if place %} in {{ place }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">Assignments{% if place %} in {{ place }}{% endif %}</div>
+
+  <div class="list-group list-group-flush">
+    {% for assignment in assignment_list %}
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">
+          {{ assignment }}: {{ assignment.employee }}
+        </h5>
+      </div>
+    {% empty %}
+      No assignments found
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock content %}
+

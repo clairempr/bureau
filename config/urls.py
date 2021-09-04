@@ -22,6 +22,10 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path(
+        "assignments/",
+        include("bureau.assignments.urls", namespace="assignments"),
+    ),
+    path(
         "military/",
         include("bureau.military.urls", namespace="military"),
     ),

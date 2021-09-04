@@ -31,10 +31,15 @@ class AssignmentManager(models.Manager):
             Q(start_date__lte='{}'.format(year), end_date__gte='{}'.format(year)) |
             Q(start_date__gte='{}'.format(year)), start_date__lt='{}'.format(year + 1))
 
-    def in_place(self, place, **kwargs):
+    def in_place(self, place, exact=False, **kwargs):
         """
         Return assignments in a particular place, according to how specific the place is
         """
+        # Only return assignments in that exact place (ex. just Alabama, not a city or county in Alabama)
+        if exact:
+            return self.filter(places=place)
+
+        # Return assignments in that place and in all places in that place
         assignments = self.filter(places__country=place.country)
         if place.region:
             assignments = assignments.filter(places__region=place.region)
