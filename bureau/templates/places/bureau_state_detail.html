@@ -7,7 +7,7 @@
   <div class="page-header">{{ object }} - {{ object.employees_employed.count }} employee{{ object.employees_employed.count|pluralize }}
       ({{ object.percent_vrc_employees|floatformat }}% VRC)</div>
 
-  <h4 class="py-3">Assignment Location{{ assignment_places.count|pluralize }}</h4>
+  <h4 class="py-3">Assignment Locations</h4>
 
   <div class="list-group list-group-flush">
     {% for place in assignment_places %}
@@ -18,6 +18,8 @@
           </a>
         </h5>
       </div>
+    {% empty %}
+      No assignments found
     {% endfor %}
   </div>
 
