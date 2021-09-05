@@ -31,7 +31,7 @@ class AssignmentListView(ListView):
         # If a place is specified, only return assignments in that exact place, not places in that place
         place = self.get_place()
         if place:
-            return Assignment.objects.in_place(place=place, exact=True)
+            return Assignment.objects.in_place(place=place, exact=True).order_by('start_date')
 
         return Assignment.objects.all()
 

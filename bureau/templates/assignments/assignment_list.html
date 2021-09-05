@@ -10,7 +10,16 @@
     {% for assignment in assignment_list %}
       <div class="list-group-item">
         <h5 class="list-group-item-heading">
-          {{ assignment }}: {{ assignment.employee }}
+          {{ assignment }}
+
+          <div class="pl-4">
+          <a href="{% url 'personnel:employee_detail' assignment.employee.pk %}">
+            {{ assignment.employee }}
+          </a>
+          </div>
+
+
+
         </h5>
       </div>
     {% empty %}

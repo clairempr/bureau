@@ -28,6 +28,10 @@ class BureauStateDetailView(DetailView):
         # Return a list of places in that state where there was an assignment, ordering by
         #   1) State only
         #   2) Cities and counties together, sorted alphabetically
+        #
+        # Bureau Headquarters is tricky because it's not a real place. Assignments could be in Washington, DC
+        # but District of Columbia assignments are also there
+        #
         place = Place.objects.get(region=self.object, city=None, county=None)
         assignment_list = Assignment.objects.in_place(place)
         annotated_assignment_places_list = Place.objects.filter(assignment__in=assignment_list).distinct().annotate(

@@ -113,6 +113,16 @@ class Place(models.Model):
             return str(self.region)
         return str(self.country)
 
+    def name_without_country(self):
+        # Return place name without country, unless place consists of only a country
+        name = str(self)
+
+        country_suffix = ', {}'.format(str(self.country))
+        if self.region and name.endswith(country_suffix):
+            name = name[:-len(country_suffix)]
+
+        return name
+
     def clean(self):
         super().clean()
         if not (self.city or self.county or self.region or self.country):
