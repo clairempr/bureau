@@ -4,8 +4,26 @@
 
 {% block content %}
 <div class="container">
-  <div class="page-header">{{ object }} - {{ object.employees_employed.count }} employee{{ object.employees_employed.count|pluralize }}
-      ({{ object.percent_vrc_employees|floatformat }}% VRC)</div>
+  <div class="page-header">
+    {{ object }} - {{ object.employees_employed.count }} employee{{ object.employees_employed.count|pluralize }}
+  </div>
+
+  <h4 class="py-3">Employee Statistics</h4>
+
+  <div class="list-group list-inline">
+    <div class="row">
+      {% for label, value in stats %}
+        <div class="col-4 col-sm-2 p-1 m-1">
+          <div class="list-group-item p-1 text-center">
+            <span class="font-weight-bold pr-3">{{ label }}</span>
+            <span class="pull-right">{{ value }}</span>
+          </div>
+        </div>
+      {% empty %}
+        No statistics for this location
+      {% endfor %}
+    </div>
+  </div>
 
   <h4 class="py-3">Assignment Locations</h4>
 

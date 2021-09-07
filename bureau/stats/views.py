@@ -1,5 +1,3 @@
-import statistics
-
 from django.db.models import Case, CharField, Count, F, FloatField, Q, Value, When
 from django.db.models.functions import Cast
 from django.views.generic.base import TemplateView
@@ -8,6 +6,8 @@ from medical.models import Ailment, AilmentType
 from personnel.models import Employee
 from places.models import Place, Region
 from places.settings import GERMANY_COUNTRY_NAMES
+
+from stats.utils import get_ages_at_death, get_ages_in_year, get_mean, get_median, get_percent
 
 class GeneralView(TemplateView):
     template_name = 'stats/general.html'
@@ -35,7 +35,6 @@ class DetailedView(TemplateView):
         employees_with_dob = Employee.objects.exclude(date_of_birth='')
         # Employees with date of death filled
         employees_with_dob_and_dod = Employee.objects.exclude(date_of_death='').exclude(date_of_birth='')
-
 
         # Age in 1865
         ages_vrc = get_ages_in_year(employees_with_dob.filter(vrc=True), 1865)
@@ -252,38 +251,3 @@ class StateComparisonView(TemplateView):
 
 
 state_comparison_view = StateComparisonView.as_view()
-
-
-def get_ages_at_death(employees):
-    """
-    Calculate approximate age at death for employees
-    Assumes that they have a birth year and death year filled
-    """
-    return list(map(lambda x: x.age_at_death(), employees))
-
-def get_ages_in_year(employees, year):
-    """
-    Calculate approximate ages for employees in the given year
-    Assumes that they have a birth year filled
-    """
-    return list(map(lambda x: x.calculate_age(year), employees))
-
-def get_mean(data):
-    """
-    Return the mean of the data, or 0 if there is no data
-    """
-    return statistics.mean(data) if data else 0
-
-def get_median(data):
-    """
-    Return the median of the data, or 0 if there is no data
-    """
-    return statistics.median(data) if data else 0
-
-def get_percent(part, total):
-    """
-    Return the percentage that part is of total and multiply by 100
-    If total is 0, return 0
-    """
-    return (part / total) * 100 if part and total else 0
-
