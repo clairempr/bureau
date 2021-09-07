@@ -75,6 +75,8 @@ class Assignment(models.Model):
     # Start and end dates use PartialDateField because the entire date isn't usually known
     start_date = PartialDateField(null=True, blank=True)
     end_date = PartialDateField(null=True, blank=True)
+    # This is to distinguish Bureau Headquarters assignments from other assignments in Washington, DC
+    bureau_headquarters = models.BooleanField(default=False)
 
     objects = AssignmentManager()
 

@@ -38,3 +38,13 @@ class AssignmentListView(ListView):
 
 assignment_list_view = AssignmentListView.as_view()
 
+class BureauHeadquartersAssignmentListView(AssignmentListView):
+
+    queryset = Assignment.objects.filter(bureau_headquarters=True).order_by('start_date')
+
+    def get_queryset(self):
+        # Return Bureau Headquarters assignments only
+        return Assignment.objects.filter(bureau_headquarters=True).order_by('start_date')
+
+
+bureau_headquarters_assignment_list_view = BureauHeadquartersAssignmentListView.as_view()

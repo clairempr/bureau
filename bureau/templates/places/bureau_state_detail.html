@@ -13,9 +13,11 @@
     {% for place in assignment_places %}
       <div class="list-group-item">
         <h5 class="list-group-item-heading">
-          <a href="{% url 'assignments:assignment_list' place.pk %}">
-            {{ place }}
-          </a>
+          {% if object.bureau_headquarters %}
+            <a href="{% url 'assignments:bureau_headquarters_assignment_list' %}">{{ place }}</a>
+          {% else %}
+            <a href="{% url 'assignments:assignment_list' place.pk %}">{{ place }}</a>
+          {% endif %}
         </h5>
       </div>
     {% empty %}

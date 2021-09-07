@@ -32,6 +32,7 @@ class BureauStateDetailView(DetailView):
         # Bureau Headquarters is tricky because it's not a real place. Assignments could be in Washington, DC
         # but District of Columbia assignments are also there
         #
+        assignment_list = ()
 
         try:
             place = Place.objects.get(region=self.object, city=None, county=None)
@@ -40,14 +41,16 @@ class BureauStateDetailView(DetailView):
 
         if place:
             assignment_list = Assignment.objects.in_place(place)
-            annotated_assignment_places_list = Place.objects.filter(assignment__in=assignment_list).distinct().annotate(
-                annotated_name=Case(
-                    When(county__name__isnull=False, then=F('county__name')),
-                    When(city__name__isnull=False, then=F('city__name')),
-                    output_field=CharField())
+        elif self.object.bureau_headquarters:
+            assignment_list = Assignment.objects.filter(bureau_headquarters=True)
+
+        annotated_assignment_places_list = Place.objects.filter(assignment__in=assignment_list).distinct().annotate(
+            annotated_name=Case(
+                When(county__name__isnull=False, then=F('county__name')),
+                When(city__name__isnull=False, then=F('city__name')), output_field=CharField())
             )
-            context['assignment_places'] = annotated_assignment_places_list.order_by(F('annotated_name').asc(
-                nulls_first=True))
+        context['assignment_places'] = annotated_assignment_places_list.order_by(F('annotated_name').asc(
+            nulls_first=True))
 
         return context
 

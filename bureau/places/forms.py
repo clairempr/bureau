@@ -20,8 +20,8 @@ class RegionForm(forms.ModelForm):
     """
     class Meta:
         model = Region
-        fields = ('id', 'display_name', 'name', 'name_ascii', 'alternate_names', 'bureau_operations', 'country',
-                  'geoname_id', 'geoname_code', )
+        fields = ('id', 'display_name', 'name', 'name_ascii', 'alternate_names', 'bureau_operations',
+                  'bureau_headquarters', 'country', 'geoname_id', 'geoname_code', )
 
 class CountyForm(forms.ModelForm):
     """

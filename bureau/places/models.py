@@ -38,6 +38,7 @@ class Region(AbstractRegion):
     whether or not Freedmen's Bureau was active there
     """
     bureau_operations = models.BooleanField(default=False)
+    bureau_headquarters = models.BooleanField(default=False)
 
     objects = RegionManager()
 
