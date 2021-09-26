@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static i18n utils_tags %}
+{% block title %}{{ place }} - Employees Who Were Born/Resided/Died There{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    Employees Who Were Born, Resided, or Died in {{ place }}
+  </div>
+
+  <h4 class="py-3">
+    Employees Born There{% if employees_born_in_place %} ({{ employees_born_in_place.count }}){% endif %}
+  </h4>
+
+  <div class="list-group list-group-flush">
+    {% for employee in employees_born_in_place %}
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">
+          <a href="{% url 'personnel:employee_detail' employee.pk %}">{{ employee }}</a>
+        </h5>
+      </div>
+    {% empty %}
+      None
+    {% endfor %}
+  </div>
+
+  <h4 class="py-3">
+    Employees Who Died There{% if employees_died_in_place %} ({{ employees_died_in_place.count }}){% endif %}
+  </h4>
+
+  <div class="list-group list-group-flush">
+    {% for employee in employees_died_in_place %}
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">
+          <a href="{% url 'personnel:employee_detail' employee.pk %}">{{ employee }}</a>
+        </h5>
+      </div>
+    {% empty %}
+      None
+    {% endfor %}
+  </div>
+
+  <h4 class="py-3">
+    Employees Who Resided There{% if employees_resided_in_place %} ({{ employees_resided_in_place.count }}){% endif %}
+  </h4>
+
+  <div class="list-group list-group-flush">
+    {% for employee in employees_resided_in_place %}
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">
+          <a href="{% url 'personnel:employee_detail' employee.pk %}">{{ employee }}</a>
+        </h5>
+      </div>
+    {% empty %}
+      None
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock content %}

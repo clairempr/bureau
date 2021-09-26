@@ -8,6 +8,7 @@ from django.db.models import Q
 from medical.models import Ailment
 from military.models import Regiment
 from places.models import Place, Region
+from places.settings import GERMANY_COUNTRY_NAME, GERMANY_COUNTRY_NAMES, VIRGINIA_REGION_NAME, VIRGINIA_REGION_NAMES
 
 
 class EmployeeManager(models.Manager):
@@ -17,6 +18,105 @@ class EmployeeManager(models.Manager):
 
     def foreign_born(self, **kwargs):
         return self.birthplace_known().exclude(place_of_birth__country__code2='US').filter(**kwargs)
+
+    def born_in_place(self, place, exact=False, **kwargs):
+        """
+        Return employees who were born in a particular place,
+        according to how specific the place is
+
+        If it's Germany, include Prussia, Bavaria, and Saxony, etc. because of inconsistencies in
+        reporting of German places in the sources
+
+        If it's Virginia, include West Virginia because of inconsistencies in
+        reporting places in the sources, and because it was all Virginia when they were born
+        """
+
+        # Only return employees born in that exact place (ex. just Ohio, not a city or county in Ohio)
+        if exact:
+            if place.country.name == GERMANY_COUNTRY_NAME and not (place.region or place.county or place.city):
+                return self.filter(place_of_birth__country__name__in=GERMANY_COUNTRY_NAMES)
+            return self.filter(place_of_birth=place)
+
+        # Return employees born in that place and in all places in that place
+        employees = self.filter(place_of_birth__country=place.country)
+
+        if place.region:
+            if place.region.name == VIRGINIA_REGION_NAME and not (place.county or place.city):
+                employees = employees.filter(place_of_birth__region__name__in=VIRGINIA_REGION_NAMES)
+            else:
+                employees = employees.filter(place_of_birth__region=place.region)
+        if place.county:
+            employees = employees.filter(place_of_birth__county=place.county)
+        elif place.city:
+            employees = employees.filter(place_of_birth__city=place.city)
+
+        return employees
+
+    def died_in_place(self, place, exact=False, **kwargs):
+        """
+        Return employees who died in a particular place,
+        according to how specific the place is
+
+        If it's Germany, include Prussia, Bavaria, and Saxony, etc. because of inconsistencies in
+        reporting of German places in the sources
+
+        If it's Virginia, include West Virginia of inconsistencies in reporting places in the sources,
+        and because it might possibly still have been all Virginia when they died
+        """
+
+        # Only return employees who died in that exact place (ex. just Ohio, not a city or county in Ohio)
+        if exact:
+            if place.country.name == GERMANY_COUNTRY_NAME and not (place.region or place.county or place.city):
+                return self.filter(place_of_death__country__name__in=GERMANY_COUNTRY_NAMES)
+            return self.filter(place_of_death=place)
+
+        # Return employees who died in that place and in all places in that place
+        employees = self.filter(place_of_death__country=place.country)
+
+        if place.region:
+            if place.region.name == VIRGINIA_REGION_NAME and not (place.county or place.city):
+                employees = employees.filter(place_of_death__region__name__in=VIRGINIA_REGION_NAMES)
+            else:
+                employees = employees.filter(place_of_death__region=place.region)
+        if place.county:
+            employees = employees.filter(place_of_death__county=place.county)
+        elif place.city:
+            employees = employees.filter(place_of_death__city=place.city)
+
+        return employees
+
+    def resided_in_place(self, place, exact=False, **kwargs):
+        """
+        Return employees who resided in a particular place,
+        according to how specific the place is
+
+        If it's Germany, include Prussia, Bavaria, and Saxony, etc. because of inconsistencies in
+        reporting of German places in the sources
+
+        If it's Virginia, include West Virginia of inconsistencies in
+        reporting places in the sources, and because it was all Virginia when the war started
+        """
+
+        # Only return employees who resided in that exact place (ex. just Ohio, not a city or county in Ohio)
+        if exact:
+            if place.country.name == GERMANY_COUNTRY_NAME and not (place.region or place.county or place.city):
+                return self.filter(place_of_residence__country__name__in=GERMANY_COUNTRY_NAMES)
+            return self.filter(place_of_residence=place)
+
+        # Return employees who resided in that place and in all places in that place
+        employees = self.filter(place_of_residence__country=place.country)
+
+        if place.region:
+            if place.region.name == VIRGINIA_REGION_NAME and not (place.county or place.city):
+                employees = employees.filter(place_of_residence__region__name__in=VIRGINIA_REGION_NAMES)
+            else:
+                employees = employees.filter(place_of_residence__region=place.region)
+        if place.county:
+            employees = employees.filter(place_of_residence__county=place.county)
+        elif place.city:
+            employees = employees.filter(place_of_residence__city=place.city)
+
+        return employees
 
     def vrc(self, **kwargs):
         return self.filter(vrc=True).filter(**kwargs)

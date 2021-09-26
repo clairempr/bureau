@@ -25,10 +25,13 @@
       </tr>
       </thead>
       <tbody>
-      {% for region, country, count in top_birthplaces %}
+      {% for place_name, place_pk, count in top_birthplaces %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <th scope="row">{% if region %}{{ region }}{% else %}{{ country }}{% endif %}</th>
+          <th scope="row">
+            <a href="{% url 'personnel:employees_born_resided_died_in_place' place_pk %}"
+               title="Employees who were born, resided, or died in {{ place_name }}">{{ place_name }}</a>
+          </th>
           <td>{{ count }}</td>
         </tr>
       {% endfor %}
@@ -47,10 +50,13 @@
       </tr>
       </thead>
       <tbody>
-      {% for region, country, count in top_deathplaces %}
+      {% for place_name, place_pk, count in top_deathplaces %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <th scope="row">{% if region %}{{ region }}{% else %}{{ country }}{% endif %}</th>
+          <th scope="row">
+            <a href="{% url 'personnel:employees_born_resided_died_in_place' place_pk %}"
+               title="Employees who were born, resided, or died in {{ place_name }}">{{ place_name }}</a>
+          </th>
           <td>{{ count }}</td>
         </tr>
       {% endfor %}

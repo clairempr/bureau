@@ -16,7 +16,11 @@
       <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Born</h5></div>
       <div class="col">
         {% if object.date_of_birth %} {{ object.date_of_birth|partial_date }}{% endif %}
-        {% if object.place_of_birth %} in {{ object.place_of_birth }}{% endif %}
+        {% if object.place_of_birth %} in
+          <a href="{% url 'personnel:employees_born_resided_died_in_place' object.place_of_birth.pk %}"
+             title="Employees who were born, resided, or died in {{ object.place_of_birth.name_without_country }}">
+            {{ object.place_of_birth }}</a>
+        {% endif %}
       </div>
     </div>
   {% endif %}
@@ -26,7 +30,12 @@
       <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Died</h5></div>
       <div class="col">
         {% if object.date_of_death %}{{ object.date_of_death|partial_date }}{% endif %}
-        {% if object.place_of_death %} in {{ object.place_of_death }}{% endif %}
+        {% if object.place_of_death %} in
+          <a href="{% url 'personnel:employees_born_resided_died_in_place' object.place_of_death.pk %}"
+             title="Employees who were born, resided, or died in {{ object.place_of_death.name_without_country }}">
+            {{ object.place_of_death }}
+          </a>
+        {% endif %}
         {% if object.died_during_assignment %} during Bureau assignment{% endif %}
       </div>
     </div>
@@ -35,7 +44,11 @@
   {% if object.place_of_residence %}
     <div class="row">
       <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Residence</h5></div>
-      <div class="col">{{ object.place_of_residence }}</div>
+      <div class="col">
+        <a href="{% url 'personnel:employees_born_resided_died_in_place' object.place_of_residence.pk %}"
+           title="Employees who were born, resided, or died in {{ object.place_of_residence.name_without_country }}">
+          {{ object.place_of_residence }}</a>
+      </div>
     </div>
   {% endif %}
 
@@ -129,11 +142,15 @@
           {% for assignment in object.assignments.all %}
             <li>
               {% if assignment.bureau_headquarters %}
-                <a href="{% url 'assignments:bureau_headquarters_assignment_list' %}">{{ assignment }}</a>
+                <a href="{% url 'assignments:bureau_headquarters_assignment_list' %}"
+                   title="Assignments at Bureau Headquarters">{{ assignment }}
+                </a>
               {% else %}
                 {{ assignment.position_list }},
                 {% for place in assignment.places.all %}
-                  <a href="{% url 'assignments:assignment_list' place.pk %}">{{ place.name_without_country }}</a>{% if not forloop.last %} and {% endif %}{% endfor %},
+                  <a href="{% url 'assignments:assignment_list' place.pk %}"
+                     title="Assignments at {{ place.name_without_country }}">{{ place.name_without_country }}
+                  </a>{% if not forloop.last %} and {% endif %}{% endfor %},
                 {{ assignment.dates }}
               {% endif %}
             </li>

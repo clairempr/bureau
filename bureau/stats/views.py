@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView
 from medical.models import Ailment, AilmentType
 from personnel.models import Employee
 from places.models import Place, Region
-from places.settings import GERMANY_COUNTRY_NAMES
+from places.settings import GERMANY_COUNTRY_NAME, GERMANY_COUNTRY_NAMES, VIRGINIA_REGION_NAME, VIRGINIA_REGION_NAMES
 
 from stats.utils import get_ages_at_death, get_ages_in_year, get_mean, get_median, get_percent
 
@@ -80,29 +80,9 @@ class DetailedView(TemplateView):
                         'everyone': get_percent(
                             (foreign_born_vrc + foreign_born_non_vrc), Employee.objects.birthplace_known().count())}
 
-        # Top places where employees were born
-        # Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of German
-        # places in the sources
-        # Group Virginia and West Virginia together, because it was all Virginia when they were born
-        top_birthplaces = Place.objects.annotate(
-            annotated_country=Case(
-                When(country__name__in=GERMANY_COUNTRY_NAMES, then=Value('Germany')),
-                default=F('country__name'), output_field=CharField(),
-            ),
-            annotated_region=Case(
-                When(region__name__in=['Virginia', 'West Virginia'], then=Value('Virginia')),
-                default=F('region__name'), output_field=CharField(),
-            ),
-        ).values_list('annotated_region', 'annotated_country').annotate(
-            num_employees=Count('employees_born_in')).order_by('-num_employees')[:25]
-
-        top_deathplaces = Place.objects.annotate(
-            annotated_country=Case(
-                When(country__name__in=GERMANY_COUNTRY_NAMES, then=Value('Germany')),
-                default=F('country__name'), output_field=CharField(),
-            ),
-        ).values_list('region__name', 'annotated_country').annotate(
-            num_employees=Count('employees_died_in')).order_by('-num_employees')[:25]
+        # Top places where employees were born or died, with certain places grouped together
+        top_birthplaces = get_top_birthplaces(number=25)
+        top_deathplaces = get_top_deathplaces(number=25)
 
         # Ailments
         ailments = []
@@ -143,6 +123,64 @@ class DetailedView(TemplateView):
 
 
 detailed_view = DetailedView.as_view()
+
+def get_top_birthplaces(number=25):
+    """
+    Return top places where employees were born
+    Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of German
+    places in the sources
+    Group Virginia and West Virginia together, because it was all Virginia when they were born
+    """
+
+    top_birthplaces = Place.objects.annotate(
+        annotated_country=Case(
+            When(country__name__in=GERMANY_COUNTRY_NAMES, then=Value(GERMANY_COUNTRY_NAME)),
+            default=F('country__name'), output_field=CharField(),
+        ),
+        annotated_region=Case(
+            When(region__name__in=VIRGINIA_REGION_NAMES, then=Value(VIRGINIA_REGION_NAME)),
+            default=F('region__name'), output_field=CharField(),
+        ),
+    ).values_list('annotated_region', 'annotated_country').annotate(
+        num_employees=Count('employees_born_in')).order_by('-num_employees')[:number]
+
+    return get_places_with_pks_for_context(top_birthplaces)
+
+def get_top_deathplaces(number=25):
+    """
+    Return top places where employees died
+    Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of German
+    places in the sources
+    """
+
+    top_deathplaces = Place.objects.annotate(
+        annotated_country=Case(
+            When(country__name__in=GERMANY_COUNTRY_NAMES, then=Value(GERMANY_COUNTRY_NAME)),
+            default=F('country__name'), output_field=CharField(),
+        ),
+    ).values_list('region__name', 'annotated_country').annotate(
+        num_employees=Count('employees_died_in')).order_by('-num_employees')[:number]
+
+    return get_places_with_pks_for_context(top_deathplaces)
+
+
+def get_places_with_pks_for_context(place_names_and_counts):
+    """
+    Take list of place names (country or region) and counts, get the corresponding Place,
+    and return list of names, pks, and counts
+    """
+    context_places = []
+
+    for (region, country, count) in place_names_and_counts:
+        if region:
+            place_pk = Place.objects.filter(region__name=region, county__name__isnull=True,
+                                            city__name__isnull=True).first().pk
+        else:
+            place_pk = Place.objects.filter(country__name=country, region__name__isnull=True,
+                                            county__name__isnull=True, city__name__isnull=True).first().pk
+        context_places.append((region if region else country, place_pk, count))
+
+    return context_places
 
 
 class StateComparisonView(TemplateView):
