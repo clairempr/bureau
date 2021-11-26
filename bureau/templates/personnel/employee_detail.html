@@ -113,8 +113,10 @@
     <div class="row">
       <div class="col-sm-2 text-right"><h5 class="font-weight-bold">Ailment{{ object.ailments.count|pluralize }}</h5></div>
       <div class="col">
-        <ul class="list-unstyled">{% for ailment in object.ailments.all %}
-          <li>{{ ailment.name }}</li>{% endfor %}
+        <ul class="list-unstyled">
+          {% for ailment in object.ailments.all %}
+            <li><a href="{% url 'personnel:employees_with_ailment_list' ailment.pk %}">{{ ailment.name }}</a></li>
+          {% endfor %}
         </ul>
       </div>
     </div>

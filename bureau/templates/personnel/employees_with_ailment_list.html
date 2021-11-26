@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static i18n utils_tags %}
+{% block title %}Employees With {{ ailment }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    Employees With {{ ailment }}{% if employee_list %} ({{ paginator.count }}){% endif %}
+  </div>
+
+  <div class="list-group list-group-flush">
+    {% for employee in employee_list %}
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">
+          <a href="{% url 'personnel:employee_detail' employee.pk %}">{{ employee }}</a>
+        </h5>
+      </div>
+    {% empty %}
+      None
+    {% endfor %}
+  </div>
+</div>
+
+{% include 'partials/pagination.html' %}
+
+{% endblock content %}
+
