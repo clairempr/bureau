@@ -94,7 +94,7 @@ class BureauStateDetailView(DetailView):
             ('% Identified as "colored"', get_float_format(get_percent(part=colored_count, total=total_employees))),
             ('% Died during assignment', get_float_format(get_percent(part=died_during_assignment_count,
                                                                       total=total_employees))),
-            ('Former slave', former_slave_count),
+            ('Former slaves', former_slave_count),
             ('% Former slaveholder', get_float_format(get_percent(part=former_slaveholder_count,
                                                                   total=total_employees))),
             ('% Union veterans', get_float_format(get_percent(part=union_count, total=total_employees))),
