@@ -148,9 +148,12 @@ class GetFloatFormatTestCase(TestCase):
     """
 
     def test_get_float_format(self):
-        self.assertEqual(get_float_format(12.3, 2), '12.30')
-        self.assertEqual(get_float_format(50, 2), '50.00')
-        self.assertEqual(get_float_format(100, 2), '100')
+        self.assertEqual(get_float_format(12.3, 2), '12.30',
+                         'get_float_format() should return number formatted with 2 decimal places')
+        self.assertEqual(get_float_format(50, 2), '50.00',
+                         'get_float_format() should return number formatted with 2 decimal places')
+        self.assertEqual(get_float_format(100, 2), '100',
+                         'get_float_format() should return number formatted with no decimal places if divisible by 100')
 
 class GetNumberEmployeesBornInBureauStateTestCase(TestCase):
     """
@@ -181,9 +184,11 @@ class GetNumberEmployeesBornInBureauStateTestCase(TestCase):
         # get_number_employees_born_in_bureau_state() should return number of employees
         # born in that state, if it's a state and not Bureau Headquarters
         self.assertEqual(get_number_employees_born_in_bureau_state(self.employees, self.state),
-                         self.number_employees_born_in_state)
+                         self.number_employees_born_in_state,
+                         'get_number_employees_born_in_bureau_state() should return number of employees born in state')
 
         # get_number_employees_born_in_bureau_state() should return number of employees
         # born in District of Columbia, if "state" is Bureau Headquarters
         self.assertEqual(get_number_employees_born_in_bureau_state(self.employees, self.bureau_headquarters),
-                         self.number_employees_born_in_dc)
+                         self.number_employees_born_in_dc,
+                         'get_number_employees_born_in_bureau_state() should return number of employees born in DC')
