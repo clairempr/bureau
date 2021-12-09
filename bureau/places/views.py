@@ -171,4 +171,4 @@ def get_float_format(number, places=2):
     Return number with specific float formatting
     """
     format_string = '{:.' + str(places) + 'f}'
-    return format_string.format(number) if number % 100 else number
+    return format_string.format(number) if number % 100 else str(number)

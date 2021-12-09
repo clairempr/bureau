@@ -5,8 +5,10 @@ from django.urls import reverse
 
 from assignments.tests.factories import AssignmentFactory
 from medical.tests.factories import AilmentFactory, AilmentTypeFactory
+from personnel.models import Employee
+from personnel.tests.factories import EmployeeFactory
 from places.tests.factories import CityFactory, CountyFactory, PlaceFactory, RegionFactory
-from places.views import BureauStateDetailView
+from places.views import BureauStateDetailView, get_float_format, get_number_employees_born_in_bureau_state
 
 class BureauStateDetailViewTestCase(TestCase):
     """
@@ -138,3 +140,50 @@ class BureauStateDetailViewTestCase(TestCase):
         # penmanship contest entrants), so get_float_format() should be called a certain number of times
         self.assertEqual(mock_get_float_format.call_count, len(returned_stats_labels) - 2,
                          'get_stats() should call get_float_format() for all but 2 stats')
+
+class GetFloatFormatTestCase(TestCase):
+    """
+    get_float_format(number, places) should return number formatted with specified number of decimal places,
+    unless number is divisible by 100
+    """
+
+    def test_get_float_format(self):
+        self.assertEqual(get_float_format(12.3, 2), '12.30')
+        self.assertEqual(get_float_format(50, 2), '50.00')
+        self.assertEqual(get_float_format(100, 2), '100')
+
+class GetNumberEmployeesBornInBureauStateTestCase(TestCase):
+    """
+    get_number_employees_born_in_bureau_state(employees, bureau_state) should return number of employees
+    born in bureau_state, or in District of Columbia if it's Bureau Headquarters
+    """
+
+    def setUp(self):
+        self.bureau_headquarters = RegionFactory(bureau_headquarters=True)
+        self.state = RegionFactory(name='Peach State')
+
+        # Employees born in DC
+        self.number_employees_born_in_dc = 2
+        district_of_columbia = PlaceFactory(region=RegionFactory(name='District of Columbia'))
+        for i in range(self.number_employees_born_in_dc):
+            EmployeeFactory(place_of_birth=district_of_columbia)
+
+        # Employees born in state
+        self.number_employees_born_in_state = 3
+        state = PlaceFactory(region=self.state)
+        for i in range(self.number_employees_born_in_state):
+            EmployeeFactory(place_of_birth=state)
+
+        # All employees
+        self.employees = Employee.objects.all()
+
+    def test_get_number_employees_born_in_bureau_state(self):
+        # get_number_employees_born_in_bureau_state() should return number of employees
+        # born in that state, if it's a state and not Bureau Headquarters
+        self.assertEqual(get_number_employees_born_in_bureau_state(self.employees, self.state),
+                         self.number_employees_born_in_state)
+
+        # get_number_employees_born_in_bureau_state() should return number of employees
+        # born in District of Columbia, if "state" is Bureau Headquarters
+        self.assertEqual(get_number_employees_born_in_bureau_state(self.employees, self.bureau_headquarters),
+                         self.number_employees_born_in_dc)
