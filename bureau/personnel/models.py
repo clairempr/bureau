@@ -51,7 +51,7 @@ class EmployeeManager(models.Manager):
 
         return employees
 
-    def died_in_place(self, place, exact=False, **kwargs):
+    def died_in_place(self, place, **kwargs):
         """
         Return employees who died in a particular place,
         according to how specific the place is
@@ -59,24 +59,19 @@ class EmployeeManager(models.Manager):
         If it's Germany, include Prussia, Bavaria, and Saxony, etc. because of inconsistencies in
         reporting of German places in the sources
 
-        If it's Virginia, include West Virginia of inconsistencies in reporting places in the sources,
-        and because it might possibly still have been all Virginia when they died
+        If it's Virginia, don't include West Virginia because it's unlikely that anyone who worked for the Bureau,
+        even pre-Bureau organizations like the Contraband Dept., died before West Virginia became a state in 1863
         """
 
-        # Only return employees who died in that exact place (ex. just Ohio, not a city or county in Ohio)
-        if exact:
-            if place.country.name == GERMANY_COUNTRY_NAME and not (place.region or place.county or place.city):
-                return self.filter(place_of_death__country__name__in=GERMANY_COUNTRY_NAMES)
-            return self.filter(place_of_death=place)
-
         # Return employees who died in that place and in all places in that place
-        employees = self.filter(place_of_death__country=place.country)
+        # If it's Germany with no city specified, include Prussia, Bavaria, and Saxony, etc.
+        if place.country.name == GERMANY_COUNTRY_NAME and not (place.region or place.county or place.city):
+            employees = self.filter(place_of_death__country__name__in=GERMANY_COUNTRY_NAMES)
+        else:
+            employees = self.filter(place_of_death__country=place.country)
 
         if place.region:
-            if place.region.name == VIRGINIA_REGION_NAME and not (place.county or place.city):
-                employees = employees.filter(place_of_death__region__name__in=VIRGINIA_REGION_NAMES)
-            else:
-                employees = employees.filter(place_of_death__region=place.region)
+            employees = employees.filter(place_of_death__region=place.region)
         if place.county:
             employees = employees.filter(place_of_death__county=place.county)
         elif place.city:
