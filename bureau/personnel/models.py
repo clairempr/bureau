@@ -79,7 +79,7 @@ class EmployeeManager(models.Manager):
 
         return employees
 
-    def resided_in_place(self, place, exact=False, **kwargs):
+    def resided_in_place(self, place, **kwargs):
         """
         Return employees who resided in a particular place,
         according to how specific the place is
@@ -91,16 +91,15 @@ class EmployeeManager(models.Manager):
         reporting places in the sources, and because it was all Virginia when the war started
         """
 
-        # Only return employees who resided in that exact place (ex. just Ohio, not a city or county in Ohio)
-        if exact:
-            if place.country.name == GERMANY_COUNTRY_NAME and not (place.region or place.county or place.city):
-                return self.filter(place_of_residence__country__name__in=GERMANY_COUNTRY_NAMES)
-            return self.filter(place_of_residence=place)
-
         # Return employees who resided in that place and in all places in that place
-        employees = self.filter(place_of_residence__country=place.country)
+        # If it's Germany with no city specified, include Prussia, Bavaria, and Saxony, etc.
+        if place.country.name == GERMANY_COUNTRY_NAME and not (place.region or place.county or place.city):
+            employees = self.filter(place_of_residence__country__name__in=GERMANY_COUNTRY_NAMES)
+        else:
+            employees = self.filter(place_of_residence__country=place.country)
 
         if place.region:
+            # If it's Virginia with no city or county specified, include West Virginia
             if place.region.name == VIRGINIA_REGION_NAME and not (place.county or place.city):
                 employees = employees.filter(place_of_residence__region__name__in=VIRGINIA_REGION_NAMES)
             else:
