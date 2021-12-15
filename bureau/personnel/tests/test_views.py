@@ -178,3 +178,12 @@ class EmployeesWithAilmentListViewTestCase(TestCase):
             'EmployeesWithAilmentListView.get_queryset() should return employees with ailment type if ailment type specified')
         self.assertNotIn(employee_with_ailment, queryset,
             "EmployeesWithAilmentListView.get_queryset() shouldn't return employees with ailment if ailment type specified")
+
+        # If get_ailment() and get_ailment_type() both return None,
+        # get_queryset() should return the view's default queryset (all employees)
+        mock_get_ailment.return_value = None
+        mock_get_ailment_type.return_value = None
+        queryset = self.view.get_queryset()
+        for employee in [employee_with_ailment, employee_with_ailment_type]:
+            self.assertIn(employee, queryset,
+            'EmployeesWithAilmentListView.get_queryset() should return all employees if no ailment or ailment type specified')
