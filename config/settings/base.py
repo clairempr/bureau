@@ -268,3 +268,5 @@ CITIES_LIGHT_INCLUDE_CITY_TYPES = ['ADM1', 'ADM3', 'CAPE', 'ISL', 'INSM', 'PPL',
                                    'PPLC', 'PPLCH', 'PPLF', 'PPLG', 'PPLH', 'PPLL', 'PPLQ', 'PPLR', 'PPLS', 'PPLW',
                                    'PPLX', 'PRK', 'S']
 
+# Used when returning a string value for an empty field
+DEFAULT_EMPTY_FIELD_STRING = 'Unknown'

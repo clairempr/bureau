@@ -1,10 +1,117 @@
 from partial_date import PartialDate
+from unittest.mock import patch
 
+from django.conf import settings
 from django.test import TestCase
 
 from assignments.models import Assignment
 from assignments.tests.factories import AssignmentFactory, PositionFactory
 from places.tests.factories import CityFactory, CountyFactory, PlaceFactory, RegionFactory
+
+
+class AssignmentTestCase(TestCase):
+    """
+    Test Assignment model
+    """
+
+    def setUp(self):
+        self.position1 = PositionFactory(title='Pig Keeper')
+        self.position2 = PositionFactory(title='Assistant Pig Keeper')
+        self.place1 = PlaceFactory(city=CityFactory())
+        self.place2 = PlaceFactory(city=CityFactory())
+        self.start_date = PartialDate('1866')
+        self.end_date = PartialDate('1867')
+        description = 'Position1 and Position2, Place1 and Place2, 1866 - 1867'
+        self.assignment = AssignmentFactory(description=description, start_date=self.start_date, end_date=self.end_date)
+        self.assignment.positions.add(self.position1, self.position2)
+        self.assignment.places.add(self.place1, self.place2)
+
+    def test_str(self):
+        """
+        Assignment.__str__() should return a string containing info about positions, places, and dates of Assignment
+        In cases where one of those things can't be accessed without causing an exception
+        (deleting an inline Assignment in Employee admin, for example), __str__() should return Assignment.description
+        """
+
+        self.assertTrue(self.assignment.position_list() in str(self.assignment),
+                        'Assignment.__str__ should contain Assignment.position_list()')
+        self.assertTrue(self.assignment.place_list() in str(self.assignment),
+                        'Assignment.__str__ should contain Assignment.place_list()')
+        self.assertTrue(self.assignment.dates() in str(self.assignment),
+                        'Assignment.__str__ should contain Assignment.dates()')
+
+        # If accessing position_list() causes an exception, __str__() should return description
+        with patch.object(Assignment, 'position_list', side_effect=RecursionError(), autospec=True):
+            self.assertEqual(str(self.assignment), self.assignment.description,
+                'Assignment.__str__ should be equal to Assignment.description if position_list() causes exception')
+
+        # If accessing place_list() causes an exception, __str__() should return description
+        with patch.object(Assignment, 'place_list', side_effect=RecursionError(), autospec=True):
+            self.assertEqual(str(self.assignment), self.assignment.description,
+                'Assignment.__str__ should be equal to Assignment.description if place_list() causes exception')
+
+    def test_dates(self):
+        """
+        Assignment.dates() should return start and end dates, or just start or end,
+        or settings.DEFAULT_EMPTY_FIELD_STRING if no dates are set
+        """
+
+        # Assignment with both start and end dates
+        assignment = AssignmentFactory(start_date=self.start_date, end_date=self.end_date)
+        self.assertTrue(str(self.start_date) in assignment.dates(),
+                        'Assignment.start_date should be in Assignment.dates() if Assignment has start and end dates')
+        self.assertTrue(str(self.end_date) in assignment.dates(),
+                        'Assignment.end_date should be in Assignment.dates() if Assignment has start and end dates')
+
+        # Assignment with just start date
+        assignment = AssignmentFactory(start_date=self.start_date)
+        self.assertTrue(str(self.start_date) in assignment.dates(),
+                        'Assignment.start_date should be in Assignment.dates() if Assignment has only start date')
+
+        # Assignment with just end date
+        assignment = AssignmentFactory(end_date=self.end_date)
+        self.assertTrue(str(self.end_date) in assignment.dates(),
+                        'Assignment.end_date should be in Assignment.dates() if Assignment has only end date')
+
+        # Assignment with no dates
+        assignment = AssignmentFactory()
+        self.assertEqual(assignment.dates(), settings.DEFAULT_EMPTY_FIELD_STRING,
+                        "Assignment.dates() should return '{}' if Assignment has no dates".format(
+                            settings.DEFAULT_EMPTY_FIELD_STRING))
+
+    def test_place_list(self):
+        """
+        Assignment.place_list() should return ' and '-separated list of place names (without country),
+        or settings.DEFAULT_EMPTY_FIELD_STRING if no places are set
+        """
+
+        # Assignment with places
+        for place in [self.place1, self.place2]:
+            self.assertTrue(place.name_without_country() in self.assignment.place_list(),
+                            'Place.name_without_country() should be in Assignment.place_list()')
+
+        # Assignment with no places
+        assignment = AssignmentFactory()
+        self.assertEqual(assignment.place_list(), settings.DEFAULT_EMPTY_FIELD_STRING,
+                         "Assignment.place_list() should return '{}' if Assignment has no places".format(
+                             settings.DEFAULT_EMPTY_FIELD_STRING))
+
+    def test_position_list(self):
+        """
+        Assignment.position_list() should return ' and '-separated list of positions,
+        or settings.DEFAULT_EMPTY_FIELD_STRING if no positions are set
+        """
+
+        # Assignment with positions
+        for position in [self.position1, self.position2]:
+            self.assertTrue(str(position) in self.assignment.position_list(),
+                            'Position should be in Assignment.position_list()')
+
+        # Assignment with no positions
+        assignment = AssignmentFactory()
+        self.assertEqual(assignment.position_list(), settings.DEFAULT_EMPTY_FIELD_STRING,
+                         "Assignment.position_list() should return '{}' if Assignment has no positions".format(
+                             settings.DEFAULT_EMPTY_FIELD_STRING))
 
 
 class AssignmentManagerTestCase(TestCase):

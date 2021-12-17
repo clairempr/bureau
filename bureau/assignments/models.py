@@ -2,6 +2,7 @@ import uuid
 
 from partial_date import PartialDateField
 
+from django.conf import settings
 from django.db import models
 from django.db.models import Q
 
@@ -81,25 +82,34 @@ class Assignment(models.Model):
     objects = AssignmentManager()
 
     def __str__(self):
-        return '{positions}, {places}, {dates}'.format(positions=self.position_list(), places=self.place_list(),
-                                                       dates=self.dates())
+
+        # In cases where one of the elements used in __str__() can't be accessed without causing an exception
+        # (deleting an inline Assignment in Employee admin, for example), __str__() should return Assignment.description
+        try:
+            return '{positions}, {places}, {dates}'.format(positions=self.position_list(), places=self.place_list(),
+                                                           dates=self.dates())
+        except:
+            return self.description
 
     def dates(self):
         # An assignment can have a start date and end date, or just one of those, or none at all
         if self.start_date and self.end_date:
             return '{start} - {end}'.format(start=self.start_date, end=self.end_date)
         elif self.start_date:
-            return self.start_date
+            return str(self.start_date)
         elif self.end_date:
-            return self.end_date
+            return str(self.end_date)
 
-        return 'Unknown'
+        return settings.DEFAULT_EMPTY_FIELD_STRING
 
     def place_list(self):
-        return ' and '.join([place.name_without_country() for place in self.places.all()])
+        if self.places.exists():
+            return ' and '.join([place.name_without_country() for place in self.places.all()])
+
+        return settings.DEFAULT_EMPTY_FIELD_STRING
 
     def position_list(self):
         if self.positions.exists():
             return ' and '.join([str(position) for position in self.positions.all()])
 
-        return 'Unknown'
+        return settings.DEFAULT_EMPTY_FIELD_STRING
