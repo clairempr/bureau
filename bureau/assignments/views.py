@@ -6,6 +6,7 @@ from places.models import Place
 class AssignmentListView(ListView):
 
     model = Assignment
+    queryset = Assignment.objects.all()
     template_name = "assignments/assignment_list.html"
 
     def get_place(self):
@@ -33,7 +34,7 @@ class AssignmentListView(ListView):
         if place:
             return Assignment.objects.in_place(place=place, exact=True).order_by('start_date')
 
-        return Assignment.objects.all()
+        return self.queryset
 
 
 assignment_list_view = AssignmentListView.as_view()
