@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from assignments.tests.factories import AssignmentFactory, PositionFactory
-from assignments.views import AssignmentListView
+from assignments.views import AssignmentListView, BureauHeadquartersAssignmentListView
 from personnel.tests.factories import EmployeeFactory
 from places.tests.factories import CityFactory, CountyFactory, PlaceFactory, RegionFactory
 
@@ -119,3 +119,24 @@ class AssignmentListViewTestCase(TestCase):
                       "AssignmentListView.get_queryset() shouldn't return assignment in state only if county specified")
         self.assertNotIn(assignment_in_franklin, queryset,
                       "AssignmentListView.get_queryset() shouldn't return assignment in city if county specified")
+
+class BureauHeadquartersAssignmentListViewTestCase(TestCase):
+    """
+    Test BureauHeadquartersAssignmentListView
+    """
+
+    def test_get_queryset(self):
+        """
+        get_queryset() should return assignments where bureau_headquarters is set to True
+        """
+
+        view = BureauHeadquartersAssignmentListView()
+
+        bureau_headquarters_assignment = AssignmentFactory(bureau_headquarters=True)
+        other_assignment = AssignmentFactory(bureau_headquarters=False)
+
+        queryset = view.get_queryset()
+        self.assertIn(bureau_headquarters_assignment, queryset,
+            'BureauHeadquartersAssignmentListView.get_queryset() should return Bureau Headquarters assignment')
+        self.assertNotIn(other_assignment, queryset,
+            "BureauHeadquartersAssignmentListView.get_queryset() shouldn't return non-Bureau Headquarters assignment")

@@ -7,6 +7,7 @@ class AssignmentListView(ListView):
 
     model = Assignment
     queryset = Assignment.objects.all()
+    ordering = ['start_date', 'positions__title', 'employee__last_name', 'employee__first_name']
     template_name = "assignments/assignment_list.html"
 
     def get_place(self):
@@ -32,20 +33,20 @@ class AssignmentListView(ListView):
         # If a place is specified, only return assignments in that exact place, not places in that place
         place = self.get_place()
         if place:
-            return Assignment.objects.in_place(place=place, exact=True).order_by('start_date')
+            queryset = Assignment.objects.in_place(place=place, exact=True)
+        else:
+            queryset = self.queryset
 
-        return self.queryset
+        return queryset.order_by(*self.ordering)
 
 
 assignment_list_view = AssignmentListView.as_view()
 
 class BureauHeadquartersAssignmentListView(AssignmentListView):
 
-    queryset = Assignment.objects.filter(bureau_headquarters=True).order_by('start_date')
-
     def get_queryset(self):
         # Return Bureau Headquarters assignments only
-        return Assignment.objects.filter(bureau_headquarters=True).order_by('start_date')
+        return Assignment.objects.filter(bureau_headquarters=True).order_by(*self.ordering)
 
 
 bureau_headquarters_assignment_list_view = BureauHeadquartersAssignmentListView.as_view()
