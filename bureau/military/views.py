@@ -16,7 +16,6 @@ class RegimentListView(ListView):
     paginate_by = 25
     slug_field = "name"
     slug_url_kwarg = "name"
-    ordering = ('number', 'name',)
     queryset = Regiment.objects.all()
     regiment_type = 'all_regiments'
 
