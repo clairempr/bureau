@@ -96,11 +96,6 @@ class AssignmentInline(admin.TabularInline):
     extra = 0
     raw_id_fields = ('places',)
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "position":
-            kwargs["queryset"] = Position.objects.all().order_by('title')
-        return super(AssignmentInline, self).formfield_for_foreignkey(db_field, request, **kwargs)
-
 
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'bureau_state', 'vrc', 'needs_backfilling', 'place_of_birth', 'age_in_1865',)
