@@ -1,15 +1,18 @@
 import string
 
+from partial_date import PartialDate
+
 from django.contrib.admin import site
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from django.urls import reverse
 from django.test import Client, RequestFactory, TestCase
 
+from assignments.tests.factories import AssignmentFactory
 from military.tests.factories import RegimentFactory
 from places.tests.factories import PlaceFactory, RegionFactory
 
-from personnel.admin import DateOfBirthFilledListFilter, EmployeeAdmin, FirstLetterListFilter, \
+from personnel.admin import DateOfBirthFilledListFilter, EmployeeAdmin, EmploymentYearListFilter, FirstLetterListFilter, \
     PlaceOfBirthFilledListFilter, USCTListFilter, YES_NO_LOOKUPS
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
@@ -118,6 +121,43 @@ class DateOfBirthFilledListFilterTestCase(EmployeeAdminFilterTestCase):
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), {employee_no_dob})
+
+
+class EmploymentYearListFilterTestCase(EmployeeAdminFilterTestCase):
+    """
+    Test EmploymentYearListFilter
+    """
+
+    def test_lookups(self):
+        employee_1865_1866 = EmployeeFactory()
+        employee_1867_1868 = EmployeeFactory()
+
+        AssignmentFactory(start_date=PartialDate('1865-10'), end_date=PartialDate('1866-01'),
+                          employee=employee_1865_1866)
+        AssignmentFactory(start_date=PartialDate('1867-06'), end_date=PartialDate('1868-03'),
+                          employee=employee_1867_1868)
+
+        request = self.request_factory.get('/')
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
+
+        # Lookups should be a range of years from earliest Assignment start_date to latest Assignment end_date
+        filter = EmploymentYearListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
+        expected = [(year, year) for year in [1865, 1866, 1867, 1868]]
+        self.assertEqual(sorted(filter.lookup_choices), expected)
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {employee_1865_1866, employee_1867_1868})
+
+        # Look for employees who worked in 1867
+        request = self.request_factory.get('/', {'employment_year': '1867'})
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
+
+        # Make sure the correct queryset is returned
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), {employee_1867_1868})
 
 
 class FirstLetterListFilterTestCase(EmployeeAdminFilterTestCase):
