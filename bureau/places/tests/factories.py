@@ -32,6 +32,7 @@ class CountyFactory(DjangoModelFactory):
     Base County factory
     """
 
+    name = Faker('last_name')
     name_ascii = LazyAttribute(lambda obj: obj.name)
     country = SubFactory(CountryFactory)
 

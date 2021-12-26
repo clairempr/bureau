@@ -8,14 +8,25 @@ from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from places.admin import CityAdmin, CountyAdmin, InUseListFilter, PopulationListFilter
-from places.models import City, County
-from places.tests.factories import CityFactory, PlaceFactory
+from places.models import City, County, Place
+from places.tests.factories import CityFactory, CountryFactory, CountyFactory, PlaceFactory, RegionFactory
 
 
 User = get_user_model()
 
 
-class CityAdminTestCase(TestCase):
+class AdminTestCase(TestCase):
+    """
+    Base class for testing places Admin
+    """
+
+    def setUp(self):
+        # Set up superuser to log in to admin
+        User.objects.create_superuser(username='fred', password='secret', email='email')
+        self.client.login(username='fred', password='secret')
+
+
+class CityAdminTestCase(AdminTestCase):
     """
     Tests for CityAdmin
     """
@@ -26,9 +37,6 @@ class CityAdminTestCase(TestCase):
         If request has a GET parameter 'geonames_search', get_changeform_initial_data() should call
         geonames_city_lookup() with those search terms and return the result
         """
-
-        User.objects.create_superuser(username='fred', password='secret', email='email')
-        self.client.login(username='fred', password='secret')
 
         self.client.get(reverse('admin:places_city_add'))
         self.assertEqual(mock_geonames_city_lookup.call_count, 0,
@@ -171,7 +179,7 @@ class CityAdminListFilterTestCase(TestCase):
         self.assertSetEqual(set(queryset), {city_with_pop_0, city_with_pop_1, city_with_pop_500, city_with_pop_1000})
 
 
-class CountyAdminTestCase(TestCase):
+class CountyAdminTestCase(AdminTestCase):
     """
     Tests for CountyAdmin
     """
@@ -183,9 +191,6 @@ class CountyAdminTestCase(TestCase):
         geonames_county_lookup() with those search terms and return the result
         """
 
-        User.objects.create_superuser(username='fred', password='secret', email='email')
-        self.client.login(username='fred', password='secret')
-
         self.client.get(reverse('admin:places_county_add'))
         self.assertEqual(mock_geonames_county_lookup.call_count, 0,
                          "geonames_county_lookup() shouldn't be called if no 'geonames_search' GET parameter supplied")
@@ -194,3 +199,55 @@ class CountyAdminTestCase(TestCase):
         self.assertEqual(mock_geonames_county_lookup.call_count, 1,
                          "geonames_county_lookup() should be called if 'geonames_search' GET parameter supplied")
         mock_geonames_county_lookup.reset_mock()
+
+
+class PlaceAdminTestCase(AdminTestCase):
+    """
+    Tests for PlaceAdmin
+    """
+
+    def test_save_model(self):
+        """
+        save_model() should make sure that region and country don't conflict with selected city
+        """
+
+        url = reverse('admin:places_place_add')
+
+        city = CityFactory()
+        county = CountyFactory()
+        region = RegionFactory()
+        country = CountryFactory()
+
+        # Keep track of pks of Places after they're created, to be able to retrieve the Place that has just been created
+        existing_places_pks = []
+
+        # If city is supplied, Place should be assigned the region and country of that city
+        self.client.post(url,
+                         {'id': 1, 'city': city.id, 'region': region.id, 'country': country.id},
+                         follow=True,)
+        place = Place.objects.last()
+        existing_places_pks.append(place.pk)
+        self.assertEqual(place.region, city.region,
+                         "PlaceAdmin.save_model() should get Place's region from its city.region")
+        self.assertEqual(place.country, city.country,
+                         "PlaceAdmin.save_model() should get Place's country from its city.country")
+
+        # If county is supplied (and not city), Place should be assigned the state and country of that county
+        self.client.post(url,
+                         {'id': 2, 'county': county.id, 'region': region.id, 'country': country.id},
+                         follow=True, )
+        place = Place.objects.exclude(pk__in=existing_places_pks).last()
+        existing_places_pks.append(place.pk)
+        self.assertEqual(place.region, county.state,
+                         "PlaceAdmin.save_model() should get Place's region from its county.state")
+        self.assertEqual(place.country, county.country,
+                         "PlaceAdmin.save_model() should get Place's country from its county.country")
+
+        # If region is supplied (and not city or county), Place should be assigned the country of that region
+        self.client.post(url,
+                         {'id': 3, 'region': region.id, 'country': country.id},
+                         follow=True, )
+        place = Place.objects.exclude(pk__in=existing_places_pks).last()
+        existing_places_pks.append(place.pk)
+        self.assertEqual(place.country, region.country,
+                         "PlaceAdmin.save_model() should get Place's country from its region.country")
