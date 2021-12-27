@@ -57,7 +57,7 @@ region_items_pre_import.connect(filter_region_import)
 
 # Signal to set bureau_operations to True in selected states post-import
 def set_region_fields(sender, instance, items, **kwargs):
-    if instance.country == 'US' and instance.geoname_code in BUREAU_STATES:
+    if instance.country.code2 == 'US' and instance.geoname_code in BUREAU_STATES:
         instance.bureau_operations = True
 
 region_items_post_import.connect(set_region_fields)

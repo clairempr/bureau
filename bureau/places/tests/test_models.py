@@ -61,6 +61,34 @@ class ImportTestCase(TestCase):
         items = {IRegion.code: 'DExxx'}
         self.assertRaises(InvalidItems, filter_region_import, None, items)
 
+    @override_settings(BUREAU_STATES=['AL', 'ENG'])
+    def test_set_region_fields(self):
+        """
+        set_region_fields() is used by the region_items_post_import signal to set bureau_operations to True in
+        regions where country is "US" and geoname_code is listed in BUREAU_STATES setting
+        """
+        us = CountryFactory(code2='US')
+        alabama = RegionFactory(country=us, geoname_code='AL', name='Alabama')
+        vermont = RegionFactory(country=us, geoname_code='VT', name='Vermont')
+
+        uk = CountryFactory(code2='GB')
+        england = RegionFactory(country=uk, geoname_code='ENG', name='England')
+
+        # State in BUREAU_STATES list should get bureau_operations set to True
+        set_region_fields(sender=None, instance=alabama, items={})
+        self.assertTrue(alabama.bureau_operations,
+                        'State in BUREAU_STATES list should get bureau_operations set to True')
+
+        # State not in BUREAU_STATES list shouldn't get bureau_operations set to True
+        set_region_fields(sender=None, instance=vermont, items={})
+        self.assertFalse(vermont.bureau_operations,
+                        "State not in BUREAU_STATES list shouldn't get bureau_operations set to True")
+
+        # Region not in US shouldn't get bureau_operations set to True
+        set_region_fields(sender=None, instance=england, items={})
+        self.assertFalse(england.bureau_operations,
+                        "Region not in US shouldn't get bureau_operations set to True")
+
 
 class RegionTestCase(TestCase):
     """
