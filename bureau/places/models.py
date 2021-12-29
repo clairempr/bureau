@@ -115,7 +115,7 @@ class Place(models.Model):
         return str(self.country)
 
     def name_without_country(self):
-        # Return place name without country, unless place consists of only a country
+        # Return place name without country, if place has a region defined
         name = str(self)
 
         country_suffix = ', {}'.format(str(self.country))

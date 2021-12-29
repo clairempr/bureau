@@ -1,11 +1,12 @@
 from cities_light.exceptions import InvalidItems
 from cities_light.settings import ICity, IRegion
 
+from django.core.exceptions import ValidationError
 from django.test import override_settings, TestCase
 
 from personnel.tests.factories import EmployeeFactory
 from places.models import filter_city_import, filter_region_import, set_region_fields
-from places.tests.factories import CountryFactory, CountyFactory, RegionFactory
+from places.tests.factories import CityFactory, CountryFactory, CountyFactory, PlaceFactory, RegionFactory
 
 
 class CountyTestCase(TestCase):
@@ -88,6 +89,100 @@ class ImportTestCase(TestCase):
         set_region_fields(sender=None, instance=england, items={})
         self.assertFalse(england.bureau_operations,
                         "Region not in US shouldn't get bureau_operations set to True")
+
+
+class PlaceTestCase(TestCase):
+    """
+    Test Place model
+    """
+
+    def test_str(self):
+        """
+        If Place has a city, county, or region defined, it should be used in __str__, otherwise country should be used
+        """
+
+        city = CityFactory(name='Jonesboro')
+        county = CountyFactory(name='Clayton')
+        region = RegionFactory(name='Georgia')
+        country = CountryFactory(code2='US')
+
+        self.assertEqual(str(PlaceFactory(city=city)), str(city),
+                         'If Place has a city defined, str(place) should be str(city)')
+        self.assertEqual(str(PlaceFactory(county=county)), str(county),
+                         'If Place has a county defined, str(place) should be str(county)')
+        self.assertEqual(str(PlaceFactory(region=region)), str(region),
+                         'If Place has a region defined, str(place) should be str(region)')
+        self.assertEqual(str(PlaceFactory(country=country)), str(country),
+                         'If Place has only a country defined, str(place) should be str(country)')
+
+    def test_name_without_country(self):
+        """
+        name_without_country() should return place name without country, if place has a region defined
+        """
+
+        # If place has a region defined, name_without_country() shouldn't include country name
+        us = CountryFactory(name='United States')
+        georgia = RegionFactory(name='Georgia', country=us)
+        jonesboro = CityFactory(name='Jonesboro', region=georgia, country=us)
+
+        self.assertFalse(str(us) in PlaceFactory(city=jonesboro).name_without_country(),
+                         "Place.name_without_country() shouldn't include country name if region defined")
+
+        # If place has no region defined, name_without_country() should include country name
+        bohemia = CountryFactory(name='Bohemia')
+        neuhaus = CityFactory(name='Neuhaus', country=bohemia)
+
+        self.assertTrue(str(bohemia) in str(PlaceFactory(city=neuhaus)),
+                        'Place.name_without_country() should include country name if no region defined')
+
+    def test_clean(self):
+        """
+        clean() should make sure that either city, county, region, or country is filled
+        """
+
+        # When Place has no city, county, region, or country, a ValidationError should be raised
+        self.assertRaises(ValidationError, PlaceFactory().clean)
+
+        # When place has a city, no error should be raised
+        PlaceFactory(city=CityFactory(), county=None, region=None, country=None).clean()
+
+        # When place has a county, no error should be raised
+        PlaceFactory(county=CountyFactory(), city=None, region=None, country=None).clean()
+
+        # When place has a region, no error should be raised
+        PlaceFactory(region=RegionFactory(), city=None, county=None, country=None).clean()
+
+        # When place has a country, no error should be raised
+        PlaceFactory(country=CountryFactory(), city=None, county=None, region=None).clean()
+
+    def test_save(self):
+        """
+        save() should make sure that region and country don't conflict with selected city
+        """
+
+        city = CityFactory()
+        county = CountyFactory()
+        region = RegionFactory()
+        country = CountryFactory()
+
+        # If city is supplied, Place should be assigned the region and country of that city
+        place = PlaceFactory(city=city, region=region, country=country)
+        self.assertEqual(place.region, city.region,
+                         "Place.save() should get Place's region from its city.region")
+        self.assertEqual(place.country, city.country,
+                         "Place.save() should get Place's country from its city.country")
+
+        # If county is supplied (and not city), Place should be assigned the state and country of that county
+        place = PlaceFactory(county=county, region=region, country=country)
+        self.assertEqual(place.region, county.state,
+                         "Place.save() should get Place's region from its county.state")
+        self.assertEqual(place.country, county.country,
+                         "Place.save() should get Place's country from its county.country")
+
+        # If region is supplied (and not city or county), Place should be assigned the country of that region
+        place = PlaceFactory(region=region, country=country)
+        self.assertEqual(place.country, region.country,
+                         "Place.save() should get Place's country from its region.country")
 
 
 class RegionTestCase(TestCase):
