@@ -7,8 +7,11 @@ from assignments.tests.factories import AssignmentFactory
 from medical.tests.factories import AilmentFactory, AilmentTypeFactory
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
+from places.forms import GeoNamesLookupForm
 from places.tests.factories import CityFactory, CountyFactory, PlaceFactory, RegionFactory
-from places.views import BureauStateDetailView, get_float_format, get_number_employees_born_in_bureau_state
+from places.views import BureauStateDetailView, GeoNamesCityLookupView, GeoNamesCountyLookupView, \
+    GeoNamesLookupBaseView, get_float_format, get_number_employees_born_in_bureau_state
+
 
 class BureauStateDetailViewTestCase(TestCase):
     """
@@ -141,6 +144,63 @@ class BureauStateDetailViewTestCase(TestCase):
         self.assertEqual(mock_get_float_format.call_count, len(returned_stats_labels) - 2,
                          'get_stats() should call get_float_format() for all but 2 stats')
 
+
+class GeoNamesLookupBaseViewTestCase(TestCase):
+    """
+    Test GeoNamesLookupBaseView
+    """
+
+    def test_form_valid(self):
+        """
+        form_valid() should set GeoNamesLookupBaseView.geonames_search to value of form's 'geonames_search' field
+        """
+
+        view = GeoNamesLookupBaseView(success_url='just needs a value')
+
+        geonames_search = 'Null Island'
+        form = GeoNamesLookupForm(data={'geonames_search': geonames_search})
+
+        # Call form.is_valid() to populate cleaned_data
+        form.is_valid()
+        view.form_valid(form)
+        self.assertEqual(view.geonames_search, geonames_search,
+                         "GeoNamesLookupBaseView.geonames_search should get its value from 'geonames_search' field")
+
+
+class GeoNamesCityLookupViewTestCase(TestCase):
+    """
+    Test GeoNamesCityLookupView
+    """
+
+    def test_get_success_url(self):
+        """
+        success_url should include value of view's geonames_search in parameters
+        """
+
+        view = GeoNamesCityLookupView()
+        view.geonames_search = 'Null Island'
+
+        self.assertTrue('geonames_search={}'.format(view.geonames_search) in view.get_success_url(),
+                        "GeoNamesCityLookupView's success_url should include value of geonames_search in parameters")
+
+
+class GeoNamesCountyLookupViewTestCase(TestCase):
+    """
+    Test GeoNamesCountyLookupView
+    """
+
+    def test_get_success_url(self):
+        """
+        success_url should include value of view's geonames_search in parameters
+        """
+
+        view = GeoNamesCountyLookupView()
+        view.geonames_search = 'Null Island'
+
+        self.assertTrue('geonames_search={}'.format(view.geonames_search) in view.get_success_url(),
+                        "GeoNamesCountyLookupView's success_url should include value of geonames_search in parameters")
+
+
 class GetFloatFormatTestCase(TestCase):
     """
     get_float_format(number, places) should return number formatted with specified number of decimal places,
@@ -154,6 +214,7 @@ class GetFloatFormatTestCase(TestCase):
                          'get_float_format() should return number formatted with 2 decimal places')
         self.assertEqual(get_float_format(100, 2), '100',
                          'get_float_format() should return number formatted with no decimal places if divisible by 100')
+
 
 class GetNumberEmployeesBornInBureauStateTestCase(TestCase):
     """
