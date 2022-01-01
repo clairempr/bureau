@@ -5,6 +5,7 @@ from medical.tests.factories import AilmentFactory
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 from places.tests.factories import CountryFactory, PlaceFactory, RegionFactory
+from stats.views import get_places_with_pks_for_context
 
 class DetailedViewTestCase(TestCase):
     """
@@ -73,6 +74,25 @@ class GeneralViewTestCase(TestCase):
     def test_template_used(self):
         response = self.client.get(self.url)
         self.assertTemplateUsed(response, 'stats/general.html')
+
+
+class GetPlacesWithPksForContextTestCase(TestCase):
+    """
+    get_places_with_pks_for_context() should take list of place names (country or region) and counts,
+    get the corresponding Place, and return list of names, pks, and counts
+    """
+
+    def get_places_with_pks_for_context(self):
+        PlaceFactory(country=CountryFactory(name='Canada'))
+        new_york = PlaceFactory(region=RegionFactory(name='New York', country=CountryFactory(name='United States')))
+        spain = PlaceFactory(country=CountryFactory(name='Spain'))
+
+        input = [('New York', 'United States', 43), (None, 'Spain', 5)]
+        expected_output = [('New York', new_york.pk, 43), ('Spain', spain.pk, 5)]
+
+        # Compare the lists as sets because order isn't important
+        self.assertSetEqual(set(get_places_with_pks_for_context(input)), set(expected_output),
+                            'get_places_with_pks_for_context() should return names, pks, and counts for places from input')
 
 
 class StateComparisonViewTestCase(TestCase):

@@ -166,8 +166,8 @@ def get_top_deathplaces(number=25):
 
 def get_places_with_pks_for_context(place_names_and_counts):
     """
-    Take list of place names (country or region) and counts, get the corresponding Place,
-    and return list of names, pks, and counts
+    Take list of place names (country or region) and counts in the format (region, country, count),
+    get the corresponding Place, and return list of names, pks, and counts
     """
     context_places = []
 
