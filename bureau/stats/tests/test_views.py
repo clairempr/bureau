@@ -82,7 +82,7 @@ class GetPlacesWithPksForContextTestCase(TestCase):
     get the corresponding Place, and return list of names, pks, and counts
     """
 
-    def get_places_with_pks_for_context(self):
+    def test_get_places_with_pks_for_context(self):
         PlaceFactory(country=CountryFactory(name='Canada'))
         new_york = PlaceFactory(region=RegionFactory(name='New York', country=CountryFactory(name='United States')))
         spain = PlaceFactory(country=CountryFactory(name='Spain'))
