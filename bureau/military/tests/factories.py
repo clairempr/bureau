@@ -1,4 +1,4 @@
-from factory import DjangoModelFactory, Faker
+from factory import DjangoModelFactory
 
 from ..models import Regiment
 

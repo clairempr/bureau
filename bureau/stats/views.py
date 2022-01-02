@@ -188,104 +188,110 @@ class StateComparisonView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        stats = []
-
-        total_employees = Region.objects.bureau_state().annotate(
-            total=Cast(Count('employee_employed'), FloatField()))
-
-        # Top employee count
-        top_total = total_employees.annotate(value=F('total')).exclude(value=0).order_by('-value')[:5]
-        stats.append(('Employee count', top_total))
-
-        # Top % VRC employees
-        top_vrc_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__vrc=True)), FloatField()) / F(
-                'total') * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% VRC employees', top_vrc_percent))
-
-        # Top % USCT employees
-        top_usct_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__in=Employee.objects.usct())),
-                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% USCT employees', top_usct_percent))
-
-        if Employee.objects.birthplace_known().exists():
-            # Top % foreign-born employees
-            top_foreign_born_percent = total_employees.annotate(
-                value=Cast(Count('employee_employed', filter=Q(employee_employed__in=Employee.objects.foreign_born())),
-                           FloatField()) / Cast(Count('employee_employed',
-                                                      filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
-                           FloatField()) * 100).exclude(value=0).order_by('-value')[:5]
-            stats.append(('% Foreign-born employees', top_foreign_born_percent))
-
-            # Top % employees born in that state
-            top_born_in_state_percent = total_employees.annotate(
-                value=Cast(Count('employee_employed', filter=Q(employee_employed__place_of_birth__region__id=F('id'))),
-                           FloatField()) / Cast(Count('employee_employed',
-                                                      filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
-                                                FloatField()) * 100).exclude(value=0).order_by('-value')[:5]
-            stats.append(('% Employees born there', top_born_in_state_percent))
-
-        # Top % female employees
-        top_female_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__gender=Employee.FEMALE)),
-                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% Female employees', top_female_percent))
-
-        # Top % employees who died during assignment
-        top_died_during_assignment_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__died_during_assignment=True)),
-                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% Employees who died during assignment', top_died_during_assignment_percent))
-
-        # Top % employees identified as "colored"
-        top_colored_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__colored=True)),
-                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% Employees identified as "colored"', top_colored_percent))
-
-        # Top # former slave employees
-        top_former_slave_percent = total_employees.annotate(
-            value=Count('employee_employed', filter=Q(employee_employed__former_slave=True))).exclude(
-            value=0).order_by('-value')[:5]
-        stats.append(('Former slave employees', top_former_slave_percent))
-
-        # Top % former slaveholder employees
-        top_slaveholder_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__slaveholder=True)),
-                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% Former slaveholder employees', top_slaveholder_percent))
-
-        # Top % ex-Confederate employees
-        top_confederate_percent = total_employees.annotate(
-            value=Cast(Count('employee_employed', filter=Q(employee_employed__confederate_veteran=True)),
-                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-        stats.append(('% Ex-Confederate employees', top_confederate_percent))
-
-        # Top # left-hand penmanship contest entrants
-        top_penmanship_contest = total_employees.annotate(
-            value=Count('employee_employed', filter=Q(employee_employed__penmanship_contest=True))).exclude(
-            value=0).order_by('-value')[:5]
-        stats.append(('Left-hand penmanship contest entrants', top_penmanship_contest))
-
-        # Breakdown per AilmentType
-        for ailment_type in AilmentType.objects.all():
-            top_ailment_type_percent = total_employees.annotate(
-                value=Cast(Count('employee_employed', filter=Q(employee_employed__ailments__type=ailment_type)),
-                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-            stats.append(('% With {}'.format(ailment_type), top_ailment_type_percent))
-
-            # Breakdown per Ailment, if more than one for the type
-            if ailment_type.ailments.count() > 1:
-                for ailment in ailment_type.ailments.all():
-                    top_ailment_percent = total_employees.annotate(
-                        value=Cast(Count('employee_employed', filter=Q(employee_employed__ailments=ailment)),
-                                   FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:5]
-                    stats.append(('% With {}'.format(ailment), top_ailment_percent))
-
-        context['stats'] = stats
+        context['stats'] = get_state_comparison_stats(number=5)
         return context
 
 
 state_comparison_view = StateComparisonView.as_view()
+
+def get_state_comparison_stats(number=5):
+    """
+    Return stats on the top number Bureau states for various measures
+    """
+
+    stats = []
+
+    total_employees = Region.objects.bureau_state().annotate(
+        total=Cast(Count('employee_employed'), FloatField()))
+
+    # Top employee count
+    top_total = total_employees.annotate(value=F('total')).exclude(value=0).order_by('-value')[:number]
+    stats.append(('Employee count', top_total))
+
+    # Top % VRC employees
+    top_vrc_percent = total_employees.annotate(
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__vrc=True)), FloatField()) / F(
+            'total') * 100).exclude(value=0).order_by('-value')[:number]
+    stats.append(('% VRC employees', top_vrc_percent))
+
+    # Top % USCT employees
+    top_usct_percent = total_employees.annotate(
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__in=Employee.objects.usct())),
+                   FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+    stats.append(('% USCT employees', top_usct_percent))
+
+    if Employee.objects.birthplace_known().exists():
+        # Top % foreign-born employees
+        top_foreign_born_percent = total_employees.annotate(
+            value=Cast(Count('employee_employed', filter=Q(employee_employed__in=Employee.objects.foreign_born())),
+                       FloatField()) / Cast(Count('employee_employed',
+                                                  filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
+                                            FloatField()) * 100).exclude(value=0).order_by('-value')[:number]
+        stats.append(('% Foreign-born employees', top_foreign_born_percent))
+
+        # Top % employees born in that state
+        top_born_in_state_percent = total_employees.annotate(
+            value=Cast(Count('employee_employed', filter=Q(employee_employed__place_of_birth__region__id=F('id'))),
+                       FloatField()) / Cast(Count('employee_employed',
+                                                  filter=Q(employee_employed__in=Employee.objects.birthplace_known())),
+                                            FloatField()) * 100).exclude(value=0).order_by('-value')[:number]
+        stats.append(('% Employees born there', top_born_in_state_percent))
+
+    # Top % female employees
+    top_female_percent = total_employees.annotate(
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__gender=Employee.FEMALE)),
+                   FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+    stats.append(('% Female employees', top_female_percent))
+
+    # Top % employees who died during assignment
+    top_died_during_assignment_percent = total_employees.annotate(
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__died_during_assignment=True)),
+                   FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+    stats.append(('% Employees who died during assignment', top_died_during_assignment_percent))
+
+    # Top % employees identified as "colored"
+    top_colored_percent = total_employees.annotate(
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__colored=True)),
+                   FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+    stats.append(('% Employees identified as "colored"', top_colored_percent))
+
+    # Top # former slave employees
+    top_former_slave_percent = total_employees.annotate(
+        value=Count('employee_employed', filter=Q(employee_employed__former_slave=True))).exclude(
+        value=0).order_by('-value')[:number]
+    stats.append(('Former slave employees', top_former_slave_percent))
+
+    # Top % former slaveholder employees
+    top_slaveholder_percent = total_employees.annotate(
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__slaveholder=True)),
+                   FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+    stats.append(('% Former slaveholder employees', top_slaveholder_percent))
+
+    # Top % ex-Confederate employees
+    top_confederate_percent = total_employees.annotate(
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__confederate_veteran=True)),
+                   FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+    stats.append(('% Ex-Confederate employees', top_confederate_percent))
+
+    # Top # left-hand penmanship contest entrants
+    top_penmanship_contest = total_employees.annotate(
+        value=Count('employee_employed', filter=Q(employee_employed__penmanship_contest=True))).exclude(
+        value=0).order_by('-value')[:number]
+    stats.append(('Left-hand penmanship contest entrants', top_penmanship_contest))
+
+    # Breakdown per AilmentType
+    for ailment_type in AilmentType.objects.all():
+        top_ailment_type_percent = total_employees.annotate(
+            value=Cast(Count('employee_employed', filter=Q(employee_employed__ailments__type=ailment_type)),
+                       FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+        stats.append(('% With {}'.format(ailment_type), top_ailment_type_percent))
+
+        # Breakdown per Ailment, if more than one for the type
+        if ailment_type.ailments.count() > 1:
+            for ailment in ailment_type.ailments.all():
+                top_ailment_percent = total_employees.annotate(
+                    value=Cast(Count('employee_employed', filter=Q(employee_employed__ailments=ailment)),
+                               FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
+                stats.append(('% With {}'.format(ailment), top_ailment_percent))
+
+    return stats
