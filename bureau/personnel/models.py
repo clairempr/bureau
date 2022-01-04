@@ -226,6 +226,12 @@ class Employee(models.Model):
             return self.date_of_death.date.year - self.date_of_birth.date.year
         return None
 
+    def assignments_in_order(self):
+        """
+        Return assignments in the order they should be shown in employee details
+        """
+        return self.assignments.order_by('start_date')
+
     def bureau_state_list(self):
         return ', '.join([state.name for state in self.bureau_states.all()])
 

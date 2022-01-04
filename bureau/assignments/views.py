@@ -1,3 +1,4 @@
+from django.contrib.postgres.aggregates import StringAgg
 from django.views.generic import ListView
 
 from assignments.models import Assignment
@@ -7,7 +8,7 @@ class AssignmentListView(ListView):
 
     model = Assignment
     queryset = Assignment.objects.all()
-    ordering = ['start_date', 'positions__title', 'employee__last_name', 'employee__first_name']
+    ordering = ['start_date', 'concatenated_titles', 'employee__last_name', 'employee__first_name']
     template_name = "assignments/assignment_list.html"
 
     def get_place(self):
@@ -37,7 +38,16 @@ class AssignmentListView(ListView):
         else:
             queryset = self.queryset
 
-        return queryset.order_by(*self.ordering)
+        # Annotate to order by position titles without duplicate entries when assignment has multiple positions
+        return self.annotate_titles(queryset).order_by(*self.ordering)
+
+    def annotate_titles(self, queryset):
+        """
+        Annotate to order by position titles without duplicate entries when assignment has multiple positions
+        """
+
+        # StringAgg is Postgres-only
+        return queryset.annotate(concatenated_titles=StringAgg('positions__title', delimiter=''))
 
 
 assignment_list_view = AssignmentListView.as_view()
@@ -46,7 +56,8 @@ class BureauHeadquartersAssignmentListView(AssignmentListView):
 
     def get_queryset(self):
         # Return Bureau Headquarters assignments only
-        return Assignment.objects.filter(bureau_headquarters=True).order_by(*self.ordering)
+        # Annotate to order by position titles without duplicate entries when assignment has multiple positions
+        return self.annotate_titles(Assignment.objects.filter(bureau_headquarters=True)).order_by(*self.ordering)
 
 
 bureau_headquarters_assignment_list_view = BureauHeadquartersAssignmentListView.as_view()

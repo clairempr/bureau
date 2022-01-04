@@ -3,6 +3,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.urls import reverse
 
+from assignments.models import Assignment
 from assignments.tests.factories import AssignmentFactory, PositionFactory
 from assignments.views import AssignmentListView, BureauHeadquartersAssignmentListView
 from personnel.tests.factories import EmployeeFactory
@@ -119,6 +120,36 @@ class AssignmentListViewTestCase(TestCase):
                       "AssignmentListView.get_queryset() shouldn't return assignment in state only if county specified")
         self.assertNotIn(assignment_in_franklin, queryset,
                       "AssignmentListView.get_queryset() shouldn't return assignment in city if county specified")
+
+    def test_annotate_titles(self):
+        """
+        annotate_titles() should annotate the assignments queryset with 'concatenated_titles' containing the titles of
+        all of an assignment's positions
+        """
+
+        agent_position = PositionFactory(title='Agent')
+        clerk_position = PositionFactory(title='Clerk')
+        d_o_position = PositionFactory(title='Disbursing Officer')
+
+        agent_and_d_o_assignment = AssignmentFactory()
+        agent_and_d_o_assignment.positions.add(agent_position, d_o_position)
+
+        clerk_assignment = AssignmentFactory()
+        clerk_assignment.positions.add(clerk_position)
+
+        annotated_assignments = self.view.annotate_titles(Assignment.objects.all())
+
+        # Make sure all the position titles can be found in 'concatenated_titles' that was added as an annotation
+        annotated_agent_and_d_o_assignment = annotated_assignments.get(pk=agent_and_d_o_assignment.pk)
+        self.assertTrue('Agent' in annotated_agent_and_d_o_assignment.concatenated_titles,
+                        "'Agent' should be included in 'concatenated_titles' for assignment")
+        self.assertTrue('Disbursing Officer' in annotated_agent_and_d_o_assignment.concatenated_titles,
+                        "'Disbursing Officer' should be included in 'concatenated_titles' for assignment")
+
+        annotated_clerk_assignment = annotated_assignments.get(pk=clerk_assignment.pk)
+        self.assertTrue('Clerk' in annotated_clerk_assignment.concatenated_titles,
+                        "'Clerk' should be included in 'concatenated_titles' for assignment")
+
 
 class BureauHeadquartersAssignmentListViewTestCase(TestCase):
     """

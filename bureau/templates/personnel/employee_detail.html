@@ -141,7 +141,7 @@
       </div>
       <div class="col">
         <ul class="list-unstyled">
-          {% for assignment in object.assignments.all %}
+          {% for assignment in object.assignments_in_order %}
             <li>
               {% if assignment.bureau_headquarters %}
                 <a href="{% url 'assignments:bureau_headquarters_assignment_list' %}"
@@ -151,8 +151,8 @@
                 {{ assignment.position_list }},
                 {% for place in assignment.places.all %}
                   <a href="{% url 'assignments:assignment_list' place.pk %}"
-                     title="Assignments at {{ place.name_without_country }}">{{ place.name_without_country }}
-                  </a>{% if not forloop.last %} and {% endif %}{% endfor %},
+                     title="Assignments at {{ place.name_without_country }}">
+                    {{ place.name_without_country }}</a>{% if not forloop.last %} and {% endif %}{% endfor %},
                 {{ assignment.dates }}
               {% endif %}
             </li>

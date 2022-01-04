@@ -2,7 +2,7 @@ from partial_date import PartialDate
 
 from django.test import TestCase
 
-from assignments.tests.factories import AssignmentFactory
+from assignments.tests.factories import AssignmentFactory, PositionFactory
 from military.tests.factories import RegimentFactory
 from places.tests.factories import CityFactory, CountryFactory, CountyFactory, PlaceFactory, RegionFactory
 
@@ -473,6 +473,23 @@ class EmployeeTestCase(TestCase):
         self.assertEqual(
             EmployeeFactory(date_of_birth=PartialDate('1840'), date_of_death=PartialDate('1890')).age_at_death(), 50,
                             "age_at_death() should be death year - birth year")
+
+    def test_assignments_in_order(self):
+        """
+        assignments_in_order() should return employee's assignments ordered by start_date
+        """
+
+        employee = EmployeeFactory()
+
+        assignment_1868 = AssignmentFactory(start_date=PartialDate('1868'), employee=employee)
+        assignment_1868.positions.add(PositionFactory(title='Agent'))
+        assignment_1865 = AssignmentFactory(start_date=PartialDate('1865'), employee=employee)
+        assignment_1865.positions.add(PositionFactory(title='Assistant Superintendent'))
+        assignment_1867 = AssignmentFactory(start_date=PartialDate('1867'), employee=employee)
+        assignment_1867.positions.add(PositionFactory(title='Subassistant Commissioner'))
+
+        self.assertEqual(list(employee.assignments_in_order()), [assignment_1865, assignment_1867, assignment_1868],
+                         'assignments_in_order() should return assignments ordered by start_date')
 
     def test_calculate_age(self):
         """
