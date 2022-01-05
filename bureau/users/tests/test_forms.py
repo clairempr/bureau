@@ -1,12 +1,13 @@
-import pytest
+from django.test import TestCase
 
 from bureau.users.forms import UserCreationForm
 from bureau.users.tests.factories import UserFactory
 
-pytestmark = pytest.mark.django_db
 
-
-class TestUserCreationForm:
+class UserCreationFormTestCase(TestCase):
+    """
+    Test UserCreationForm
+    """
 
     def test_clean_username(self):
         # A user with proto_user params does not exist yet.

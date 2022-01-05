@@ -1,8 +1,13 @@
-import pytest
-from django.conf import settings
+from django.test import TestCase
 
-pytestmark = pytest.mark.django_db
+from bureau.users.tests.factories import UserFactory
 
 
-def test_user_get_absolute_url(user: settings.AUTH_USER_MODEL):
-    assert user.get_absolute_url() == f"/users/{user.username}/"
+class UserTestCase(TestCase):
+    """
+    Test User model
+    """
+
+    def test_user_get_absolute_url(self):
+        user = UserFactory()
+        assert user.get_absolute_url() == f"/users/{user.username}/"
