@@ -1,5 +1,6 @@
 [run]
 include = bureau/*
 omit = *migrations*, *tests*
+branch = True
 plugins =
     django_coverage_plugin
