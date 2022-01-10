@@ -5,8 +5,8 @@ from unittest.mock import Mock, patch
 from django.conf import settings
 from django.test import override_settings, TestCase
 
-from .factories import CountryFactory, RegionFactory
-from ..utils import geonames_city_lookup, geonames_county_lookup, geonames_lookup
+from places.tests.factories import CountryFactory, RegionFactory
+from places.utils import geonames_city_lookup, geonames_county_lookup, geonames_lookup
 
 
 class GeonamesLookupTestCase(TestCase):
@@ -14,7 +14,7 @@ class GeonamesLookupTestCase(TestCase):
     Tests for GeoNames lookups
     """
 
-    @patch('bureau.places.utils.geonames_lookup', autospec=True)
+    @patch('places.utils.geonames_lookup', autospec=True)
     def test_geonames_city_lookup(self, mock_geonames_lookup):
         """
         geonames_city_lookup() should call geonames_lookup() with search text
@@ -24,7 +24,7 @@ class GeonamesLookupTestCase(TestCase):
         geonames_city_lookup(search_text)
         mock_geonames_lookup.assert_called_with(search_text, settings.CITIES_LIGHT_INCLUDE_CITY_TYPES)
 
-    @patch('bureau.places.utils.geonames_lookup', autospec=True)
+    @patch('places.utils.geonames_lookup', autospec=True)
     def test_geonames_county_lookup(self, mock_geonames_lookup):
         """
         geonames_county_lookup() should call geonames_lookup() with search text and feature code 'ADM2'
@@ -52,10 +52,15 @@ class GeonamesLookupTestCase(TestCase):
         }
 
         with patch('requests.get', autospec=True,
-                   return_value=Mock(text=json.dumps(response_content), status_code=200)):
+                   return_value=Mock(text=json.dumps(response_content), status_code=200)) as mock_requests_get:
             result = geonames_lookup(search_text, feature_codes=settings.CITIES_LIGHT_INCLUDE_CITY_TYPES)
             self.assertEqual(result['name'], 'Hamburg')
             self.assertEqual(result['state'], state)
+            # request to GeoNames API should've been sent with feature codes in the params
+            args, kwargs = mock_requests_get.call_args
+            for feature_code in settings.CITIES_LIGHT_INCLUDE_CITY_TYPES:
+                param = 'featureCode={}'.format(feature_code)
+                self.assertTrue(param in args[0], "GeoNames API request should include '{}'".format(param))
 
         # If nothing was found (no 'geonames' in response, response should be returned to the 'alternate_names'field
         response_content = {
@@ -68,3 +73,12 @@ class GeonamesLookupTestCase(TestCase):
             self.assertNotIn('name', result)
             self.assertNotIn('state', result)
             self.assertEqual(result['alternate_names'], response_content)
+
+        # If no feature codes passed to geonames_lookup(), then none should be included in the GeoNames API request
+        with patch('requests.get', autospec=True,
+                   return_value=Mock(text=json.dumps(response_content), status_code=200)) as mock_requests_get:
+            geonames_lookup(search_text)
+            # request to GeoNames API should've been sent with no feature codes in the params
+            args, kwargs = mock_requests_get.call_args
+            self.assertFalse('featureCode' in args[0],
+                             "GeoNames API request shouldn't include feature codes if none passed to geonames_lookup()")
