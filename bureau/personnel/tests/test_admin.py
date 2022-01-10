@@ -26,6 +26,12 @@ class EmployeeAdminTestCase(TestCase):
     Test custom EmployeeAdmin functionality
     """
 
+    def setUp(self):
+        # Set up superuser to log in to admin and be able to create new Employees
+        User.objects.create_superuser('admin', 'admin@example.com', 'Password123')
+        self.client = Client()
+        self.client.login(username='admin', password='Password123')
+
     def test_bureau_state(self):
         """
         Field bureau_state should contain a
@@ -47,15 +53,10 @@ class EmployeeAdminTestCase(TestCase):
                          'State not in Employee.bureau_states should not be in EmployeeAdmin.bureau_state')
 
 
-    def test_save_model(self):
+    def test_save_model_vrc_true(self):
         """
-        If Employee is a member of a VRC unit, 'vrc' should be True
+        If Employee is a member of a VRC unit, 'vrc' should get set to True
         """
-
-        # Set up superuser to log in to admin and create new Employee
-        User.objects.create_superuser('admin', 'admin@example.com', 'Password123')
-        self.client = Client()
-        self.client.login(username='admin', password='Password123')
 
         # Oops, we're forgetting to set vrc to True, even though he's in a VRC unit! Hope save_model catches it...
         self.client.post(
@@ -71,6 +72,27 @@ class EmployeeAdminTestCase(TestCase):
 
         self.assertTrue(Employee.objects.first().vrc,
                 "Employee in VRC unit should have 'vrc' set to true after saving")
+
+    def test_save_model_vrc_false(self):
+        """
+        If Employee is not a member of a VRC unit, 'vrc' should not get set to True
+        """
+
+        # Employee who's not a member of a VRC unit should have vrc stay False
+        self.client.post(
+            reverse('admin:personnel_employee_add'),
+            {'id': 1, 'last_name': 'Sladen', 'first_name': 'Joseph', 'gender': 'M', 'vrc': False,
+             'regiments': [RegimentFactory(vrc=False).id],
+             'assignments-TOTAL_FORMS': '0',
+             'assignments-INITIAL_FORMS': '0',
+             'assignments-MAX_NUM_FORMS': '1',
+             'assignments-MIN_NUM_FORMS': '1'},
+            follow=True,
+        )
+
+        self.assertFalse(Employee.objects.first().vrc,
+                "Employee not in VRC unit shouldn't have 'vrc' set to true after saving")
+
 
 class EmployeeAdminFilterTestCase(TestCase):
     """
@@ -121,6 +143,13 @@ class DateOfBirthFilledListFilterTestCase(EmployeeAdminFilterTestCase):
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), {employee_no_dob})
+
+        # Value is neither Yes nor No (shouldn't happen, but test anyway), should return all employees
+        request = self.request_factory.get('/', {'date_of_birth': 'Maybe'})
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), set(Employee.objects.all()))
 
 
 class EmploymentYearListFilterTestCase(EmployeeAdminFilterTestCase):
@@ -231,8 +260,15 @@ class PlaceOfBirthFilledListFilterTestCase(EmployeeAdminFilterTestCase):
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), {employee_no_pob})
 
+        # Value is neither Yes nor No (shouldn't happen, but test anyway), should return all employees
+        request = self.request_factory.get('/', {'place_of_birth': 'Maybe'})
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), set(Employee.objects.all()))
 
-class USCTListFilterTestCase(TestCase):
+
+class USCTListFilterTestCase(EmployeeAdminFilterTestCase):
     """
     Test list filter for membership in a USCT regiment
     """
@@ -246,14 +282,9 @@ class USCTListFilterTestCase(TestCase):
         vrc_employee = EmployeeFactory(last_name='MacNulty')
         vrc_employee.regiments.add(vrc_regiment)
 
-        modeladmin = EmployeeAdmin(Employee, site)
-
-        request_factory = RequestFactory()
-        user = AnonymousUser()
-
-        request = request_factory.get('/')
-        request.user = user
-        changelist = modeladmin.get_changelist_instance(request)
+        request = self.request_factory.get('/')
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
         filter = USCTListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
@@ -264,19 +295,26 @@ class USCTListFilterTestCase(TestCase):
         self.assertSetEqual(set(queryset), {usct_employee, vrc_employee})
 
         # Look for employees who were members of a USCT regiment
-        request = request_factory.get('/', {'usct': 'Yes'})
-        request.user = user
-        changelist = modeladmin.get_changelist_instance(request)
+        request = self.request_factory.get('/', {'usct': 'Yes'})
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), {usct_employee})
 
         # Look for employees who were not members of a USCT regiment
-        request = request_factory.get('/', {'usct': 'No'})
-        request.user = user
-        changelist = modeladmin.get_changelist_instance(request)
+        request = self.request_factory.get('/', {'usct': 'No'})
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), {vrc_employee})
+
+        # Value is neither Yes nor No (shouldn't happen, but test anyway), should return all employees
+        request = self.request_factory.get('/', {'usct': 'Maybe'})
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), set(Employee.objects.all()))
