@@ -115,6 +115,13 @@ class CityAdminListFilterTestCase(TestCase):
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), {city_not_in_a_place})
 
+        # Value is neither Yes nor No (shouldn't happen, but test anyway), should return all cities
+        request = self.request_factory.get('/', {parameter: 'Maybe'})
+        request.user = self.user
+        changelist = self.modeladmin.get_changelist_instance(request)
+        queryset = changelist.get_queryset(request)
+        self.assertSetEqual(set(queryset), set(City.objects.all()))
+
 
     def test_population_list_filter(self):
         """
@@ -251,3 +258,12 @@ class PlaceAdminTestCase(AdminTestCase):
         existing_places_pks.append(place.pk)
         self.assertEqual(place.country, region.country,
                          "PlaceAdmin.save_model() should get Place's country from its region.country")
+
+        # If no city, county, or region is supplied, nothing should change about the Place
+        self.client.post(url,
+                         {'id': 4, 'country': country.id},
+                         follow=True, )
+        place = Place.objects.exclude(pk__in=existing_places_pks).last()
+        existing_places_pks.append(place.pk)
+        self.assertEqual(place.country, country,
+                         "PlaceAdmin.save_model() should get keep Place's country if no city, county, or region set")
