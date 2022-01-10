@@ -5,7 +5,7 @@ from assignments.tests.factories import AssignmentFactory
 from personnel.tests.factories import EmployeeFactory
 from places.tests.factories import CityFactory, PlaceFactory
 
-class AssignmentListTemplateTestCase(TestCase):
+class AssignmentListViewTemplateTestCase(TestCase):
     """
     Test template of assignments.views.AssignmentListView
     """
@@ -21,7 +21,7 @@ class AssignmentListTemplateTestCase(TestCase):
         context = {'place': place, 'assignment_list': [assignment]}
         rendered = render_to_string(self.template, context)
 
-        # "Assignments in <Place>" should be in template
+        # "Assignments in <Place>" should be in html
         text = 'Assignments in {}'.format(place)
         self.assertTrue(text in rendered, "'{}' should be in {}".format(text, self.template))
 
