@@ -11,7 +11,7 @@
           <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
         {% endif %}
 
-        {% if page_obj.number|add:'-4' > 1 %}
+        {% if page_obj.number > 5 %}
             <li class="page-item"><a class="page-link" href="?page={{ page_obj.number|add:'-5' }}">&hellip;</a></li>
         {% endif %}
 
