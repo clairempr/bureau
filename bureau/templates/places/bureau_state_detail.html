@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container">
   <div class="page-header">
-    {{ object }} - {{ object.employees_employed.count }} employee{{ object.employees_employed.count|pluralize }}
+    {{ object }} - {{ object.employees_employed.count|default:0 }} employee{{ object.employees_employed.count|default:0|pluralize }}
   </div>
 
   <h4 class="py-3">Employee Statistics</h4>
