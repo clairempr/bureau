@@ -17,7 +17,7 @@ class GeneralView(TemplateView):
         context['employee_count'] = Employee.objects.count()
         context['colored_count'] = Employee.objects.filter(colored=True).count()
         context['confederate_count'] = Employee.objects.filter(confederate_veteran=True).count()
-        context['female_count'] = Employee.objects.filter(gender=Employee.FEMALE).count()
+        context['female_count'] = Employee.objects.filter(gender=Employee.Gender.FEMALE).count()
         context['vrc_count'] = Employee.objects.filter(vrc=True).count()
 
         return context
@@ -239,7 +239,7 @@ def get_state_comparison_stats(number=5):
 
     # Top % female employees
     top_female_percent = total_employees.annotate(
-        value=Cast(Count('employee_employed', filter=Q(employee_employed__gender=Employee.FEMALE)),
+        value=Cast(Count('employee_employed', filter=Q(employee_employed__gender=Employee.Gender.FEMALE)),
                    FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
     stats.append(('% Female employees', top_female_percent))
 

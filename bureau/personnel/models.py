@@ -133,17 +133,14 @@ class Employee(models.Model):
     """
 
     # Several Bureau clerks and agents were women. Make it easy to search for them with gender field.
-    FEMALE = 'F'
-    MALE = 'M'
-    GENDER_CHOICES = (
-        (FEMALE, 'Female'),
-        (MALE, 'Male'),
-    )
+    class Gender(models.TextChoices):
+        FEMALE = 'F'
+        MALE = 'M'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     last_name = models.CharField(max_length=100, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
-    gender = models.CharField(max_length=1,choices=GENDER_CHOICES,default=MALE)
+    gender = models.CharField(max_length=1,choices=Gender.choices, default=Gender.MALE)
 
     # Dates of birth and death use PartialDateField because often only the year is known
     date_of_birth = PartialDateField(null=True, blank=True)
