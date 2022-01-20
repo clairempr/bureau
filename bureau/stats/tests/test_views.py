@@ -55,7 +55,7 @@ class GeneralViewTestCase(TestCase):
     def test_get_context_data(self):
         EmployeeFactory(colored=True)
         EmployeeFactory(confederate_veteran=True)
-        EmployeeFactory(gender=Employee.FEMALE)
+        EmployeeFactory(gender=Employee.Gender.FEMALE)
         EmployeeFactory(vrc=True)
         EmployeeFactory(vrc=True)
 
@@ -322,23 +322,23 @@ class GetStateComparisonStatsTestCase(TestCase):
 
         # 1 female employee in Texas, and 3 male
         for i in range(1):
-            employee = EmployeeFactory(gender=Employee.FEMALE)
+            employee = EmployeeFactory(gender=Employee.Gender.FEMALE)
             employee.bureau_states.add(self.texas)
         for i in range(3):
-            employee = EmployeeFactory(gender=Employee.MALE)
+            employee = EmployeeFactory(gender=Employee.Gender.MALE)
             employee.bureau_states.add(self.texas)
 
         # 1 female employee in Kentucky, and 1 male
         for i in range(1):
-            employee = EmployeeFactory(gender=Employee.FEMALE)
+            employee = EmployeeFactory(gender=Employee.Gender.FEMALE)
             employee.bureau_states.add(self.kentucky)
         for i in range(1):
-            employee = EmployeeFactory(gender=Employee.MALE)
+            employee = EmployeeFactory(gender=Employee.Gender.MALE)
             employee.bureau_states.add(self.kentucky)
 
         # 3 female employees in Mississippi
         for i in range(3):
-            employee = EmployeeFactory(gender=Employee.FEMALE)
+            employee = EmployeeFactory(gender=Employee.Gender.FEMALE)
             employee.bureau_states.add(self.mississippi)
 
         expected_output = [('Mississippi', 100), ('Kentucky', 50)]

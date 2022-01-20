@@ -48,7 +48,7 @@ confederate_regiment_list_view = ConfederateRegimentListView.as_view()
 
 class RegularArmyRegimentListView(RegimentListView):
 
-    queryset = Regiment.objects.filter(us=True).exclude(usct=True).exclude(branch=Regiment.SHARPSHOOTERS)
+    queryset = Regiment.objects.filter(us=True).exclude(usct=True).exclude(branch=Regiment.Branch.SHARPSHOOTERS)
     regiment_type = 'regular_army_regiments'
 
 

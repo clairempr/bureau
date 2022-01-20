@@ -1,7 +1,6 @@
 import uuid
 
 from django.db import models
-from django.urls import reverse
 
 from places.models import Region
 
@@ -12,25 +11,19 @@ class Regiment(models.Model):
     to enable fine-grained filtering of Bureau employees' military service
     """
 
-    ARTILLERY = 'ART'
-    CAVALRY = 'CAV'
-    ENGINEERS = 'ENG'
-    INFANTRY = 'INF'
-    SHARPSHOOTERS = 'SHA'
-    BRANCH_CHOICES = (
-        (INFANTRY, 'Infantry'),
-        (CAVALRY, 'Cavalry'),
-        (ARTILLERY, 'Artillery'),
-        (ENGINEERS, 'Engineers'),
-        (SHARPSHOOTERS, 'Sharpshooters'),
-    )
+    class Branch(models.TextChoices):
+        INFANTRY = 'INF'
+        CAVALRY = 'CAV'
+        ARTILLERY = 'ART'
+        ENGINEERS = 'ENG'
+        SHARPSHOOTERS = 'SHA'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     number = models.IntegerField(null=True, blank=True)
     branch = models.CharField(
         max_length=3,
-        choices=BRANCH_CHOICES,
-        default=INFANTRY,
+        choices=Branch.choices,
+        default=Branch.INFANTRY,
     )
     name = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)

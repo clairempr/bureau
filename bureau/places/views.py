@@ -70,7 +70,7 @@ class BureauStateDetailView(DetailView):
         colored_count = employees.filter(colored=True).count()
         confederate_count = employees.filter(confederate_veteran=True).count()
         died_during_assignment_count = employees.filter(died_during_assignment=True).count()
-        female_count = employees.filter(gender=Employee.FEMALE).count()
+        female_count = employees.filter(gender=Employee.Gender.FEMALE).count()
         foreign_born_count = Employee.objects.foreign_born(bureau_states=self.object).count()
         former_slave_count = employees.filter(former_slave=True).count()
         former_slaveholder_count = employees.filter(slaveholder=True).count()
