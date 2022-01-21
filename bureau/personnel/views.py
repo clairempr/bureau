@@ -12,6 +12,7 @@ class EmployeeDetailView(DetailView):
 
 employee_detail_view = EmployeeDetailView.as_view()
 
+
 class EmployeesBornResidedDiedInPlaceView(TemplateView):
 
     model = Employee
@@ -45,6 +46,7 @@ class EmployeesBornResidedDiedInPlaceView(TemplateView):
 
 
 employees_born_resided_died_in_place_view = EmployeesBornResidedDiedInPlaceView.as_view()
+
 
 class EmployeesWithAilmentListView(ListView):
     """

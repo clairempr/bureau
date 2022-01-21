@@ -9,6 +9,7 @@ from places.settings import GERMANY_COUNTRY_NAME, GERMANY_COUNTRY_NAMES, VIRGINI
 
 from stats.utils import get_ages_at_death, get_ages_in_year, get_mean, get_median, get_percent
 
+
 class GeneralView(TemplateView):
     template_name = 'stats/general.html'
 
@@ -21,6 +22,7 @@ class GeneralView(TemplateView):
         context['vrc_count'] = Employee.objects.filter(vrc=True).count()
 
         return context
+
 
 general_view = GeneralView.as_view()
 
@@ -124,6 +126,7 @@ class DetailedView(TemplateView):
 
 detailed_view = DetailedView.as_view()
 
+
 def get_top_birthplaces(number=25):
     """
     Return top places where employees were born
@@ -145,6 +148,7 @@ def get_top_birthplaces(number=25):
         num_employees=Count('employees_born_in')).order_by('-num_employees')[:number]
 
     return get_places_with_pks_for_context(top_birthplaces)
+
 
 def get_top_deathplaces(number=25):
     """
@@ -193,6 +197,7 @@ class StateComparisonView(TemplateView):
 
 
 state_comparison_view = StateComparisonView.as_view()
+
 
 def get_state_comparison_stats(number=5):
     """

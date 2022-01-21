@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from assignments.tests.factories import AssignmentFactory
@@ -9,7 +9,7 @@ from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 from places.forms import GeoNamesLookupForm
 from places.tests.factories import CityFactory, CountyFactory, PlaceFactory, RegionFactory
-from places.views import BureauStateDetailView, GeoNamesCityLookupView, GeoNamesCountyLookupView, \
+from places.views import BureauStateDetailView, BureauStateListView, GeoNamesCityLookupView, GeoNamesCountyLookupView, \
     GeoNamesLookupBaseView, get_float_format, get_number_employees_born_in_bureau_state
 
 
@@ -143,6 +143,25 @@ class BureauStateDetailViewTestCase(TestCase):
         # penmanship contest entrants), so get_float_format() should be called a certain number of times
         self.assertEqual(mock_get_float_format.call_count, len(returned_stats_labels) - 2,
                          'get_stats() should call get_float_format() for all but 2 stats')
+
+
+class BureauStateListViewTestCase(TestCase):
+    """
+    Test BureauStateListView
+    """
+
+    def test_queryset(self):
+        """
+        BureauStateListView's queryset should contain all states with Bureau operations
+        """
+
+        tennessee = RegionFactory(name='Tennessee', bureau_operations=True)
+        RegionFactory(name='Michigan', bureau_operations=False)
+
+        request = RequestFactory().get('/')
+        view = BureauStateListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {tennessee},
+                            'BureauStateListView should contain all states with Bureau operations')
 
 
 class GeoNamesLookupBaseViewTestCase(TestCase):

@@ -9,6 +9,7 @@ from personnel.tests.factories import EmployeeFactory
 from personnel.views import EmployeesBornResidedDiedInPlaceView, EmployeesWithAilmentListView
 from places.tests.factories import PlaceFactory
 
+
 class EmployeesBornResidedDiedInPlaceViewTestCase(TestCase):
     """
     Test EmployeesBornResidedDiedInPlaceView

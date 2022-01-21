@@ -8,6 +8,7 @@ from personnel.tests.factories import EmployeeFactory
 from places.tests.factories import CountryFactory, PlaceFactory, RegionFactory
 from stats.views import get_places_with_pks_for_context, get_state_comparison_stats
 
+
 class DetailedViewTestCase(TestCase):
     """
     Test DetailedView

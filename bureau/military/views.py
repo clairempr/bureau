@@ -2,6 +2,7 @@ from django.views.generic import DetailView, ListView
 
 from military.models import Regiment
 
+
 class RegimentDetailView(DetailView):
 
     model = Regiment
@@ -71,6 +72,7 @@ class USCTRegimentListView(RegimentListView):
 
 
 usct_regiment_list_view = USCTRegimentListView.as_view()
+
 
 class VRCRegimentListView(RegimentListView):
 

@@ -9,6 +9,7 @@ from places.forms import GeoNamesLookupForm
 from places.models import City, County, Place, Region
 from stats.utils import get_ages_at_death, get_ages_in_year, get_mean, get_median, get_percent
 
+
 class BureauStateListView(ListView):
 
     model = Region
@@ -19,6 +20,7 @@ class BureauStateListView(ListView):
 
 
 bureau_state_list_view = BureauStateListView.as_view()
+
 
 class BureauStateDetailView(DetailView):
 
@@ -151,6 +153,7 @@ class GeoNamesCountyLookupView(GeoNamesLookupBaseView):
 
 geonames_county_lookup_view = GeoNamesCountyLookupView.as_view(extra_context={'lookup_type': 'county'})
 
+
 def get_number_employees_born_in_bureau_state(employees, bureau_state):
     """
     Return the number of state's employees born in that state,
@@ -165,6 +168,7 @@ def get_number_employees_born_in_bureau_state(employees, bureau_state):
             pass
 
     return employees.filter(place_of_birth__region__id=state.id).count()
+
 
 def get_float_format(number, places=2):
     """
