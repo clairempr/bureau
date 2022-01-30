@@ -46,7 +46,7 @@ class BureauStateDetailViewTemplateTestCase(TestCase):
         assignment_place = PlaceFactory(city=CityFactory(name='Vernon', region=self.state))
         context = {'object': self.state,
                    'stats': [('% VRC', '50.0')],
-                   'assignment_places': [assignment_place]}
+                   'assignment_places': {assignment_place}}
         rendered = render_to_string(self.template, context)
         self.assertTrue('% VRC' in rendered,
                         'If stats in context, they should be shown in BureauStateDetailView template')

@@ -1,7 +1,6 @@
 import uuid
 
-from cities_light.abstract_models import (AbstractCity, AbstractRegion,
-                                          AbstractCountry)
+from cities_light.abstract_models import (AbstractCity, AbstractRegion, AbstractSubRegion, AbstractCountry)
 from cities_light.exceptions import InvalidItems
 from cities_light.receivers import connect_default_signals
 from cities_light.settings import ICity, IRegion
@@ -61,6 +60,14 @@ def set_region_fields(sender, instance, items, **kwargs):
         instance.bureau_operations = True
 
 region_items_post_import.connect(set_region_fields)
+
+
+class SubRegion(AbstractSubRegion):
+    pass
+
+
+connect_default_signals(SubRegion)
+
 
 class County(AbstractRegion):
     """
