@@ -18,7 +18,7 @@ class AssignmentListViewTemplateTestCase(TestCase):
 
         assignment = AssignmentFactory(employee=EmployeeFactory())
 
-        context = {'place': place, 'assignment_list': [assignment]}
+        context = {'place': place, 'assignment_list': {assignment}}
         rendered = render_to_string(self.template, context)
 
         # "Assignments in <Place>" should be in html
