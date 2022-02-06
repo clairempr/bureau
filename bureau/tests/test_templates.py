@@ -70,11 +70,18 @@ class PaginationTemplateTestCase(TestCase):
         """
         content_if_paginated = 'Search results pages'
 
-        rendered = render_to_string(self.template, {'is_paginated': True})
+        paginator = Paginator(object_list=['a'], per_page=1)
+        context = {'is_paginated': True,
+                   'paginator': paginator,
+                   'page_obj': paginator.page(number=1)}
+        rendered = render_to_string(self.template, context)
         self.assertTrue(content_if_paginated in rendered,
                 "If 'is_paginated' is in context, rendered html should contain '{}'".format(content_if_paginated))
 
-        rendered = render_to_string(self.template, {'is_paginated': False})
+        context = {'is_paginated': False,
+                   'paginator': paginator,
+                   'page_obj': paginator.page(number=1)}
+        rendered = render_to_string(self.template, context)
         self.assertFalse(content_if_paginated in rendered,
                 "If 'is_paginated' not in context, rendered html shouldn't contain '{}'".format(content_if_paginated))
 
@@ -165,109 +172,48 @@ class PaginationTemplateTestCase(TestCase):
         self.assertFalse(next_page_link in rendered,
                           "If there's no next page, there should be no link to a next page")
 
-    def test_ellipse_before_page_numbers(self):
-        """
-        If current page number > 5, there should be an ellipse before the list of page numbers
-        """
-
-        ellipse = '&hellip;'
-        paginator = Paginator(object_list=['a', 'b', 'c', 'd', 'e', 'f'], per_page=1)
-
-        # Current page > 6: there should be an ellipse
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=6)}
-        rendered = render_to_string(self.template, context)
-        self.assertTrue(ellipse in rendered,
-                        "If current page number > 5, there should be an ellipse before the list of page numbers")
-
-        # Current page is 5: there should be no ellipse
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=5)}
-        rendered = render_to_string(self.template, context)
-        self.assertFalse(ellipse in rendered,
-                        "If current page number is 5, there should be no ellipse before the list of page numbers")
-
-        # Current page < 5: there should be no ellipse
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=4)}
-        rendered = render_to_string(self.template, context)
-        self.assertFalse(ellipse in rendered,
-                        "If current page number < 5, there should be no ellipse before the list of page numbers")
-
-    def test_ellipse_after_page_numbers(self):
-        """
-        If total number of pages > current page number + 4, there should be an ellipse before the list of page numbers
-        """
-
-        ellipse = '&hellip;'
-        paginator = Paginator(object_list=['a', 'b', 'c', 'd', 'e', 'f'], per_page=1)
-
-        # Current page is 1 (out of 6 pages): there should be an ellipse
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=1)}
-        rendered = render_to_string(self.template, context)
-        self.assertTrue(ellipse in rendered,
-                        "If current page number is 1 (of 6), there should be an ellipse after the list of page numbers")
-
-        # Current page is 2 (of 6): there should be no ellipse
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=2)}
-        rendered = render_to_string(self.template, context)
-        self.assertFalse(ellipse in rendered,
-                        "If current page number is 2 (of 6), there should be no ellipse after the list of page numbers")
-
-        # Current page is 3 (of 6): there should be no ellipse
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=3)}
-        rendered = render_to_string(self.template, context)
-        self.assertFalse(ellipse in rendered,
-                        "If current page number is 3 (of 6), there should be no ellipse after the list of page numbers")
-
     def test_paginator_page_range(self):
         """
         The current page should be marked with <span class="sr-only">(current)</span>
 
-        Otherwise for page numbers that are within 4 pages of the current page, there should be a link to them,
+        Otherwise for page numbers that are within 3 pages of the current page, there should be a link to them,
         with search text if it's in context
         """
 
-        paginator = Paginator(object_list=['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'], per_page=1)
+        paginator = Paginator(object_list=['x' for i in range(15)], per_page=1)
         context = {'is_paginated': True,
                    'paginator': paginator,
-                   'page_obj': paginator.page(number=6)}
+                   'page_obj': paginator.page(number=8)}
         rendered = render_to_string(self.template, context)
 
-        # Current page (6) should be marked "(current)" for screen reader
-        current_page_span = '<span class="page-link">6 <span class="sr-only">(current)</span></span>'
+        # Current page (8) should be marked "(current)" for screen reader
+        current_page_span = '<span class="page-link">8 <span class="sr-only">(current)</span></span>'
         self.assertInHTML(current_page_span, rendered,
                           msg_prefix="Current page number should be marked with '(current)' for screen reader")
 
-        # Page numbers within 4 pages of current page (2-5 and 7-10) should have a link to them
+        # First 2 and last 2 page numbers (1-2 and 14-15),
+        # and page numbers within 3 pages of current page (5-7 and 9-11) should have a link to them
         page_link = '<a class ="page-link" href="?page={page_number}">{page_number}</a>'
-        for page_number in [2, 3, 4, 5, 7, 8, 9, 10]:
+        for page_number in [1, 2, 5, 6, 7, 9, 10, 11, 14, 15]:
             self.assertInHTML(page_link.format(page_number=page_number), rendered,
-                              msg_prefix='Page numbers within 4 pages of current page should have a link to them')
+                msg_prefix='1st and last 2, and page numbers within 3 pages of current page should have a link to them')
 
-        # Page numbers outside of 4-page range (1 and 11) should not have a link to them without an ellipse
-        # Check for space after, because of the ellipse
-        partial_page_link = '<a class="page-link" href="?page={page_number}"> '
-        for page_number in [1, 11]:
-            self.assertFalse(partial_page_link.format(page_number=page_number) in rendered,
-                             "Page numbers outside of 4-page range of current page shouldn't have a link without ...")
-
-        # Page numbers within 4 pages of current page (2-5 and 7-10) should have a link to them with search text
-        # if present in context
+        # First 2 and last 2 page numbers (1-2 and 14-15), and page numbers within 3 pages of
+        # current page (5-7 and 9-11) should have a link to them with search text if present in context
         search_text = 'That thing to search for'
         context['search_text'] = search_text
         rendered = render_to_string(self.template, context)
 
         page_link = '<a class ="page-link" href="?page={page_number}&search_text={search_text}">{page_number}</a>'
-        for page_number in [2, 3, 4, 5, 7, 8, 9, 10]:
+        for page_number in [1, 2, 5, 6, 7, 9, 10, 11, 14, 15]:
             self.assertInHTML(page_link.format(page_number=page_number, search_text=search_text), rendered,
-                              msg_prefix='Page numbers within 4 pages of current page should have a link with search text')
+                msg_prefix='1st and last 2, and page numbers within 3 pages of current page should have a link with search text')
+
+        # Page numbers that are not the first 2 or last 2, or within 3 pages of current page should not have links
+        context = {'is_paginated': True,
+                   'paginator': paginator,
+                   'page_obj': paginator.page(number=8)}
+        partial_page_link = '<a class="page-link" href="?page={page_number}"> '
+        for page_number in [3, 4, 12, 13]:
+            self.assertFalse(partial_page_link.format(page_number=page_number) in rendered,
+                             "Page numbers not 1st or last 2, or within 3 pages of current page, shouldn't have a link")
