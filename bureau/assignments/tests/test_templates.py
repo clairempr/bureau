@@ -3,7 +3,8 @@ from django.test import TestCase
 
 from assignments.tests.factories import AssignmentFactory
 from personnel.tests.factories import EmployeeFactory
-from places.tests.factories import CityFactory, PlaceFactory
+from places.tests.factories import CityFactory, CountryFactory, PlaceFactory, RegionFactory
+
 
 class AssignmentListViewTemplateTestCase(TestCase):
     """
@@ -14,7 +15,10 @@ class AssignmentListViewTemplateTestCase(TestCase):
         self.template = 'assignments/assignment_list.html'
 
     def test_template(self):
-        place = PlaceFactory(city=CityFactory())
+        # Specify place name, so there are no issues with names that contain an ampersand
+        place = PlaceFactory(city=CityFactory(name='Selma',
+                                              region=RegionFactory(name='Alabama'),
+                                              country=CountryFactory(name='United States')))
 
         assignment = AssignmentFactory(employee=EmployeeFactory())
 
