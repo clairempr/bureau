@@ -18,7 +18,6 @@ jobs:
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         command: |  # install dependencies
-          ls -al .cache
           sudo pip3 install -r requirements/local.txt
           sudo pip3 install coveralls
     - save_cache: # cache installed dependencies
@@ -29,6 +28,7 @@ jobs:
           - '/usr/local/lib/python3.8/dist-packages'
     - run:
         command: |
+          ls -al .cache/pip
           coverage run manage.py test
     - run:
        command: |
