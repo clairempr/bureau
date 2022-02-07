@@ -23,11 +23,11 @@ jobs:
     - save_cache: # cache installed dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
         paths:
+          - '/home/circleci/.cache/pip'
           - '/usr/local/bin'
           - '/home/circleci/.pyenv/versions/3.9.10/lib/python3.9/site-packages'
     - run:
         command: |
-          pip cache dir
           coverage run manage.py test
     - run:
        command: |
