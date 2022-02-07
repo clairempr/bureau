@@ -1,40 +1,81 @@
-FROM python:3.6-alpine
+# Dockerfile for Python 3.9 taken from Cookiecutter Django, release 2022.1.27
+# https://github.com/cookiecutter/cookiecutter-django/blob/2022.01.27/%7B%7Bcookiecutter.project_slug%7D%7D/compose/production/django/Dockerfile
+ARG PYTHON_VERSION=3.9-slim-bullseye
 
-ENV PYTHONUNBUFFERED 1
+# define an alias for the specfic python version used in this file.
+FROM python:${PYTHON_VERSION} as python
 
-RUN apk update \
+# Python build stage
+FROM python as python-build-stage
+
+ARG BUILD_ENVIRONMENT=production
+
+# Install apt packages
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  # dependencies for building Python packages
+  build-essential \
   # psycopg2 dependencies
-  && apk add --virtual build-deps gcc python3-dev musl-dev \
-  && apk add postgresql-dev \
-  # Pillow dependencies
-  && apk add jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
-  # CFFI dependencies
-  && apk add libffi-dev py-cffi
-
-RUN addgroup -S django \
-    && adduser -S -G django django
+  libpq-dev
 
 # Requirements are installed here to ensure they will be cached.
-COPY ./requirements /requirements
-RUN pip install --no-cache-dir -r /requirements/production.txt \
-    && rm -rf /requirements
+COPY ./requirements .
 
-COPY ./compose/production/django/entrypoint /entrypoint
-RUN sed -i 's/\r//' /entrypoint
+# Create Python Dependency and Sub-Dependency Wheels.
+RUN pip wheel --wheel-dir /usr/src/app/wheels  \
+  -r ${BUILD_ENVIRONMENT}.txt
+
+
+# Python 'run' stage
+FROM python as python-run-stage
+
+ARG BUILD_ENVIRONMENT=production
+ARG APP_HOME=/app
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV BUILD_ENV ${BUILD_ENVIRONMENT}
+
+WORKDIR ${APP_HOME}
+
+RUN addgroup --system django \
+    && adduser --system --ingroup django django
+
+
+# Install required system dependencies
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  # psycopg2 dependencies
+  libpq-dev \
+  # Translations dependencies
+  gettext \
+  # cleaning up unused files
+  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+  && rm -rf /var/lib/apt/lists/*
+
+# All absolute dir copies ignore workdir instruction. All relative dir copies are wrt to the workdir instruction
+# copy python dependency wheels from python-build-stage
+COPY --from=python-build-stage /usr/src/app/wheels  /wheels/
+
+# use wheels to install python dependencies
+RUN pip install --no-cache-dir --no-index --find-links=/wheels/ /wheels/* \
+  && rm -rf /wheels/
+
+
+COPY --chown=django:django ./compose/production/django/entrypoint /entrypoint
+RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint
-RUN chown django /entrypoint
 
-COPY ./compose/production/django/start /start
-RUN sed -i 's/\r//' /start
+
+COPY --chown=django:django ./compose/production/django/start /start
+RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
-RUN chown django /start
 
-COPY . /app
 
-RUN chown -R django /app
+# copy application code to WORKDIR
+COPY --chown=django:django . ${APP_HOME}
+
+# make django owner of the WORKDIR directory as well.
+RUN chown django:django ${APP_HOME}
 
 USER django
-
-WORKDIR /app
 
 ENTRYPOINT ["/entrypoint"]
