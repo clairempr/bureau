@@ -18,12 +18,14 @@ jobs:
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         command: |  # install dependencies
-          sudo pip3 install -r requirements/local.txt
-          sudo pip3 install coveralls
+          sudo pip install pipenv
+          pipenv install
+          sudo pip install -r requirements/local.txt
+          sudo pip install coveralls
     - save_cache: # cache installed dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
         paths:
-          - ".cache/pip"
+          - ".venv"
           - '/usr/local/bin'
           - '/usr/local/lib/python3.8/dist-packages'
     - run:
