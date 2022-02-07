@@ -12,10 +12,12 @@ jobs:
           POSTGRES_DB: test_db
     steps:
     - checkout  # checkout source code to working directory
-    - command: ls /usr/local/bin
-    - command: ls /usr/local/lib
-    - command: ls /usr/local/lib/python3.9
-    - command: ls /usr/local/lib/python3
+    - run:
+        command: |
+          ls /usr/local/bin
+          ls /usr/local/lib
+          ls /usr/local/lib/python3.9
+          ls /usr/local/lib/python3
     - run: sudo chown -R circleci:circleci /usr/local/bin
     - run: sudo chown -R circleci:circleci /usr/local/lib/python3.9/site-packages
     - restore_cache: # restore cached dependencies
