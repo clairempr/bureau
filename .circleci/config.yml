@@ -18,9 +18,8 @@ jobs:
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         command: |  # install dependencies
-          pyenv versions
           pip install -r requirements/local.txt
-          sudo pip install coveralls
+          pip install coveralls
     - save_cache: # cache installed dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
         paths:
@@ -33,6 +32,3 @@ jobs:
     - run:
        command: |
           coveralls
-
-
-
