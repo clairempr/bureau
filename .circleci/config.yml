@@ -20,8 +20,8 @@ jobs:
         command: |  # install dependencies
           pyenv versions
           pyenv local 3.9.10
-          sudo pip3 install -r requirements/local.txt
-          sudo pip3 install coveralls
+          sudo pip install -r requirements/local.txt
+          sudo pip install coveralls
     - save_cache: # cache installed dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
         paths:
