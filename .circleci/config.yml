@@ -18,7 +18,8 @@ jobs:
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         command: |  # install dependencies
-          pip install -r requirements/local.txt
+          apt-get install python3-pip
+          sudo pip install -r requirements/local.txt
           sudo pip install coveralls
     - save_cache: # cache installed dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
