@@ -7,7 +7,7 @@ jobs:
         environment:
           DATABASE_URL: postgres://postgres@localhost/test_db
           USE_DOCKER: no
-      - image: cimg/postgres:10.5 # an example of how to specify a service container
+      - image: cimg/postgres:10.17 # an example of how to specify a service container
         environment:
           POSTGRES_DB: test_db
     steps:
