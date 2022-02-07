@@ -12,14 +12,8 @@ jobs:
           POSTGRES_DB: test_db
     steps:
     - checkout  # checkout source code to working directory
-    - run:
-        command: |
-          python3 --version
-          python -m pip list
-          ls -al /usr/local/lib/python3.8
-          ls -al /usr/local/lib/python3.8/dist-packages
     - run: sudo chown -R circleci:circleci /usr/local/bin
-    - run: sudo chown -R circleci:circleci /usr/local/lib/python3.9/site-packages
+    - run: sudo chown -R circleci:circleci /usr/local/lib/python3.8/dist-packages
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
@@ -31,7 +25,7 @@ jobs:
         paths:
           - ".cache/pip"
           - '/usr/local/bin'
-          - '/usr/local/lib/python3.9/site-packages'
+          - '/usr/local/lib/python3.8/dist-packages'
     - run:
         command: |
           coverage run manage.py test
