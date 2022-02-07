@@ -20,7 +20,6 @@ jobs:
         command: |  # install dependencies
           pip install -r requirements/local.txt
           pip install coveralls
-          pip freeze
     - save_cache: # cache installed dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
         paths:
@@ -30,7 +29,6 @@ jobs:
     - run:
         command: |
           /home/circleci/.pyenv/versions/3.9.10/bin/python3.9 -m coverage run manage.py test
-          coverage run manage.py test
     - run:
        command: |
           coveralls
