@@ -27,7 +27,7 @@ jobs:
           - '/home/circleci/.pyenv/versions/3.9.10/lib/python3.9/site-packages'
     - run:
         command: |
-          ls -al .cache/pip
+          pip cache dir
           coverage run manage.py test
     - run:
        command: |
