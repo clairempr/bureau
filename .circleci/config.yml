@@ -13,21 +13,20 @@ jobs:
     steps:
     - checkout  # checkout source code to working directory
     - run: sudo chown -R circleci:circleci /usr/local/bin
-    - run: sudo chown -R circleci:circleci /usr/local/lib/python3.8/dist-packages
+    - run: sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.9.10/lib/python3.9/site-packages
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         command: |  # install dependencies
           pyenv versions
-          python -m ensurepip --upgrade
-          sudo pip install -r requirements/local.txt
-          sudo pip install coveralls
+          pyenv local 3.9.10
+          sudo pip3 install -r requirements/local.txt
+          sudo pip3 install coveralls
     - save_cache: # cache installed dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
         paths:
-          - ".venv"
           - '/usr/local/bin'
-          - '/usr/local/lib/python3.8/dist-packages'
+          - '/home/circleci/.pyenv/versions/3.9.10/lib/python3.9/site-packages'
     - run:
         command: |
           ls -al .cache/pip
