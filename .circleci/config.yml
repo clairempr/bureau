@@ -14,10 +14,7 @@ jobs:
     - checkout  # checkout source code to working directory
     - run:
         command: |
-          ls /usr/local/bin
-          ls /usr/local/lib
-          ls /usr/local/lib/python3.9
-          ls /usr/local/lib/python3
+          ls -al /usr/local/lib
     - run: sudo chown -R circleci:circleci /usr/local/bin
     - run: sudo chown -R circleci:circleci /usr/local/lib/python3.9/site-packages
     - restore_cache: # restore cached dependencies
