@@ -18,6 +18,7 @@ jobs:
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         command: |  # install dependencies
+          pyenv versions
           python -m ensurepip --upgrade
           sudo pip install -r requirements/local.txt
           sudo pip install coveralls
