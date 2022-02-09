@@ -333,3 +333,4 @@ bureau/media/
 
 # My stuff
 db_backups/
+postgres_upgrade/
