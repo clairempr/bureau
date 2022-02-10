@@ -1,4 +1,5 @@
-from factory import DjangoModelFactory, Faker, LazyAttribute, SubFactory
+from factory import Faker, LazyAttribute, SubFactory
+from factory.django import DjangoModelFactory
 
 from places.models import City, Country, County, Place, Region
 
@@ -24,7 +25,6 @@ class CityFactory(DjangoModelFactory):
 
     class Meta:
         model = City
-
 
 
 class CountyFactory(DjangoModelFactory):

@@ -1,4 +1,5 @@
-from factory import DjangoModelFactory
+from factory.django import DjangoModelFactory
+
 
 from ..models import Regiment
 

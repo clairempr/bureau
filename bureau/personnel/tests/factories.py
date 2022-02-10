@@ -1,4 +1,5 @@
-from factory import DjangoModelFactory, Faker
+from factory import Faker
+from factory.django import DjangoModelFactory
 
 from ..models import Employee
 
@@ -12,4 +13,3 @@ class EmployeeFactory(DjangoModelFactory):
 
     class Meta:
         model = Employee
-
