@@ -1,12 +1,12 @@
 from partial_date import PartialDate
 
 from django.core.paginator import Paginator
-from django.test import TestCase
+from django.test import SimpleTestCase
 
 from utilities.templatetags.utils_tags import get_proper_elided_page_range, partial_date
 
 
-class GetProperElidedPageRangeTestCase(TestCase):
+class GetProperElidedPageRangeTestCase(SimpleTestCase):
     """
     get_proper_elided_page_range() should return get_elided_page_range(number, on_each_side, on_ends) for paginator
     """
@@ -29,7 +29,7 @@ class GetProperElidedPageRangeTestCase(TestCase):
         self.assertEqual(elided_page_range.count(str(Paginator.ELLIPSIS)), 2)
 
 
-class PartialDateTestCase(TestCase):
+class PartialDateTestCase(SimpleTestCase):
     """
     partial_date() should return a partial date formatted according to the parts that are known
     """

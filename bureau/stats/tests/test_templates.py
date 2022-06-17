@@ -1,14 +1,14 @@
 from django.db.models import Count, FloatField
 from django.db.models.functions import Cast
 from django.template.loader import render_to_string
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 
 from personnel.tests.factories import EmployeeFactory
 from places.models import Region
 from places.tests.factories import RegionFactory
 
 
-class StatisticsTemplateTestCase(TestCase):
+class StatisticsTemplateTestCase(SimpleTestCase):
     """
     Test template of stats.views.GeneralView
     """

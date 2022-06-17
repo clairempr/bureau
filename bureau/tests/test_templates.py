@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 User = get_user_model()
 
 
-class BaseTemplateTestCase(TestCase):
+class BaseTemplateTestCase(SimpleTestCase):
     """
     Test Home page
     """
@@ -56,7 +56,7 @@ class HomeTemplateTestCase(TestCase):
         self.assertTemplateUsed(response, self.template)
 
 
-class PaginationTemplateTestCase(TestCase):
+class PaginationTemplateTestCase(SimpleTestCase):
     """
     Test partial template pagination.html
     """

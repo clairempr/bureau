@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from django.test import RequestFactory, TestCase
+from django.test import RequestFactory, SimpleTestCase, TestCase
 from django.urls import reverse
 
 from assignments.tests.factories import AssignmentFactory
@@ -164,7 +164,7 @@ class BureauStateListViewTestCase(TestCase):
                             'BureauStateListView should contain all states with Bureau operations')
 
 
-class GeoNamesLookupBaseViewTestCase(TestCase):
+class GeoNamesLookupBaseViewTestCase(SimpleTestCase):
     """
     Test GeoNamesLookupBaseView
     """
@@ -186,7 +186,7 @@ class GeoNamesLookupBaseViewTestCase(TestCase):
                          "GeoNamesLookupBaseView.geonames_search should get its value from 'geonames_search' field")
 
 
-class GeoNamesCityLookupViewTestCase(TestCase):
+class GeoNamesCityLookupViewTestCase(SimpleTestCase):
     """
     Test GeoNamesCityLookupView
     """
@@ -203,7 +203,7 @@ class GeoNamesCityLookupViewTestCase(TestCase):
                         "GeoNamesCityLookupView's success_url should include value of geonames_search in parameters")
 
 
-class GeoNamesCountyLookupViewTestCase(TestCase):
+class GeoNamesCountyLookupViewTestCase(SimpleTestCase):
     """
     Test GeoNamesCountyLookupView
     """
@@ -220,7 +220,7 @@ class GeoNamesCountyLookupViewTestCase(TestCase):
                         "GeoNamesCountyLookupView's success_url should include value of geonames_search in parameters")
 
 
-class GetFloatFormatTestCase(TestCase):
+class GetFloatFormatTestCase(SimpleTestCase):
     """
     get_float_format(number, places) should return number formatted with specified number of decimal places,
     unless number is divisible by 100
