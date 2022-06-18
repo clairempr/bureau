@@ -37,7 +37,28 @@ class HomeTemplateTestCase(TestCase):
         self.url = reverse('home')
         self.template = 'pages/home.html'
 
+    def test_template_used(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, self.template)
+
+
+class MainNavMenyTemplateTestCase(TestCase):
+    """
+    Test main nav menu template main_nav_menu.html
+    """
+
+    def setUp(self):
+        self.url = reverse('home')
+        self.template = 'main_nav_menu.html'
+
     def test_template_content(self):
+        rendered = render_to_string(self.template, context={})
+        for nav in ['The Bureau', 'Employees',
+                    'Statistics', 'General', 'Detailed', 'State Comparison',
+                    'Bureau States', 'Regiments', 'About']:
+            self.assertIn(nav, rendered)
+
+    def test_authenticated_content(self):
         # Non-authenticated user should see "Sign Up" and "Sign In" in menu
         response = self.client.get(self.url)
         for text in ['Sign Up', 'Sign In']:
@@ -50,10 +71,6 @@ class HomeTemplateTestCase(TestCase):
         for text in ['My Profile', 'Sign Out']:
             self.assertContains(response, text,
                                 msg_prefix="Non-authenticated user should see '{}' in menu".format(text))
-
-    def test_template_used(self):
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, self.template)
 
 
 class PaginationTemplateTestCase(SimpleTestCase):

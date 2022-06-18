@@ -1,0 +1,26 @@
+<form action="{{ request.path }}" method="get">
+  {% csrf_token %}
+
+  <div class="row">
+    <div class="col mb-3">
+      <label for="last_name" class="form-label">Last name</label>
+      <input type="text" class="form-control" id="last_name" name="last_name" value="{{ last_name }}">
+    </div>
+    <div class="col mb-3">
+      <label for="first_name" class="form-label">First name</label>
+      <input type="text" class="form-control" id="first_name" name="first_name" value="{{ first_name }}">
+    </div>
+    <div class="col mb-3">
+      <label for="bureau_states" class="form-label">Bureau states</label>
+      <select class="form-select" multiple id="bureau_states" name="bureau_states" aria-label="multiple select example">
+        {% for state, selected in bureau_states %}
+          <option value="{{ state.pk }}" {% if selected %}selected{% endif %}>{{ state.name }}</option>
+        {% endfor %}
+      </select>
+    {{ selected_bureau_states }}
+    </div>
+  </div>
+
+  <button type="submit" class="btn">Search</button>
+  <button type="submit" class="btn" name="clear" value="true">Clear</button>
+</form>

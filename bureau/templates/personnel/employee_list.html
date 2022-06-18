@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% block title %}Employees{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+  <link href="https://fonts.googleapis.com/css?family=Gravitas+One"
+        rel="stylesheet">
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">Bureau Employees</div>
+
+  <div class="mt-4 mb-2">
+    {% include 'personnel/partials/employee_search_form.html' %}
+  </div>
+
+  <div class="list-group list-group-flush">
+    {% for employee in employee_list %}
+      <div class="list-group-item">
+        <h5 class="list-group-item-heading">
+          <a href="{% url 'personnel:employee_detail' employee.pk %}">
+            {{ employee }}
+          </a>
+        </h5>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% include 'partials/pagination.html' %}
+
+{% endblock content %}

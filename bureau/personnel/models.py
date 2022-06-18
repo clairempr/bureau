@@ -126,6 +126,7 @@ class EmployeeManager(models.Manager):
             Q(assignments__start_date__gte='{}'.format(year)),
             assignments__start_date__lt='{}'.format(year + 1)).distinct().filter(**kwargs)
 
+
 class Employee(models.Model):
     """
     Freedmen's Bureau employee, military or civilian,
@@ -236,4 +237,3 @@ class Employee(models.Model):
         if self.date_of_birth:
             return year - self.date_of_birth.date.year
         return None
-

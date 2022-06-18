@@ -1,13 +1,101 @@
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
 from medical.tests.factories import AilmentFactory, AilmentTypeFactory
-from personnel.models import EmployeeManager
+from personnel.models import Employee, EmployeeManager
 from personnel.tests.factories import EmployeeFactory
-from personnel.views import EmployeesBornResidedDiedInPlaceView, EmployeesWithAilmentListView
-from places.tests.factories import PlaceFactory
+from personnel.views import EmployeeListView, EmployeesBornResidedDiedInPlaceView, EmployeesWithAilmentListView
+from places.tests.factories import BureauStateFactory, PlaceFactory
+
+
+class EmployeeListViewTestCase(TestCase):
+    """
+    Test EmployeeListView
+    """
+
+    def setUp(self):
+        self.employee1 = EmployeeFactory()
+        self.employee2 = EmployeeFactory()
+        self.bureau_state1 = BureauStateFactory()
+        self.bureau_state2 = BureauStateFactory()
+
+    def test_get_context_data(self):
+        """
+        context should contain any GET parameters (aside from "Clear"), if "clear" isn't True
+        """
+
+        url = 'personnel:employee_list'
+
+        request = RequestFactory().get('/')
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        context = view.get_context_data()
+
+        # If GET parameter wasn't supplied for search criteria, they should be empty in context
+        for key in ['first_name', 'last_name']:
+            self.assertEqual(context[key], '', f"If GET parameter {key} not supplied, it should be empty in context")
+
+        # If GET parameter was supplied for search criteria, they should be filled in context
+        search_text = 'this is the name'
+        for key in ['first_name', 'last_name']:
+            response = self.client.get(reverse(url), {key: search_text})
+            self.assertEqual(response.context[key], search_text,
+                             "If {key} was supplied, it should be in context of EmployeeListView")
+
+        # If GET parameter "clear" was true, search criteria shouldn't be filled in context
+        for key in ['first_name', 'last_name']:
+            response = self.client.get(reverse(url), {'clear': 'true', key: search_text})
+            self.assertNotIn(key, response.context,
+                             "If clear was True, no search criteria should be in context of EmployeeListView")
+
+        # Some things should always be in context
+        response = self.client.get(reverse(url))
+        for key in ['bureau_states']:
+            self.assertIn(key, response.context, "{key} should always be in context of EmployeeListView")
+
+    def test_get_queryset_default(self):
+        request = RequestFactory().get('/')
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
+
+    def test_get_queryset_clear(self):
+        # If "clear" is True, search criteria have been cleared and all employees need to be returned
+        request = RequestFactory().get('/', {'clear': 'true'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
+
+    def test_get_queryset_by_name(self):
+        rebecca_crumpler = EmployeeFactory(first_name='Rebecca Lee', last_name='Crumpler')
+        william_van_duyn = EmployeeFactory(first_name='William B.', last_name='Van Duyn')
+
+        for text in ['Rebecca', 'Lee', 'Rebecca Lee']:
+            request = RequestFactory().get('/', {'first_name': text})
+            view = EmployeeListView(kwargs={}, object_list=[], request=request)
+            self.assertSetEqual(set(view.get_queryset()), {rebecca_crumpler},
+                    'If first_name specified, EmployeeListView should return employees with search text in first_name')
+
+        for text in ['Van', 'Duyn', 'Van Duyn']:
+            request = RequestFactory().get('/', {'last_name': text})
+            view = EmployeeListView(kwargs={}, object_list=[], request=request)
+            self.assertSetEqual(set(view.get_queryset()), {william_van_duyn},
+                    'If last_name specified, EmployeeListView should return employees with search text in last_name')
+
+    def test_get_queryset_by_bureau_states(self):
+        employee_in_state_1 = EmployeeFactory()
+        employee_in_state_1.bureau_states.add(self.bureau_state1)
+        employee_in_states_1_and_2 = EmployeeFactory()
+        employee_in_states_1_and_2.bureau_states.add(self.bureau_state1, self.bureau_state2)
+
+        request = RequestFactory().get('/', {'bureau_states': [self.bureau_state1.pk, self.bureau_state2.pk]})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_in_state_1, employee_in_states_1_and_2},
+                    'If bureau_states specified, EmployeeListView should return employees who worked in at least one')
+
+        request = RequestFactory().get('/', {'bureau_states': [self.bureau_state2.pk]})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_in_states_1_and_2},
+                    'If bureau_states specified, EmployeeListView should return employees who worked in at least one')
 
 
 class EmployeesBornResidedDiedInPlaceViewTestCase(TestCase):

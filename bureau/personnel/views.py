@@ -2,7 +2,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 
 from medical.models import Ailment, AilmentType
 from personnel.models import Employee
-from places.models import Place
+from places.models import Place, Region
 
 
 class EmployeeDetailView(DetailView):
@@ -11,6 +11,57 @@ class EmployeeDetailView(DetailView):
 
 
 employee_detail_view = EmployeeDetailView.as_view()
+
+
+class EmployeeListView(ListView):
+
+    model = Employee
+    paginate_by = 25
+    slug_field = "name"
+    slug_url_kwarg = "name"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # If search criteria haven't been cleared,
+        # put values in context so they can be used to re-populate search form
+        if not self.request.GET.get('clear', False):
+            for key in ['first_name', 'last_name']:
+                value = self.request.GET.get(key, '')
+                context[key] = value
+
+            selected_bureau_states = self.request.GET.getlist('bureau_states', [])
+        else:
+            selected_bureau_states = []
+
+        context['bureau_states'] = [(state, True if str(state.pk) in selected_bureau_states else False)
+                                    for state in Region.objects.bureau_state()]
+
+        return context
+
+    def get_queryset(self):
+        qs = Employee.objects.all()
+
+        # If search criteria have been cleared, just return default queryset
+        if self.request.GET.get('clear', False):
+            return qs
+
+        first_name = self.request.GET.get('first_name')
+        if first_name:
+            qs = qs.filter(first_name__icontains=first_name)
+
+        last_name = self.request.GET.get('last_name')
+        if last_name:
+            qs = qs.filter(last_name__icontains=last_name)
+
+        selected_bureau_states = self.request.GET.getlist('bureau_states', [])
+        if selected_bureau_states:
+            qs = qs.filter(bureau_states__in=selected_bureau_states)
+
+        return qs.distinct()
+
+
+employee_list_view = EmployeeListView.as_view()
 
 
 class EmployeesBornResidedDiedInPlaceView(TemplateView):

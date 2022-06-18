@@ -52,7 +52,6 @@ class EmployeeAdminTestCase(TestCase):
         self.assertNotIn(state3.name, EmployeeAdmin.bureau_state(EmployeeAdmin, employee),
                          'State not in Employee.bureau_states should not be in EmployeeAdmin.bureau_state')
 
-
     def test_save_model_vrc_true(self):
         """
         If Employee is a member of a VRC unit, 'vrc' should get set to True

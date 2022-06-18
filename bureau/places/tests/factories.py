@@ -59,3 +59,11 @@ class RegionFactory(DjangoModelFactory):
 
     class Meta:
         model = Region
+
+
+class BureauStateFactory(RegionFactory):
+    """
+    Bureau state Region factory
+    """
+
+    bureau_operations = True
