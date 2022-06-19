@@ -5,6 +5,36 @@ from django.test import TestCase
 from medical.tests.factories import AilmentFactory, AilmentTypeFactory
 from personnel.tests.factories import EmployeeFactory
 
+
+class EmployeeListViewTemplateTestCase(TestCase):
+    """
+    Test template of personnel.views.EmployeeListView
+    """
+
+    def setUp(self):
+        self.template = 'personnel/employee_list.html'
+
+    def test_template(self):
+        last_name = 'Howard'
+        first_name = 'Oliver Otis'
+
+        employee = EmployeeFactory(first_name='Oliver Otis', last_name='Howard')
+
+        context = {'last_name': last_name, 'first_name': first_name, 'employee_list': [employee]}
+        rendered = render_to_string(self.template, context)
+
+        # "Bureau Employees" should be in html
+        text = 'Bureau Employees'
+        self.assertTrue(text in rendered, "'{}' should be in {}".format(text, self.template))
+
+        # Search criteria should be in html
+        for key in ['last_name', 'first_name']:
+            self.assertTrue(key in rendered, "'{}' should be in {}".format(text, self.template))
+
+        # Employees should be listed
+        self.assertTrue(str(employee) in rendered, 'Employees should be listed in {}'.format(self.template))
+
+
 class EmployeesWithAilmentListViewTemplateTestCase(TestCase):
     """
     Test template of personnel.views.EmployeesWithAilmentListView

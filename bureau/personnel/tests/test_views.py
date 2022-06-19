@@ -16,8 +16,6 @@ class EmployeeListViewTestCase(TestCase):
     """
 
     def setUp(self):
-        self.employee1 = EmployeeFactory()
-        self.employee2 = EmployeeFactory()
         self.bureau_state1 = BureauStateFactory()
         self.bureau_state2 = BureauStateFactory()
 
@@ -55,11 +53,15 @@ class EmployeeListViewTestCase(TestCase):
             self.assertIn(key, response.context, "{key} should always be in context of EmployeeListView")
 
     def test_get_queryset_default(self):
+        EmployeeFactory()
+
         request = RequestFactory().get('/')
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
 
     def test_get_queryset_clear(self):
+        EmployeeFactory()
+
         # If "clear" is True, search criteria have been cleared and all employees need to be returned
         request = RequestFactory().get('/', {'clear': 'true'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
