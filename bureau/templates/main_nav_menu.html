@@ -1,64 +1,65 @@
 {% load i18n %}
 
-<div class="m-b-1 font-weight-bold" style="font-family: 'Gentium Basic'; font-size: 1.5em;">
-
+<div class="mb-1 fw-bold" style="font-family: 'Gentium Basic'; font-size: 1.5em;">
   <nav class="navbar navbar-expand-md navbar-light bg-light">
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <a class="navbar-brand" href="{% url 'home' %}">The Bureau</a>
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'home' %}">The Bureau</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'personnel:employee_list' %}">Employees</a>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
-             aria-haspopup="true" aria-expanded="false">
-            Statistics
-          </a>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <a class="dropdown-item" href="{% url 'stats:general' %}">General</a>
-            <a class="dropdown-item" href="{% url 'stats:detailed' %}">Detailed</a>
-            <a class="dropdown-item" href="{% url 'stats:state_comparison' %}">State Comparison</a>
-          </div>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'places:bureau_state_list' %}">Bureau States</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'military:regiment_list' %}">Regiments</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'about' %}">About</a>
-        </li>
-        {% if request.user.is_authenticated %}
           <li class="nav-item">
-            {# URL provided by django-allauth/account/urls.py #}
-            <a class="nav-link" href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
+            <a class="nav-link" href="{% url 'personnel:employee_list' %}">Employees</a>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+              Statistics
+            </a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="{% url 'stats:general' %}">General</a>
+              <a class="dropdown-item" href="{% url 'stats:detailed' %}">Detailed</a>
+              <a class="dropdown-item" href="{% url 'stats:state_comparison' %}">State Comparison</a>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'places:bureau_state_list' %}">Bureau States</a>
           </li>
           <li class="nav-item">
-            {# URL provided by django-allauth/account/urls.py #}
-            <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
-          </li>
-        {% else %}
-          <li class="nav-item">
-            {# URL provided by django-allauth/account/urls.py #}
-            <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+            <a class="nav-link" href="{% url 'military:regiment_list' %}">Regiments</a>
           </li>
           <li class="nav-item">
-            {# URL provided by django-allauth/account/urls.py #}
-            <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+            <a class="nav-link" href="{% url 'about' %}">About</a>
           </li>
-        {% endif %}
-      </ul>
+          {% if request.user.is_authenticated %}
+            <li class="nav-item">
+              {# URL provided by django-allauth/account/urls.py #}
+              <a class="nav-link" href="{% url 'users:detail' request.user.username %}">{% trans "My Profile" %}</a>
+            </li>
+            <li class="nav-item">
+              {# URL provided by django-allauth/account/urls.py #}
+              <a class="nav-link" href="{% url 'account_logout' %}">{% trans "Sign Out" %}</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              {# URL provided by django-allauth/account/urls.py #}
+              <a id="sign-up-link" class="nav-link" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
+            </li>
+            <li class="nav-item">
+              {# URL provided by django-allauth/account/urls.py #}
+              <a id="log-in-link" class="nav-link" href="{% url 'account_login' %}">{% trans "Sign In" %}</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
+
   </nav>
 
 </div>

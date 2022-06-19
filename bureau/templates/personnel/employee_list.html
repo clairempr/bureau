@@ -20,9 +20,8 @@
     {% for employee in employee_list %}
       <div class="list-group-item">
         <h5 class="list-group-item-heading">
-          <a href="{% url 'personnel:employee_detail' employee.pk %}">
-            {{ employee }}
-          </a>
+          <a href="{% url 'personnel:employee_detail' employee.pk %}">{{ employee }}</a>
+          &nbsp;({% if employee.vrc %}VRC - {% endif %}{{ employee.bureau_state_list }})
         </h5>
       </div>
     {% endfor %}

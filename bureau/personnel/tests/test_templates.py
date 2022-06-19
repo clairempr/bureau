@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from medical.tests.factories import AilmentFactory, AilmentTypeFactory
 from personnel.tests.factories import EmployeeFactory
+from places.tests.factories import BureauStateFactory
 
 
 class EmployeeListViewTemplateTestCase(TestCase):
@@ -14,7 +15,7 @@ class EmployeeListViewTemplateTestCase(TestCase):
     def setUp(self):
         self.template = 'personnel/employee_list.html'
 
-    def test_template(self):
+    def test_name_in_template(self):
         last_name = 'Howard'
         first_name = 'Oliver Otis'
 
@@ -33,6 +34,28 @@ class EmployeeListViewTemplateTestCase(TestCase):
 
         # Employees should be listed
         self.assertTrue(str(employee) in rendered, 'Employees should be listed in {}'.format(self.template))
+
+    def test_gender_in_template(self):
+        rendered = render_to_string(self.template, context={})
+
+        for text in ['Gender', 'Male', 'Female']:
+            self.assertTrue(text in rendered, f"{text} should be in page")
+
+    def test_bureau_state_in_template(self):
+        bureau_state = BureauStateFactory(name='Tarheel State')
+        EmployeeFactory()
+
+        context = {'bureau_states': [(bureau_state, True)]}
+        rendered = render_to_string(self.template, context)
+
+        # Bureau states should be in html
+        self.assertTrue('Tarheel State' in rendered, "Bureau state should be in page")
+
+    def test_misc_labels_in_template(self):
+        rendered = render_to_string(self.template, context={})
+
+        for label in ['VRC', 'Union veteran', 'Confederate veteran']:
+            self.assertTrue(label in rendered, f"{label} should be in page")
 
 
 class EmployeesWithAilmentListViewTemplateTestCase(TestCase):

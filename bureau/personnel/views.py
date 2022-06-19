@@ -25,14 +25,17 @@ class EmployeeListView(ListView):
 
         # If search criteria haven't been cleared,
         # put values in context so they can be used to re-populate search form
-        if not self.request.GET.get('clear', False):
-            for key in ['first_name', 'last_name']:
+        if self.request.GET.get('clear', False):
+            selected_bureau_states = []
+        else:
+            for key in ['first_name', 'last_name', 'gender']:
                 value = self.request.GET.get(key, '')
                 context[key] = value
-
             selected_bureau_states = self.request.GET.getlist('bureau_states', [])
-        else:
-            selected_bureau_states = []
+            # Checkboxes
+            for key in ['vrc', 'union_veteran', 'confederate_veteran']:
+                if key in self.request.GET:
+                    context[key] = key
 
         context['bureau_states'] = [(state, True if str(state.pk) in selected_bureau_states else False)
                                     for state in Region.objects.bureau_state()]
@@ -46,17 +49,31 @@ class EmployeeListView(ListView):
         if self.request.GET.get('clear', False):
             return qs
 
+        # Name
         first_name = self.request.GET.get('first_name')
         if first_name:
             qs = qs.filter(first_name__icontains=first_name)
-
         last_name = self.request.GET.get('last_name')
         if last_name:
             qs = qs.filter(last_name__icontains=last_name)
 
+        # Gender is "Male" or "Female" in select,  but value in model is "M" or "F"
+        gender = self.request.GET.get('gender')
+        if gender:
+            qs = qs.filter(gender=gender[0])
+
+        # Bureau states
         selected_bureau_states = self.request.GET.getlist('bureau_states', [])
         if selected_bureau_states:
             qs = qs.filter(bureau_states__in=selected_bureau_states)
+
+        # VRC/Union veteran/Confederate veteran
+        if 'vrc' in self.request.GET:
+            qs = qs.filter(vrc=True)
+        if 'union_veteran' in self.request.GET:
+            qs = qs.filter(union_veteran=True)
+        if 'confederate_veteran' in self.request.GET:
+            qs = qs.filter(confederate_veteran=True)
 
         return qs.distinct()
 

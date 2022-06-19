@@ -29,6 +29,14 @@ main {
   border-style: double;
 }
 
+.form-label {
+  font-size: 1.4rem;
+}
+
+.form-select {
+  font-size: 1.2rem;
+}
+
 .page-header {
   margin-top: .5rem!important;
   margin-bottom: 1.1rem!important;
