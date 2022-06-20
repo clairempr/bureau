@@ -67,3 +67,4 @@ class BureauStateFactory(RegionFactory):
     """
 
     bureau_operations = True
+    country = SubFactory(CountryFactory, name='United States')
