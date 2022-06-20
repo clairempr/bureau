@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
+from places.tests.factories import BureauStateFactory
+
 User = get_user_model()
 
 
@@ -201,29 +203,66 @@ class PaginationTemplateTestCase(SimpleTestCase):
             self.assertFalse(partial_page_link.format(page_number=page_number) in rendered,
                              "Page numbers not 1st or last 2, or within 3 pages of current page, shouldn't have a link")
 
-    def test_search_parameters(self):
-        """
-        If search criteria are in context, their values should be in the pagination
-        """
 
-        # If search text supplied, that should be in the link
-        paginator = Paginator(object_list=['a', 'b'], per_page=1)
+class SearchParametersTemplateTestCase(TestCase):
+    """
+    Test search_parameters.html template
+    """
+
+    def setUp(self):
+        self.template = 'partials/search_parameters.html'
+
+    def test_search_text(self):
+        """
+        If search_text is in context, its value should be in the pagination
+        """
         search_text = 'That thing to search for'
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=1),
-                   'search_text': search_text}
+        context = {'search_text': search_text}
         rendered = render_to_string(self.template, context)
         self.assertTrue('&search_text={}'.format(search_text) in rendered,
-                        "If search text supplied, that should be in link to the next page")
+                        'If search text supplied, that should be in link')
 
-        # If search text supplied, that should be in the link to the previous page
-        paginator = Paginator(object_list=['a', 'b'], per_page=1)
-        search_text = 'That thing to search for'
-        context = {'is_paginated': True,
-                   'paginator': paginator,
-                   'page_obj': paginator.page(number=2),
-                   'search_text': search_text}
+    def test_name(self):
+        """
+        If search_text is in context, its value should be in the pagination
+        """
+        last_name = 'Last Name'
+        first_name = 'First Name'
+        context = {'last_name': last_name, 'first_name': first_name}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&search_text={}'.format(search_text) in rendered,
-                        "If search text supplied, that should be in link to the previous page")
+        self.assertTrue('&last_name={}'.format(last_name) in rendered,
+                        'If last name supplied, that should be in link')
+        self.assertTrue('&first_name={}'.format(first_name) in rendered,
+                        'If first name supplied, that should be in link')
+
+    def test_gender(self):
+        """
+        If gender is in context, its value should be in the pagination
+        """
+        gender = 'Female'
+        context = {'gender': gender}
+        rendered = render_to_string(self.template, context)
+        self.assertTrue('&gender={}'.format(gender) in rendered, 'If gender supplied, that should be in link')
+
+    def test_bureau_state(self):
+        """
+        If bureau_states is in context, its value should be in the pagination
+        """
+        alabama = BureauStateFactory(name='Alabama')
+        arkansas = BureauStateFactory(name='Arkansas')
+
+        # bureau_states is list of tuples: (state, selected)
+        bureau_states = [(alabama, False), (arkansas, True)]
+        context = {'bureau_states': bureau_states}
+        rendered = render_to_string(self.template, context)
+        self.assertTrue('&bureau_states={}'.format(arkansas.pk) in rendered,
+                        'If bureau_states supplied, selected states should be in link')
+
+    def test_booleans(self):
+        """
+        If a boolean is in context, its value should be in the pagination
+        """
+        for key in ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment']:
+            context = {key: key}
+            rendered = render_to_string(self.template, context)
+            self.assertTrue(f'&{key}={key}' in rendered, f'If {key} supplied, that should be in link')

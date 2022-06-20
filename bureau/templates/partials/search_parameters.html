@@ -1,5 +1,10 @@
 {% if search_text %}&search_text={{ search_text }}{% endif %}
 {% if last_name %}&last_name={{ last_name }}{% endif %}
 {% if first_name %}&first_name={{ first_name }}{% endif %}
+{% if gender %}&gender={{ gender }}{% endif %}
 {% for state, selected in bureau_states %}{% if selected %}&bureau_states={{ state.pk }}{% endif %}{% endfor %}
 {% if vrc %}&vrc={{ vrc }}{% endif %}
+{% if union_veteran %}&union_veteran={{ union_veteran }}{% endif %}
+{% if confederate_veteran %}&confederate_veteran={{ confederate_veteran }}{% endif %}
+{% if colored %}&colored={{ colored }}{% endif %}
+{% if died_during_assignment %}&died_during_assignment={{ died_during_assignment }}{% endif %}

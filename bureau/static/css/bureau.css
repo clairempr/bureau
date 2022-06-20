@@ -35,6 +35,7 @@ main {
 
 .form-select {
   font-size: 1.2rem;
+  min-width: max-content;
 }
 
 .page-header {

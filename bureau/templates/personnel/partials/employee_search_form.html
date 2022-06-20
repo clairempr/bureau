@@ -27,6 +27,9 @@
       </select>
     </div>
     <div class="col mb-3">
+      {% include "partials/form_checkbox.html" with checkbox_field="died_during_assignment" checkbox_label="Died during assignment" checkbox_value=died_during_assignment %}
+    </div>
+    <div class="col mb-3">
       {% include "partials/form_checkbox.html" with checkbox_field="vrc" checkbox_label="VRC" checkbox_value=vrc %}
     </div>
     <div class="col mb-3">
@@ -34,6 +37,9 @@
     </div>
     <div class="col mb-3">
       {% include "partials/form_checkbox.html" with checkbox_field="confederate_veteran" checkbox_label="Confederate veteran" checkbox_value=confederate_veteran %}
+    </div>
+    <div class="col mb-3">
+      {% include "partials/form_checkbox.html" with checkbox_field="colored" checkbox_label='Identified as "Colored"' checkbox_value=colored %}
     </div>
 
   </div>

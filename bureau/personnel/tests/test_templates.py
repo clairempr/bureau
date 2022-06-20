@@ -35,6 +35,13 @@ class EmployeeListViewTemplateTestCase(TestCase):
         # Employees should be listed
         self.assertTrue(str(employee) in rendered, 'Employees should be listed in {}'.format(self.template))
 
+        # If VRC or has Bureau states, that should be in parentheses after name
+        vrc_employee = EmployeeFactory(vrc=True)
+        vrc_employee.bureau_states.add(BureauStateFactory(name='Missouri'))
+        context = {'employee_list': [vrc_employee]}
+        rendered = render_to_string(self.template, context)
+        self.assertIn('(VRC - Missouri)', rendered)
+
     def test_gender_in_template(self):
         rendered = render_to_string(self.template, context={})
 
@@ -54,7 +61,8 @@ class EmployeeListViewTemplateTestCase(TestCase):
     def test_misc_labels_in_template(self):
         rendered = render_to_string(self.template, context={})
 
-        for label in ['VRC', 'Union veteran', 'Confederate veteran']:
+        for label in ['VRC', 'Union veteran', 'Confederate veteran', 'Identified as "Colored"',
+                      'Died during assignment']:
             self.assertTrue(label in rendered, f"{label} should be in page")
 
 

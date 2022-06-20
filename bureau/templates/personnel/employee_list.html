@@ -12,8 +12,11 @@
 <div class="container">
   <div class="page-header">Bureau Employees</div>
 
-  <div class="mt-4 mb-2">
+  <div class="my-4">
     {% include 'personnel/partials/employee_search_form.html' %}
+  </div>
+  <div class="fs-5 mt-3 mb-2">
+    {{ paginator.count }} employee{{ paginator.count|pluralize }} found
   </div>
 
   <div class="list-group list-group-flush">
@@ -21,7 +24,8 @@
       <div class="list-group-item">
         <h5 class="list-group-item-heading">
           <a href="{% url 'personnel:employee_detail' employee.pk %}">{{ employee }}</a>
-          &nbsp;({% if employee.vrc %}VRC - {% endif %}{{ employee.bureau_state_list }})
+          &nbsp;{% if employee.bureau_state_list or employee.vrc %}
+          ({% if employee.vrc %}VRC - {% endif %}{{ employee.bureau_state_list }}){% endif %}
         </h5>
       </div>
     {% endfor %}

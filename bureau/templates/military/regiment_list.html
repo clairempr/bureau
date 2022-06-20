@@ -45,8 +45,11 @@
     </li>
   </ul>
 
-  <div class="mt-4 mb-2">
+  <div class="my-4">
     {% include 'military/partials/regiment_search_form.html' %}
+  </div>
+  <div class="fs-5 mt-3 mb-2">
+    {{ paginator.count }} regiment{{ paginator.count|pluralize }} found
   </div>
 
   <div class="list-group list-group-flush">
