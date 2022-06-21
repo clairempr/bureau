@@ -27,6 +27,14 @@
       </select>
     </div>
     <div class="col mb-3">
+      <label for="place_of_birth" class="form-label text-nowrap">Birthplace</label>
+      <input type="text" class="form-control" id="place_of_birth" name="place_of_birth" value="{{ place_of_birth }}">
+    </div>
+    <div class="col mb-3">
+      <label for="place_of_death" class="form-label text-nowrap">Place of death</label>
+      <input type="text" class="form-control" id="place_of_death" name="place_of_death" value="{{ place_of_death }}">
+    </div>
+    <div class="col mb-3">
       {% include "partials/form_checkbox.html" with checkbox_field="died_during_assignment" checkbox_label="Died during assignment" checkbox_value=died_during_assignment %}
     </div>
     <div class="col mb-3">

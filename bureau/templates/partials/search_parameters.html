@@ -1,6 +1,8 @@
 {% if search_text %}&search_text={{ search_text }}{% endif %}
 {% if last_name %}&last_name={{ last_name }}{% endif %}
 {% if first_name %}&first_name={{ first_name }}{% endif %}
+{% if place_of_birth %}&place_of_birth={{ place_of_birth }}{% endif %}
+{% if place_of_death %}&place_of_death={{ place_of_death }}{% endif %}
 {% if gender %}&gender={{ gender }}{% endif %}
 {% for state, selected in bureau_states %}{% if selected %}&bureau_states={{ state.pk }}{% endif %}{% endfor %}
 {% if vrc %}&vrc={{ vrc }}{% endif %}

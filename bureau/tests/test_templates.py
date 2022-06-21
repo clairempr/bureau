@@ -245,6 +245,26 @@ class SearchParametersTemplateTestCase(TestCase):
         rendered = render_to_string(self.template, context)
         self.assertTrue('&gender={}'.format(gender) in rendered, 'If gender supplied, that should be in link')
 
+    def test_place_of_birth(self):
+        """
+        If search_text is in context, its value should be in the pagination
+        """
+        place_of_birth = 'New York'
+        context = {'place_of_birth': place_of_birth}
+        rendered = render_to_string(self.template, context)
+        self.assertTrue('&place_of_birth={}'.format(place_of_birth) in rendered,
+                        'If place_of_birth supplied, that should be in link')
+
+    def test_place_of_death(self):
+        """
+        If search_text is in context, its value should be in the pagination
+        """
+        place_of_death = 'New York'
+        context = {'place_of_death': place_of_death}
+        rendered = render_to_string(self.template, context)
+        self.assertTrue('&place_of_death={}'.format(place_of_death) in rendered,
+                        'If place_of_death supplied, that should be in link')
+
     def test_bureau_state(self):
         """
         If bureau_states is in context, its value should be in the pagination

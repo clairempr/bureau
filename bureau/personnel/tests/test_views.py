@@ -7,7 +7,7 @@ from medical.tests.factories import AilmentFactory, AilmentTypeFactory
 from personnel.models import Employee, EmployeeManager
 from personnel.tests.factories import EmployeeFactory
 from personnel.views import EmployeeListView, EmployeesBornResidedDiedInPlaceView, EmployeesWithAilmentListView
-from places.tests.factories import BureauStateFactory, PlaceFactory
+from places.tests.factories import BureauStateFactory, CityFactory, PlaceFactory, RegionFactory
 
 
 class EmployeeListViewTestCase(TestCase):
@@ -23,6 +23,7 @@ class EmployeeListViewTestCase(TestCase):
         self.bureau_state2 = BureauStateFactory()
         self.boolean_keys = ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
                              'former_slave', 'slaveholder']
+        self.search_keys = ['first_name', 'last_name', 'gender', 'place_of_birth', 'place_of_death']
 
     def test_get_context_data(self):
         """
@@ -34,12 +35,12 @@ class EmployeeListViewTestCase(TestCase):
         context = view.get_context_data()
 
         # If GET parameter wasn't supplied for search criteria, they should be empty in context
-        for key in ['first_name', 'last_name']:
+        for key in self.search_keys:
             self.assertEqual(context[key], '', f"If GET parameter {key} not supplied, it should be empty in context")
 
         # If GET parameter was supplied for search criteria, they should be filled in context
-        search_text = 'this is the name'
-        for key in ['first_name', 'last_name', 'gender']:
+        search_text = 'search text'
+        for key in self.search_keys:
             response = self.client.get(reverse(self.url), {key: search_text})
             self.assertEqual(response.context[key], search_text,
                              "If {key} was supplied, it should be in context of EmployeeListView")
@@ -74,7 +75,7 @@ class EmployeeListViewTestCase(TestCase):
         self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
 
         # If GET parameter "clear" was true, search criteria shouldn't be filled in context
-        for key in ['first_name', 'last_name', 'gender'] + self.boolean_keys:
+        for key in self.search_keys + self.boolean_keys:
             response = self.client.get(reverse(self.url), {'clear': 'true', key: 'value'})
             self.assertNotIn(key, response.context,
                              "If clear was True, no search criteria should be in context of EmployeeListView")
@@ -122,6 +123,46 @@ class EmployeeListViewTestCase(TestCase):
             view = EmployeeListView(kwargs={}, object_list=[], request=request)
             self.assertSetEqual(set(view.get_queryset()), {self.william_van_duyn},
                     'If last_name specified, EmployeeListView should return employees with search text in last_name')
+
+    def test_get_queryset_by_place_of_birth(self):
+        ohio = PlaceFactory(region=RegionFactory(name='Ohio'))
+        philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
+        employee_born_in_ohio = EmployeeFactory(place_of_birth=ohio)
+        employee_born_in_philadelphia = EmployeeFactory(place_of_birth=philadelphia)
+
+        request = RequestFactory().get('/', {'place_of_birth': 'Ohio'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertIn(employee_born_in_ohio, view.get_queryset(),
+                'If state place_of_birth specified, EmployeeListView should return employees with search text in state name')
+        self.assertNotIn(employee_born_in_philadelphia, view.get_queryset(),
+                'If state place_of_birth specified, EmployeeListView should return only employees with search text in state name')
+
+        request = RequestFactory().get('/', {'place_of_birth': 'Philadelphia'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertIn(employee_born_in_philadelphia, view.get_queryset(),
+                'If city place_of_birth specified, EmployeeListView should return employees with search text in city name')
+        self.assertNotIn(employee_born_in_ohio, view.get_queryset(),
+                'If city place_of_birth specified, EmployeeListView should return only employees with search text in city name')
+
+    def test_get_queryset_by_place_of_death(self):
+        ohio = PlaceFactory(region=RegionFactory(name='Ohio'))
+        philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
+        employee_died_in_ohio = EmployeeFactory(place_of_death=ohio)
+        employee_died_in_philadelphia = EmployeeFactory(place_of_death=philadelphia)
+
+        request = RequestFactory().get('/', {'place_of_death': 'Ohio'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertIn(employee_died_in_ohio, view.get_queryset(),
+                'If state place_of_death specified, EmployeeListView should return employees with search text in state name')
+        self.assertNotIn(employee_died_in_philadelphia, view.get_queryset(),
+                'If state place_of_death specified, EmployeeListView should return only employees with search text in state name')
+
+        request = RequestFactory().get('/', {'place_of_death': 'Philadelphia'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertIn(employee_died_in_philadelphia, view.get_queryset(),
+                'If city place_of_death specified, EmployeeListView should return employees with search text in city name')
+        self.assertNotIn(employee_died_in_ohio, view.get_queryset(),
+                'If city place_of_death specified, EmployeeListView should return only employees with search text in city name')
 
     def test_get_queryset_by_bureau_states(self):
         employee_in_state_1 = EmployeeFactory()

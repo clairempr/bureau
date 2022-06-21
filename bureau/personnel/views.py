@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.views.generic import DetailView, ListView, TemplateView
 
 from medical.models import Ailment, AilmentType
@@ -29,7 +30,7 @@ class EmployeeListView(ListView):
             selected_bureau_states = []
             selected_ailments = []
         else:
-            for key in ['first_name', 'last_name', 'gender']:
+            for key in ['first_name', 'last_name', 'gender', 'place_of_birth', 'place_of_death']:
                 value = self.request.GET.get(key, '')
                 context[key] = value
 
@@ -57,19 +58,6 @@ class EmployeeListView(ListView):
         if self.request.GET.get('clear', False):
             return qs
 
-        # Name
-        first_name = self.request.GET.get('first_name')
-        if first_name:
-            qs = qs.filter(first_name__icontains=first_name)
-        last_name = self.request.GET.get('last_name')
-        if last_name:
-            qs = qs.filter(last_name__icontains=last_name)
-
-        # Gender is "Male" or "Female" in select,  but value in model is "M" or "F"
-        gender = self.request.GET.get('gender')
-        if gender:
-            qs = qs.filter(gender=gender[0])
-
         # Booleans from checkboxes
         if 'died_during_assignment' in self.request.GET:
             qs = qs.filter(died_during_assignment=True)
@@ -85,6 +73,31 @@ class EmployeeListView(ListView):
             qs = qs.filter(former_slave=True)
         if 'slaveholder' in self.request.GET:
             qs = qs.filter(slaveholder=True)
+
+        # Gender is "Male" or "Female" in select,  but value in model is "M" or "F"
+        gender = self.request.GET.get('gender')
+        if gender:
+            qs = qs.filter(gender=gender[0])
+
+        # Fields with search text
+        first_name = self.request.GET.get('first_name')
+        if first_name:
+            qs = qs.filter(first_name__icontains=first_name)
+        last_name = self.request.GET.get('last_name')
+        if last_name:
+            qs = qs.filter(last_name__icontains=last_name)
+        place_of_birth = self.request.GET.get('place_of_birth')
+        if place_of_birth:
+            qs = qs.filter(Q(place_of_birth__country__name__icontains=place_of_birth)
+                   | Q(place_of_birth__region__name__icontains=place_of_birth)
+                   | Q(place_of_birth__county__name__icontains=place_of_birth)
+                   | Q(place_of_birth__city__name__icontains=place_of_birth))
+        place_of_death = self.request.GET.get('place_of_death')
+        if place_of_death:
+            qs = qs.filter(Q(place_of_death__country__name__icontains=place_of_death)
+                   | Q(place_of_death__region__name__icontains=place_of_death)
+                   | Q(place_of_death__county__name__icontains=place_of_death)
+                   | Q(place_of_death__city__name__icontains=place_of_death))
 
         # Bureau states
         selected_bureau_states = self.request.GET.getlist('bureau_states', [])
