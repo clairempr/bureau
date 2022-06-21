@@ -27,11 +27,16 @@ class EmployeeListView(ListView):
         # put values in context so they can be used to re-populate search form
         if self.request.GET.get('clear', False):
             selected_bureau_states = []
+            selected_ailments = []
         else:
             for key in ['first_name', 'last_name', 'gender']:
                 value = self.request.GET.get(key, '')
                 context[key] = value
+
+            # Multiselect
             selected_bureau_states = self.request.GET.getlist('bureau_states', [])
+            selected_ailments = self.request.GET.getlist('ailments', [])
+
             # Checkboxes
             for key in ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
                         'former_slave', 'slaveholder']:
@@ -40,6 +45,8 @@ class EmployeeListView(ListView):
 
         context['bureau_states'] = [(state, True if str(state.pk) in selected_bureau_states else False)
                                     for state in Region.objects.bureau_state()]
+        context['ailments'] = [(ailment, True if str(ailment.pk) in selected_ailments else False)
+                               for ailment in Ailment.objects.all()]
 
         return context
 
@@ -63,11 +70,6 @@ class EmployeeListView(ListView):
         if gender:
             qs = qs.filter(gender=gender[0])
 
-        # Bureau states
-        selected_bureau_states = self.request.GET.getlist('bureau_states', [])
-        if selected_bureau_states:
-            qs = qs.filter(bureau_states__in=selected_bureau_states)
-
         # Booleans from checkboxes
         if 'died_during_assignment' in self.request.GET:
             qs = qs.filter(died_during_assignment=True)
@@ -83,6 +85,15 @@ class EmployeeListView(ListView):
             qs = qs.filter(former_slave=True)
         if 'slaveholder' in self.request.GET:
             qs = qs.filter(slaveholder=True)
+
+        # Bureau states
+        selected_bureau_states = self.request.GET.getlist('bureau_states', [])
+        if selected_bureau_states:
+            qs = qs.filter(bureau_states__in=selected_bureau_states)
+        # Ailments
+        selected_ailments = self.request.GET.getlist('ailments', [])
+        if selected_ailments:
+            qs = qs.filter(ailments__in=selected_ailments)
 
         return qs.distinct()
 

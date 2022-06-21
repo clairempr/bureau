@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
+from medical.tests.factories import AilmentFactory
 from places.tests.factories import BureauStateFactory
 
 User = get_user_model()
@@ -257,6 +258,20 @@ class SearchParametersTemplateTestCase(TestCase):
         rendered = render_to_string(self.template, context)
         self.assertTrue('&bureau_states={}'.format(arkansas.pk) in rendered,
                         'If bureau_states supplied, selected states should be in link')
+
+    def test_ailment(self):
+        """
+        If ailments is in context, its value should be in the pagination
+        """
+        shell_wound = AilmentFactory(name='Shell wound')
+        hernia = AilmentFactory(name='hernia')
+
+        # ailments is list of tuples: (ailment, selected)
+        ailments = [(shell_wound, False), (hernia, True)]
+        context = {'ailments': ailments}
+        rendered = render_to_string(self.template, context)
+        self.assertTrue('&ailments={}'.format(hernia.pk) in rendered,
+                        'If ailments supplied, selected ailments should be in link')
 
     def test_booleans(self):
         """

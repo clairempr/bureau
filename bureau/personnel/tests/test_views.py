@@ -50,7 +50,7 @@ class EmployeeListViewTestCase(TestCase):
 
         # Some things should always be in context
         response = self.client.get(reverse(self.url))
-        for key in ['bureau_states']:
+        for key in ['bureau_states', 'ailments']:
             self.assertIn(key, response.context, "{key} should always be in context of EmployeeListView")
 
     def test_get_context_clear(self):
@@ -86,6 +86,13 @@ class EmployeeListViewTestCase(TestCase):
         for state, selected in response.context['bureau_states']:
             self.assertFalse(selected,
                              'If clear was True supplied, no bureau_states should be selected in context')
+        # ailments is list of tuples: (ailment, selected)
+        gunshot_wound = AilmentFactory(name='Gunshot wound')
+        ailments = [str(gunshot_wound.pk)]
+        response = self.client.get(reverse(self.url), {'clear': 'true', 'ailments': ailments})
+        for ailment, selected in response.context['ailments']:
+            self.assertFalse(selected,
+                             'If clear was True supplied, no ailments should be selected in context')
 
     def test_get_queryset_by_gender(self):
         request = RequestFactory().get('/')
@@ -260,6 +267,24 @@ class EmployeeListViewTestCase(TestCase):
                       'If slaveholder specified, EmployeeListView should return slaveholder employees')
         self.assertNotIn(non_slaveholder_employee, queryset,
                          'If slaveholder specified, EmployeeListView should return only slaveholder employees')
+
+    def test_get_queryset_by_ailments(self):
+        ailment1 = AilmentFactory()
+        ailment2 = AilmentFactory()
+        employee_with_ailment_1 = EmployeeFactory()
+        employee_with_ailment_1.ailments.add(ailment1)
+        employee_with_ailments_1_and_2 = EmployeeFactory()
+        employee_with_ailments_1_and_2.ailments.add(ailment1, ailment2)
+
+        request = RequestFactory().get('/', {'ailments': [ailment1.pk, ailment2.pk]})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_with_ailment_1, employee_with_ailments_1_and_2},
+                            'If ailments specified, EmployeeListView should return employees with at least one')
+
+        request = RequestFactory().get('/', {'ailments': [ailment2.pk]})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_with_ailments_1_and_2},
+                            'If ailments specified, EmployeeListView should return employees with at least one')
 
 
 class EmployeesBornResidedDiedInPlaceViewTestCase(TestCase):

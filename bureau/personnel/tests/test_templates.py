@@ -58,6 +58,16 @@ class EmployeeListViewTemplateTestCase(TestCase):
         # Bureau states should be in html
         self.assertTrue('Tarheel State' in rendered, "Bureau state should be in page")
 
+    def test_ailment_in_template(self):
+        ailment = AilmentFactory(name='Consumption')
+        EmployeeFactory()
+
+        context = {'ailments': [(ailment, True)]}
+        rendered = render_to_string(self.template, context)
+
+        # Ailments states should be in html
+        self.assertTrue('Consumption' in rendered, "Ailment should be in page")
+
     def test_misc_labels_in_template(self):
         rendered = render_to_string(self.template, context={})
 

@@ -33,6 +33,14 @@
       {% include "partials/form_checkbox.html" with checkbox_field="vrc" checkbox_label="VRC" checkbox_value=vrc %}
     </div>
     <div class="col mb-3">
+      <label for="ailments" class="form-label text-nowrap">Ailments</label>
+      <select class="form-select" multiple id="ailments" name="ailments" aria-label="Select ailments">
+        {% for ailment, selected in ailments %}
+          <option value="{{ ailment.pk }}" {% if selected %}selected{% endif %}>{{ ailment.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col mb-3">
       {% include "partials/form_checkbox.html" with checkbox_field="union_veteran" checkbox_label="Union veteran" checkbox_value=union_veteran %}
     </div>
     <div class="col mb-3">
