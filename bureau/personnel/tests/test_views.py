@@ -21,6 +21,8 @@ class EmployeeListViewTestCase(TestCase):
         self.william_van_duyn = EmployeeFactory(first_name='William B.', last_name='Van Duyn', gender=Employee.Gender.MALE)
         self.bureau_state1 = BureauStateFactory()
         self.bureau_state2 = BureauStateFactory()
+        self.boolean_keys = ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
+                             'former_slave', 'slaveholder']
 
     def test_get_context_data(self):
         """
@@ -41,7 +43,7 @@ class EmployeeListViewTestCase(TestCase):
             response = self.client.get(reverse(self.url), {key: search_text})
             self.assertEqual(response.context[key], search_text,
                              "If {key} was supplied, it should be in context of EmployeeListView")
-        for key in ['vrc', 'union_veteran', 'confederate_veteran']:
+        for key in self.boolean_keys:
             response = self.client.get(reverse(self.url), {key: 'on'})
             self.assertEqual(response.context[key], key,
                              "If {key} was supplied, it should be in context of EmployeeListView")
@@ -72,8 +74,7 @@ class EmployeeListViewTestCase(TestCase):
         self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
 
         # If GET parameter "clear" was true, search criteria shouldn't be filled in context
-        for key in ['first_name', 'last_name', 'gender', 'vrc', 'union_veteran', 'confederate_veteran',
-                    'colored', 'died_during_assignment']:
+        for key in ['first_name', 'last_name', 'gender'] + self.boolean_keys:
             response = self.client.get(reverse(self.url), {'clear': 'true', key: 'value'})
             self.assertNotIn(key, response.context,
                              "If clear was True, no search criteria should be in context of EmployeeListView")
@@ -221,6 +222,44 @@ class EmployeeListViewTestCase(TestCase):
             'If died_during_assignment specified, EmployeeListView should return employees who died during assignment')
         self.assertNotIn(non_died_during_assignment_employee, queryset,
             'If died_during_assignment_employee specified, EmployeeListView should return only employees who died during assignment')
+
+    def test_get_queryset_by_former_slave_status(self):
+        former_slave_employee = EmployeeFactory(former_slave=True)
+        non_former_slave_employee = EmployeeFactory(former_slave=False)
+
+        request = RequestFactory().get('/')
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        queryset = view.get_queryset()
+        for employee in [former_slave_employee, non_former_slave_employee]:
+            self.assertIn(employee, queryset,
+                'If former_slave not specified, EmployeeListView should return employees whether or not they were a former slave')
+
+        request = RequestFactory().get('/', {'former_slave': 'former_slave'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        queryset = view.get_queryset()
+        self.assertIn(former_slave_employee, queryset,
+                      'If former_slave specified, EmployeeListView should return former slave employees')
+        self.assertNotIn(non_former_slave_employee, queryset,
+                         'If former_slave specified, EmployeeListView should return only former slave employees')
+
+    def test_get_queryset_by_slaveholder_status(self):
+        slaveholder_employee = EmployeeFactory(slaveholder=True)
+        non_slaveholder_employee = EmployeeFactory(slaveholder=False)
+
+        request = RequestFactory().get('/')
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        queryset = view.get_queryset()
+        for employee in [slaveholder_employee, non_slaveholder_employee]:
+            self.assertIn(employee, queryset,
+                'If slaveholder not specified, EmployeeListView should return employees whether or not they were a slaveholder')
+
+        request = RequestFactory().get('/', {'slaveholder': 'slaveholder'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        queryset = view.get_queryset()
+        self.assertIn(slaveholder_employee, queryset,
+                      'If slaveholder specified, EmployeeListView should return slaveholder employees')
+        self.assertNotIn(non_slaveholder_employee, queryset,
+                         'If slaveholder specified, EmployeeListView should return only slaveholder employees')
 
 
 class EmployeesBornResidedDiedInPlaceViewTestCase(TestCase):

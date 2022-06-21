@@ -29,6 +29,10 @@ main {
   border-style: double;
 }
 
+.form-check {
+  min-width: 215px;
+}
+
 .form-label {
   font-size: 1.4rem;
 }

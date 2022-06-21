@@ -62,7 +62,7 @@ class EmployeeListViewTemplateTestCase(TestCase):
         rendered = render_to_string(self.template, context={})
 
         for label in ['VRC', 'Union veteran', 'Confederate veteran', 'Identified as "Colored"',
-                      'Died during assignment']:
+                      'Died during assignment', 'Former slave', 'Former slaveholder']:
             self.assertTrue(label in rendered, f"{label} should be in page")
 
 

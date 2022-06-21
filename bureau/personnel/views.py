@@ -33,7 +33,8 @@ class EmployeeListView(ListView):
                 context[key] = value
             selected_bureau_states = self.request.GET.getlist('bureau_states', [])
             # Checkboxes
-            for key in ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment']:
+            for key in ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
+                        'former_slave', 'slaveholder']:
                 if key in self.request.GET:
                     context[key] = key
 
@@ -78,6 +79,10 @@ class EmployeeListView(ListView):
             qs = qs.filter(confederate_veteran=True)
         if 'colored' in self.request.GET:
             qs = qs.filter(colored=True)
+        if 'former_slave' in self.request.GET:
+            qs = qs.filter(former_slave=True)
+        if 'slaveholder' in self.request.GET:
+            qs = qs.filter(slaveholder=True)
 
         return qs.distinct()
 

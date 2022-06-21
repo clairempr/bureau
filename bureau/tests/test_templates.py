@@ -262,7 +262,8 @@ class SearchParametersTemplateTestCase(TestCase):
         """
         If a boolean is in context, its value should be in the pagination
         """
-        for key in ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment']:
+        for key in ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
+                    'former_slave', 'slaveholder']:
             context = {key: key}
             rendered = render_to_string(self.template, context)
             self.assertTrue(f'&{key}={key}' in rendered, f'If {key} supplied, that should be in link')
