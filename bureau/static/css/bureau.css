@@ -54,7 +54,7 @@ main {
   font-size: 1.1rem;
 }
 
-.nav, .tablist .nav-item a {
+.nav, .nav-tabs .nav-item a {
   color: rgba(0, 0, 0, 0.56);
   font-family: 'Gravitas One', serif;
 }
