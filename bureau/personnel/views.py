@@ -4,6 +4,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 from medical.models import Ailment, AilmentType
 from personnel.models import Employee
 from places.models import Place, Region
+from places.settings import GERMANY_COUNTRY_NAMES
 
 
 class EmployeeDetailView(DetailView):
@@ -86,18 +87,34 @@ class EmployeeListView(ListView):
         last_name = self.request.GET.get('last_name')
         if last_name:
             qs = qs.filter(last_name__icontains=last_name)
+
         place_of_birth = self.request.GET.get('place_of_birth')
         if place_of_birth:
-            qs = qs.filter(Q(place_of_birth__country__name__icontains=place_of_birth)
+            # Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of
+            # German places in the sources
+            if place_of_birth.upper() == 'GERMANY':
+                qs = qs.filter(place_of_birth__country__name__in=GERMANY_COUNTRY_NAMES)
+            else:
+                qs = qs.filter(Q(place_of_birth__country__name__icontains=place_of_birth)
                    | Q(place_of_birth__region__name__icontains=place_of_birth)
                    | Q(place_of_birth__county__name__icontains=place_of_birth)
                    | Q(place_of_birth__city__name__icontains=place_of_birth))
+
         place_of_death = self.request.GET.get('place_of_death')
         if place_of_death:
-            qs = qs.filter(Q(place_of_death__country__name__icontains=place_of_death)
-                   | Q(place_of_death__region__name__icontains=place_of_death)
-                   | Q(place_of_death__county__name__icontains=place_of_death)
-                   | Q(place_of_death__city__name__icontains=place_of_death))
+            # Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of
+            # German places in the sources
+            if place_of_death.upper() == 'GERMANY':
+                qs = qs.filter(place_of_death__country__name__in=GERMANY_COUNTRY_NAMES)
+            # Virginia and West Virginia shouldn't be grouped together, because West Virginia was already a state
+            # when the war ended
+            elif place_of_death.upper() == 'VIRGINIA':
+                qs = qs.filter(place_of_death__region__name__iexact=place_of_death)
+            else:
+                qs = qs.filter(Q(place_of_death__country__name__icontains=place_of_death)
+                       | Q(place_of_death__region__name__icontains=place_of_death)
+                       | Q(place_of_death__county__name__icontains=place_of_death)
+                       | Q(place_of_death__city__name__icontains=place_of_death))
 
         # Bureau states
         selected_bureau_states = self.request.GET.getlist('bureau_states', [])

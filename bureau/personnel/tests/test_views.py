@@ -7,7 +7,7 @@ from medical.tests.factories import AilmentFactory, AilmentTypeFactory
 from personnel.models import Employee, EmployeeManager
 from personnel.tests.factories import EmployeeFactory
 from personnel.views import EmployeeListView, EmployeesBornResidedDiedInPlaceView, EmployeesWithAilmentListView
-from places.tests.factories import BureauStateFactory, CityFactory, PlaceFactory, RegionFactory
+from places.tests.factories import BureauStateFactory, CityFactory, CountryFactory, PlaceFactory, RegionFactory
 
 
 class EmployeeListViewTestCase(TestCase):
@@ -125,44 +125,82 @@ class EmployeeListViewTestCase(TestCase):
                     'If last_name specified, EmployeeListView should return employees with search text in last_name')
 
     def test_get_queryset_by_place_of_birth(self):
-        ohio = PlaceFactory(region=RegionFactory(name='Ohio'))
+        germany = PlaceFactory(country=CountryFactory(name='Germany'))
+        bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
+        virginia = PlaceFactory(region=RegionFactory(name='Virginia'))
+        west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'))
         philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
-        employee_born_in_ohio = EmployeeFactory(place_of_birth=ohio)
+        employee_born_in_germany = EmployeeFactory(place_of_birth=germany)
+        employee_born_in_bavaria = EmployeeFactory(place_of_birth=bavaria)
+        employee_born_in_virginia = EmployeeFactory(place_of_birth=virginia)
+        employee_born_in_west_virginia = EmployeeFactory(place_of_birth=west_virginia)
         employee_born_in_philadelphia = EmployeeFactory(place_of_birth=philadelphia)
 
-        request = RequestFactory().get('/', {'place_of_birth': 'Ohio'})
+        # If country is Germany, other places like Bavaria should be included
+        # otherwise it should be just that country
+        request = RequestFactory().get('/', {'place_of_birth': 'Germany'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertIn(employee_born_in_ohio, view.get_queryset(),
-                'If state place_of_birth specified, EmployeeListView should return employees with search text in state name')
-        self.assertNotIn(employee_born_in_philadelphia, view.get_queryset(),
-                'If state place_of_birth specified, EmployeeListView should return only employees with search text in state name')
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_germany, employee_born_in_bavaria},
+            'If Germany specified as place_of_birth, EmployeeListView should return employees born in Germany and Bavaria')
+        request = RequestFactory().get('/', {'place_of_birth': 'Bavaria'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_bavaria},
+            'If country specified as place_of_birth, EmployeeListView should return employees born in that country')
 
+        # State: search for "Virginia" will automatically include West Virginia, which is what we want
+        request = RequestFactory().get('/', {'place_of_birth': 'Virginia'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_virginia, employee_born_in_west_virginia},
+            'If state place_of_birth specified, EmployeeListView should return employees with search text in state name')
+        request = RequestFactory().get('/', {'place_of_birth': 'West Virginia'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_west_virginia},
+            'If state place_of_birth specified, EmployeeListView should return employees with search text in state name')
+
+        # City
         request = RequestFactory().get('/', {'place_of_birth': 'Philadelphia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertIn(employee_born_in_philadelphia, view.get_queryset(),
-                'If city place_of_birth specified, EmployeeListView should return employees with search text in city name')
-        self.assertNotIn(employee_born_in_ohio, view.get_queryset(),
-                'If city place_of_birth specified, EmployeeListView should return only employees with search text in city name')
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_philadelphia},
+            'If city place_of_birth specified, EmployeeListView should return employees with search text in city name')
 
     def test_get_queryset_by_place_of_death(self):
-        ohio = PlaceFactory(region=RegionFactory(name='Ohio'))
+        germany = PlaceFactory(country=CountryFactory(name='Germany'))
+        bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
+        virginia = PlaceFactory(region=RegionFactory(name='Virginia'))
+        west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'))
         philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
-        employee_died_in_ohio = EmployeeFactory(place_of_death=ohio)
+        employee_died_in_germany = EmployeeFactory(place_of_death=germany)
+        employee_died_in_bavaria = EmployeeFactory(place_of_death=bavaria)
+        employee_died_in_virginia = EmployeeFactory(place_of_death=virginia)
+        employee_died_in_west_virginia = EmployeeFactory(place_of_death=west_virginia)
         employee_died_in_philadelphia = EmployeeFactory(place_of_death=philadelphia)
 
-        request = RequestFactory().get('/', {'place_of_death': 'Ohio'})
+        # If country is Germany, other places like Bavaria should be included
+        # otherwise it should be just that country
+        request = RequestFactory().get('/', {'place_of_death': 'Germany'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertIn(employee_died_in_ohio, view.get_queryset(),
-                'If state place_of_death specified, EmployeeListView should return employees with search text in state name')
-        self.assertNotIn(employee_died_in_philadelphia, view.get_queryset(),
-                'If state place_of_death specified, EmployeeListView should return only employees with search text in state name')
+        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_germany, employee_died_in_bavaria},
+            'If Germany specified as place_of_death, EmployeeListView should return employees who died in Germany and Bavaria')
+        request = RequestFactory().get('/', {'place_of_death': 'Bavaria'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_bavaria},
+            'If country specified as place_of_death, EmployeeListView should return employees who died in that country')
 
+        # State: search for "Virginia" should not include West Virginia
+        request = RequestFactory().get('/', {'place_of_death': 'Virginia'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_virginia},
+            'If Virginia specified as place_of_death, EmployeeListView should return employees who died in Virginia only')
+        request = RequestFactory().get('/', {'place_of_death': 'West Virginia'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_west_virginia},
+            'If state place_of_death specified, EmployeeListView should return employees with search text in state name')
+
+        # City
         request = RequestFactory().get('/', {'place_of_death': 'Philadelphia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertIn(employee_died_in_philadelphia, view.get_queryset(),
-                'If city place_of_death specified, EmployeeListView should return employees with search text in city name')
-        self.assertNotIn(employee_died_in_ohio, view.get_queryset(),
-                'If city place_of_death specified, EmployeeListView should return only employees with search text in city name')
+        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_philadelphia},
+            'If city place_of_death specified, EmployeeListView should return employees with search text in city name')
 
     def test_get_queryset_by_bureau_states(self):
         employee_in_state_1 = EmployeeFactory()
