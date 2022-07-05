@@ -1,3 +1,4 @@
+from partial_date import PartialDate
 from unittest.mock import patch
 
 from django.test import RequestFactory, TestCase
@@ -21,6 +22,11 @@ class EmployeeListViewTestCase(TestCase):
         self.william_van_duyn = EmployeeFactory(first_name='William B.', last_name='Van Duyn', gender=Employee.Gender.MALE)
         self.bureau_state1 = BureauStateFactory()
         self.bureau_state2 = BureauStateFactory()
+        self.germany = PlaceFactory(country=CountryFactory(name='Germany'))
+        self.bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
+        self.virginia = PlaceFactory(region=RegionFactory(name='Virginia'))
+        self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'))
+        self.philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
         self.boolean_keys = ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
                              'former_slave', 'slaveholder']
         self.search_keys = ['first_name', 'last_name', 'gender', 'place_of_birth', 'place_of_death']
@@ -48,16 +54,16 @@ class EmployeeListViewTestCase(TestCase):
             response = self.client.get(reverse(self.url), {key: 'on'})
             self.assertEqual(response.context[key], key,
                              "If {key} was supplied, it should be in context of EmployeeListView")
+        # Year of birth start and end
+        for key in ['year_of_birth_start', 'year_of_birth_end']:
+            response = self.client.get(reverse(self.url), {key: '1830'})
+            self.assertEqual(response.context[key], '1830',
+                             "If {key} was supplied, it should be in context of EmployeeListView")
 
         # Some things should always be in context
         response = self.client.get(reverse(self.url))
         for key in ['bureau_states', 'ailments']:
             self.assertIn(key, response.context, "{key} should always be in context of EmployeeListView")
-
-    def test_get_context_clear(self):
-        """
-        context should containn't any GET parameters if "clear" is True
-        """
 
     def test_get_queryset_default(self):
         EmployeeFactory()
@@ -125,16 +131,11 @@ class EmployeeListViewTestCase(TestCase):
                     'If last_name specified, EmployeeListView should return employees with search text in last_name')
 
     def test_get_queryset_by_place_of_birth(self):
-        germany = PlaceFactory(country=CountryFactory(name='Germany'))
-        bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
-        virginia = PlaceFactory(region=RegionFactory(name='Virginia'))
-        west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'))
-        philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
-        employee_born_in_germany = EmployeeFactory(place_of_birth=germany)
-        employee_born_in_bavaria = EmployeeFactory(place_of_birth=bavaria)
-        employee_born_in_virginia = EmployeeFactory(place_of_birth=virginia)
-        employee_born_in_west_virginia = EmployeeFactory(place_of_birth=west_virginia)
-        employee_born_in_philadelphia = EmployeeFactory(place_of_birth=philadelphia)
+        employee_born_in_germany = EmployeeFactory(place_of_birth=self.germany)
+        employee_born_in_bavaria = EmployeeFactory(place_of_birth=self.bavaria)
+        employee_born_in_virginia = EmployeeFactory(place_of_birth=self.virginia)
+        employee_born_in_west_virginia = EmployeeFactory(place_of_birth=self.west_virginia)
+        employee_born_in_philadelphia = EmployeeFactory(place_of_birth=self.philadelphia)
 
         # If country is Germany, other places like Bavaria should be included
         # otherwise it should be just that country
@@ -163,17 +164,53 @@ class EmployeeListViewTestCase(TestCase):
         self.assertSetEqual(set(view.get_queryset()), {employee_born_in_philadelphia},
             'If city place_of_birth specified, EmployeeListView should return employees with search text in city name')
 
+    def test_get_queryset_by_year_of_birth(self):
+        employee_born_in_1828 = EmployeeFactory(date_of_birth=PartialDate('1828'))
+        employee_born_in_1830 = EmployeeFactory(date_of_birth=PartialDate('1830-11-08'))
+        employee_born_in_1843 = EmployeeFactory(date_of_birth=PartialDate('1843-01'))
+
+        # If years out of range, queryset should be empty
+        request = RequestFactory().get('/', {'year_of_birth_start': '1831', 'year_of_birth_end': '1840'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertEqual(view.get_queryset().count(), 0,
+            'If no employees in specified birth year range, queryset should be empty')
+        # First employee with birth year between start and end years
+        request = RequestFactory().get('/', {'year_of_birth_start': '1810', 'year_of_birth_end': '1829'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1828},
+            'Employee with birth year in range should be returned')
+        # Last employee with birth year between start and end years
+        request = RequestFactory().get('/', {'year_of_birth_start': '1840', 'year_of_birth_end': '1850'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1843},
+            'Employee with birth year in range should be returned')
+        # All employees with birth year between start and end years
+        request = RequestFactory().get('/', {'year_of_birth_start': '1810', 'year_of_birth_end': '1850'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1828, employee_born_in_1830, employee_born_in_1843},
+            'Employee with birth year in range should be returned')
+        # Employee with birth year in start year
+        request = RequestFactory().get('/', {'year_of_birth_start': '1830', 'year_of_birth_end': '1840'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1830},
+            'Employee with birth year in range should be returned')
+        # Employee with birth year in end year
+        request = RequestFactory().get('/', {'year_of_birth_start': '1829', 'year_of_birth_end': '1830'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1830},
+            'Employee with birth year in range should be returned')
+        # Start and end year the same
+        request = RequestFactory().get('/', {'year_of_birth_start': '1828', 'year_of_birth_end': '1828'})
+        view = EmployeeListView(kwargs={}, object_list=[], request=request)
+        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1828},
+            'Employee with birth year in range should be returned')
+
     def test_get_queryset_by_place_of_death(self):
-        germany = PlaceFactory(country=CountryFactory(name='Germany'))
-        bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
-        virginia = PlaceFactory(region=RegionFactory(name='Virginia'))
-        west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'))
-        philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
-        employee_died_in_germany = EmployeeFactory(place_of_death=germany)
-        employee_died_in_bavaria = EmployeeFactory(place_of_death=bavaria)
-        employee_died_in_virginia = EmployeeFactory(place_of_death=virginia)
-        employee_died_in_west_virginia = EmployeeFactory(place_of_death=west_virginia)
-        employee_died_in_philadelphia = EmployeeFactory(place_of_death=philadelphia)
+        employee_died_in_germany = EmployeeFactory(place_of_death=self.germany)
+        employee_died_in_bavaria = EmployeeFactory(place_of_death=self.bavaria)
+        employee_died_in_virginia = EmployeeFactory(place_of_death=self.virginia)
+        employee_died_in_west_virginia = EmployeeFactory(place_of_death=self.west_virginia)
+        employee_died_in_philadelphia = EmployeeFactory(place_of_death=self.philadelphia)
 
         # If country is Germany, other places like Bavaria should be included
         # otherwise it should be just that country
