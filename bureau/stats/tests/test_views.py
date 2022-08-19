@@ -5,7 +5,7 @@ from medical.tests.factories import AilmentFactory, AilmentTypeFactory
 from military.tests.factories import RegimentFactory
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
-from places.tests.factories import CountryFactory, PlaceFactory, RegionFactory
+from places.tests.factories import BureauStateFactory, CountryFactory, PlaceFactory, RegionFactory
 from stats.views import get_places_with_pks_for_context, get_state_comparison_stats
 
 
@@ -103,9 +103,9 @@ class GetStateComparisonStatsTestCase(TestCase):
     """
 
     def setUp(self):
-        self.kentucky = RegionFactory(name='Kentucky', bureau_operations=True)
-        self.mississippi = RegionFactory(name='Mississippi', bureau_operations=True)
-        self.texas = RegionFactory(name='Texas', bureau_operations=True)
+        self.kentucky = BureauStateFactory(name='Kentucky')
+        self.mississippi = BureauStateFactory(name='Mississippi')
+        self.texas = BureauStateFactory(name='Texas')
 
     def get_state_stats_for_key(self, stats, key):
         """

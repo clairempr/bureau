@@ -1,0 +1,15 @@
+{% if search_text %}&search_text={{ search_text }}{% endif %}
+{% if last_name %}&last_name={{ last_name }}{% endif %}
+{% if first_name %}&first_name={{ first_name }}{% endif %}
+{% if place_of_birth %}&place_of_birth={{ place_of_birth }}{% endif %}
+{% if place_of_death %}&place_of_death={{ place_of_death }}{% endif %}
+{% if gender %}&gender={{ gender }}{% endif %}
+{% for state, selected in bureau_states %}{% if selected %}&bureau_states={{ state.pk }}{% endif %}{% endfor %}
+{% if vrc %}&vrc={{ vrc }}{% endif %}
+{% for ailment, selected in ailments %}{% if selected %}&ailments={{ ailment.pk }}{% endif %}{% endfor %}
+{% if union_veteran %}&union_veteran={{ union_veteran }}{% endif %}
+{% if confederate_veteran %}&confederate_veteran={{ confederate_veteran }}{% endif %}
+{% if colored %}&colored={{ colored }}{% endif %}
+{% if died_during_assignment %}&died_during_assignment={{ died_during_assignment }}{% endif %}
+{% if former_slave %}&former_slave={{ former_slave }}{% endif %}
+{% if slaveholder %}&slaveholder={{ slaveholder }}{% endif %}

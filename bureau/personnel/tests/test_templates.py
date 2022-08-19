@@ -4,6 +4,78 @@ from django.test import TestCase
 
 from medical.tests.factories import AilmentFactory, AilmentTypeFactory
 from personnel.tests.factories import EmployeeFactory
+from places.tests.factories import BureauStateFactory
+
+
+class EmployeeListViewTemplateTestCase(TestCase):
+    """
+    Test template of personnel.views.EmployeeListView
+    """
+
+    def setUp(self):
+        self.template = 'personnel/employee_list.html'
+
+    def test_name_in_template(self):
+        last_name = 'Howard'
+        first_name = 'Oliver Otis'
+
+        employee = EmployeeFactory(first_name='Oliver Otis', last_name='Howard')
+
+        context = {'last_name': last_name, 'first_name': first_name, 'employee_list': [employee]}
+        rendered = render_to_string(self.template, context)
+
+        # "Bureau Employees" should be in html
+        text = 'Bureau Employees'
+        self.assertTrue(text in rendered, "'{}' should be in {}".format(text, self.template))
+
+        # Search criteria should be in html
+        for key in ['last_name', 'first_name']:
+            self.assertTrue(key in rendered, "'{}' should be in {}".format(text, self.template))
+
+        # Employees should be listed
+        self.assertTrue(str(employee) in rendered, 'Employees should be listed in {}'.format(self.template))
+
+        # If VRC or has Bureau states, that should be in parentheses after name
+        vrc_employee = EmployeeFactory(vrc=True)
+        vrc_employee.bureau_states.add(BureauStateFactory(name='Missouri'))
+        context = {'employee_list': [vrc_employee]}
+        rendered = render_to_string(self.template, context)
+        self.assertIn('(VRC - Missouri)', rendered)
+
+    def test_gender_in_template(self):
+        rendered = render_to_string(self.template, context={})
+
+        for text in ['Gender', 'Male', 'Female']:
+            self.assertTrue(text in rendered, f"{text} should be in page")
+
+    def test_bureau_state_in_template(self):
+        bureau_state = BureauStateFactory(name='Tarheel State')
+        EmployeeFactory()
+
+        context = {'bureau_states': [(bureau_state, True)]}
+        rendered = render_to_string(self.template, context)
+
+        # Bureau states should be in html
+        self.assertTrue('Tarheel State' in rendered, "Bureau state should be in page")
+
+    def test_ailment_in_template(self):
+        ailment = AilmentFactory(name='Consumption')
+        EmployeeFactory()
+
+        context = {'ailments': [(ailment, True)]}
+        rendered = render_to_string(self.template, context)
+
+        # Ailments states should be in html
+        self.assertTrue('Consumption' in rendered, "Ailment should be in page")
+
+    def test_misc_labels_in_template(self):
+        rendered = render_to_string(self.template, context={})
+
+        for label in ['VRC', 'Union veteran', 'Confederate veteran', 'Identified as "Colored"',
+                      'Died during assignment', 'Former slave', 'Former slaveholder', 'Place of birth',
+                      'Year of birth', 'Place of death']:
+            self.assertTrue(label in rendered, f"{label} should be in page")
+
 
 class EmployeesWithAilmentListViewTemplateTestCase(TestCase):
     """

@@ -29,6 +29,19 @@ main {
   border-style: double;
 }
 
+.form-check {
+  min-width: 215px;
+}
+
+.form-label {
+  font-size: 1.4rem;
+}
+
+.form-select {
+  font-size: 1.2rem;
+  min-width: max-content;
+}
+
 .page-header {
   margin-top: .5rem!important;
   margin-bottom: 1.1rem!important;
@@ -41,7 +54,7 @@ main {
   font-size: 1.1rem;
 }
 
-.nav, .tablist .nav-item a {
+.nav, .nav-tabs .nav-item a {
   color: rgba(0, 0, 0, 0.56);
   font-family: 'Gravitas One', serif;
 }

@@ -2,7 +2,7 @@ from django.template.loader import render_to_string
 from django.test import TestCase
 
 from personnel.tests.factories import EmployeeFactory
-from places.tests.factories import CityFactory, PlaceFactory, RegionFactory
+from places.tests.factories import CityFactory, PlaceFactory, BureauStateFactory
 
 
 class BureauStateDetailViewTemplateTestCase(TestCase):
@@ -12,7 +12,7 @@ class BureauStateDetailViewTemplateTestCase(TestCase):
 
     def setUp(self):
         self.template = 'places/bureau_state_detail.html'
-        self.state = RegionFactory(name='Pelican State', bureau_operations=True)
+        self.state = BureauStateFactory(name='Pelican State')
 
     def test_template(self):
         page_header = '<div class="page-header">{state} - {employee_count} {employees}</div>'

@@ -6,7 +6,7 @@
       <ul class="pagination justify-content-center">
         {% if page_obj.has_previous %}
           <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_text %}&search_text={{ search_text }}{% endif %}">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% include "partials/search_parameters.html" %}">
               &laquo;</a>
           </li>
         {% else %}
@@ -16,14 +16,14 @@
         {% get_proper_elided_page_range paginator page_obj.number as page_range %}
         {% for i in page_range %}
           {% if page_obj.number == i %}
-            <li class="active page-item"><span class="page-link">{{ i }} <span class="sr-only">(current)</span></span>
+            <li class="active page-item"><span class="page-link">{{ i }} <span class="visually-hidden">(current)</span></span>
             </li>
           {% else %}
             {% if i == page_obj.paginator.ELLIPSIS %}
               <li class="page-item"><span class="page-link">{{ i }}</span></li>
             {% else %}
               <li class="page-item">
-                <a class="page-link" href="?page={{ i }}{% if search_text %}&search_text={{ search_text }}{% endif %}">
+                <a class="page-link" href="?page={{ i }}{% include "partials/search_parameters.html" %}">
                 {{ i }}</a>
               </li>
             {% endif %}
@@ -33,7 +33,7 @@
         {% if page_obj.has_next %}
           <li class="page-item">
             <a class="page-link" href="?page={{ page_obj.next_page_number }}
-              {% if search_text %}&search_text={{ search_text }}{% endif %}">
+              {% include "partials/search_parameters.html" %}">
               &raquo;</a>
           </li>
         {% else %}

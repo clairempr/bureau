@@ -1,0 +1,71 @@
+<form action="{{ request.path }}" method="get">
+  {% csrf_token %}
+
+  <div class="row">
+    <div class="col mb-3">
+      <label for="last_name" class="form-label text-nowrap">Last name</label>
+      <input type="text" class="form-control" id="last_name" name="last_name" value="{{ last_name }}">
+    </div>
+    <div class="col mb-3">
+      <label for="first_name" class="form-label text-nowrap">First name</label>
+      <input type="text" class="form-control" id="first_name" name="first_name" value="{{ first_name }}">
+    </div>
+    <div class="col mb-3">
+      <label for="gender" class="form-label text-nowrap">Gender</label>
+      <select class="form-select" id="gender" name="gender" aria-label="Select gender">
+        <option {% if not gender %}selected{% endif %}></option>
+        <option {% if gender == "Male"%}selected{% endif %} value="Male">Male</option>
+        <option {% if gender == "Female"%}selected{% endif %} value="Female">Female</option>
+      </select>
+    </div>
+    <div class="col mb-3">
+      <label for="place_of_birth" class="form-label text-nowrap">Place of birth</label>
+      <input type="text" class="form-control" id="place_of_birth" name="place_of_birth" value="{{ place_of_birth }}">
+    </div>
+    <div class="col mb-3">
+      <label for="year_of_birth_start" class="form-label text-nowrap">Year of birth start</label>
+      <input type="text" class="form-control" id="year_of_birth_start" name="year_of_birth_start"
+             value="{{ year_of_birth_start }}">
+    </div>
+    <div class="col mb-3">
+      <label for="year_of_birth_end" class="form-label text-nowrap">Year of birth end</label>
+      <input type="text" class="form-control" id="year_of_birth_end" name="year_of_birth_end"
+             value="{{ year_of_birth_end }}">
+    </div>
+    <div class="col mb-3">
+      <label for="place_of_death" class="form-label text-nowrap">Place of death</label>
+      <input type="text" class="form-control" id="place_of_death" name="place_of_death" value="{{ place_of_death }}">
+    </div>
+    <div class="col mb-3">
+      <label for="bureau_states" class="form-label text-nowrap">Bureau states</label>
+      <select class="form-select" multiple id="bureau_states" name="bureau_states" aria-label="Select Bureau states">
+        {% for state, selected in bureau_states %}
+          <option value="{{ state.pk }}" {% if selected %}selected{% endif %}>{{ state.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col mb-3">
+      <label for="ailments" class="form-label text-nowrap">Ailments</label>
+      <select class="form-select" multiple id="ailments" name="ailments" aria-label="Select ailments">
+        {% for ailment, selected in ailments %}
+          <option value="{{ ailment.pk }}" {% if selected %}selected{% endif %}>{{ ailment.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col mb-3">
+      {% include "partials/form_checkbox.html" with checkbox_field="died_during_assignment" checkbox_label="Died during assignment" checkbox_value=died_during_assignment %}
+      {% include "partials/form_checkbox.html" with checkbox_field="vrc" checkbox_label="VRC" checkbox_value=vrc %}
+      {% include "partials/form_checkbox.html" with checkbox_field="union_veteran" checkbox_label="Union veteran" checkbox_value=union_veteran %}
+      {% include "partials/form_checkbox.html" with checkbox_field="confederate_veteran" checkbox_label="Confederate veteran" checkbox_value=confederate_veteran %}
+    </div>
+    <div class="col mb-3">
+      {% include "partials/form_checkbox.html" with checkbox_field="colored" checkbox_label='Identified as "Colored"' checkbox_value=colored %}
+      {% include "partials/form_checkbox.html" with checkbox_field="former_slave" checkbox_label='Former slave' checkbox_value=former_slave %}
+      {% include "partials/form_checkbox.html" with checkbox_field="slaveholder" checkbox_label='Former slaveholder' checkbox_value=slaveholder %}
+    </div>
+
+  </div>
+
+  <button type="submit" class="btn">Search</button>
+  <button type="submit" class="btn" name="clear" value="true">Clear</button>
+</form>
