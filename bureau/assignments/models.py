@@ -7,7 +7,7 @@ from django.db import models
 from django.db.models import Q
 
 from personnel.models import Employee
-from places.models import Place
+from places.models import Place, Region
 
 
 class Position(models.Model):
@@ -71,6 +71,15 @@ class Assignment(models.Model):
         related_query_name='assignment',
         blank=True,
     )
+    # Under which Assistant Commissioner's jurisdiction did this assignment fall?
+    bureau_states = models.ManyToManyField(
+        Region,
+        limit_choices_to={'bureau_operations': True},
+        related_name='assignments',
+        related_query_name='assignment',
+        blank=True,
+        verbose_name='bureau states (jurisdiction)'
+    )
 
     employee = models.ForeignKey(Employee, null=True, blank=True, on_delete=models.PROTECT, related_name='assignments')
     # Start and end dates use PartialDateField because the entire date isn't usually known
@@ -90,6 +99,9 @@ class Assignment(models.Model):
                                                            dates=self.dates())
         except:
             return self.description
+
+    def bureau_state_list(self):
+        return ', '.join([state.name for state in self.bureau_states.all()])
 
     def dates(self):
         # An assignment can have a start date and end date, or just one of those, or none at all
