@@ -4,11 +4,12 @@ from .models import Assignment, Position
 
 
 class AssignmentAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'employee')
-    list_filter = ('positions', )
+    list_display = ('__str__', 'bureau_state_list', 'employee')
+    list_filter = ('bureau_states', 'positions', )
     search_fields = ('description', )
     raw_id_fields = ('places', )
     save_on_top = True
+    list_per_page = 50
 
     def get_queryset(self, request):
         qs = super(AssignmentAdmin, self).get_queryset(request)

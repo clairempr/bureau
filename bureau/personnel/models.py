@@ -170,6 +170,7 @@ class Employee(models.Model):
         related_name='employees_employed',
         related_query_name='employee_employed',
         blank=True,
+        verbose_name='bureau states (location)'
     )
 
     # Keep track of which Bureau employees were considered "colored" because they were underrepresented
