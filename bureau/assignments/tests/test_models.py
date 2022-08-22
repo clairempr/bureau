@@ -50,6 +50,18 @@ class AssignmentTestCase(TestCase):
             self.assertEqual(str(self.assignment), self.assignment.description,
                 'Assignment.__str__ should be equal to Assignment.description if place_list() causes exception')
 
+    def test_bureau_state_list(self):
+        """
+        Assignment.bureau_state_list() should return list of names of bureau_states
+        """
+        ar = RegionFactory(name='Arkansas ')
+        mo = RegionFactory(name='Missouri')
+        assignment = AssignmentFactory()
+        assignment.bureau_states.add(ar, mo)
+
+        self.assertIn('Arkansas', assignment.bureau_state_list())
+        self.assertIn('Missouri', assignment.bureau_state_list())
+
     def test_dates(self):
         """
         Assignment.dates() should return start and end dates, or just start or end,
@@ -232,4 +244,4 @@ class PositionTestCase(TestCase):
         title = 'Assistant to the Assistant Subassistant Commissioner'
         position = PositionFactory(title=title)
         self.assertEqual(str(position), title,
-                        "Position.__str__ should be equal to Position.title")
+                         "Position.__str__ should be equal to Position.title")
