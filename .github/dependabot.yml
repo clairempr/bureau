@@ -7,3 +7,5 @@ updates:
     # Check for updates every day (weekdays)
     schedule:
       interval: "daily"
+    # Disable version updates not associated with security updates
+    open-pull-requests-limit: 0
