@@ -1,0 +1,9 @@
+version: 2
+updates:
+  # Enable version updates for pip
+  - package-ecosystem: "pip"
+    # Look for requirements files in the requirements directory
+    directory: "/requirements"
+    # Check for updates every day (weekdays)
+    schedule:
+      interval: "daily"
