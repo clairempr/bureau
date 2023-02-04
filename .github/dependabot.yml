@@ -8,4 +8,4 @@ updates:
     schedule:
       interval: "daily"
     # Disable version updates not associated with security updates
-#    open-pull-requests-limit: 0
+    open-pull-requests-limit: 0
