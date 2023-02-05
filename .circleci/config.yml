@@ -16,9 +16,9 @@ jobs:
     - run:
         command: |
           which python3
-          ls /home/circleci/.pyenv/versions
-          ls /home/circleci/.pyenv/versions/3.11.10
-          ls /home/circleci/.pyenv/versions/3.11.10/lib
+          ls /home/circleci/.pyenv/shims
+          ls /home/circleci/.pyenv/shims/3.11.10
+          ls /home/circleci/.pyenv/shims/3.11.10/lib
     - run: sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.11.10/lib/python3.11/site-packages
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
