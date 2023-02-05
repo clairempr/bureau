@@ -1,6 +1,7 @@
-# Dockerfile for Python 3.9 taken from Cookiecutter Django, release 2022.1.27
-# https://github.com/cookiecutter/cookiecutter-django/blob/2022.01.27/%7B%7Bcookiecutter.project_slug%7D%7D/compose/local/django/Dockerfile
-ARG PYTHON_VERSION=3.9-slim-bullseye
+# Dockerfile for Python 3.10
+# See Cookiecutter Django
+# https://github.com/cookiecutter/cookiecutter-django/blob/master/%7B%7Bcookiecutter.project_slug%7D%7D/compose/local/django/Dockerfile
+ARG PYTHON_VERSION=3.11-slim-bullseye
 
 # define an alias for the specfic python version used in this file.
 FROM python:${PYTHON_VERSION} as python
