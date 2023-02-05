@@ -6,8 +6,8 @@ from assignments.models import Assignment
 from medical.models import AilmentType
 from personnel.models import Employee
 from places.forms import GeoNamesLookupForm
-from places.models import City, County, Place, Region
-from stats.utils import get_ages_at_death, get_ages_in_year, get_mean, get_median, get_percent
+from places.models import Place, Region
+from stats.utils import get_ages_in_year, get_mean, get_median, get_percent
 
 
 class BureauStateListView(ListView):

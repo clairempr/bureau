@@ -15,12 +15,15 @@ from .settings import BUREAU_STATES, LOAD_CITIES_FROM_COUNTRIES, LOAD_REGIONS_FR
 class City(AbstractCity):
     pass
 
+
 connect_default_signals(City)
+
 
 # Signal to import only cities from certain countries
 def filter_city_import(sender, items, **kwargs):
     if items[ICity.countryCode] not in LOAD_CITIES_FROM_COUNTRIES:
         raise InvalidItems()
+
 
 city_items_pre_import.connect(filter_city_import)
 
@@ -45,19 +48,24 @@ class Region(AbstractRegion):
         total = self.employees_employed.count()
         return self.employees_employed.filter(vrc=True).count() / total * 100 if total else 0
 
+
 connect_default_signals(Region)
+
 
 # Signal to import only regions from certain countries
 def filter_region_import(sender, items, **kwargs):
     if items[IRegion.code][:2] not in LOAD_REGIONS_FROM_COUNTRIES:
         raise InvalidItems()
 
+
 region_items_pre_import.connect(filter_region_import)
+
 
 # Signal to set bureau_operations to True in selected states post-import
 def set_region_fields(sender, instance, items, **kwargs):
     if instance.country.code2 == 'US' and instance.geoname_code in BUREAU_STATES:
         instance.bureau_operations = True
+
 
 region_items_post_import.connect(set_region_fields)
 
@@ -77,7 +85,6 @@ class County(AbstractRegion):
 
     state = models.ForeignKey(Region, null=True, blank=True, on_delete=models.PROTECT, related_name='counties')
 
-
     class Meta(Region.Meta):
         unique_together = ('country', 'state', 'name')
         verbose_name = ('county')
@@ -94,6 +101,8 @@ class County(AbstractRegion):
 
 class Country(AbstractCountry):
     pass
+
+
 connect_default_signals(Country)
 
 
@@ -107,7 +116,6 @@ class Place(models.Model):
     county = models.ForeignKey(County, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
     region = models.ForeignKey(Region, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
     country = models.ForeignKey(Country, null=True, blank=True, on_delete=models.PROTECT, related_name='places')
-
 
     class Meta:
         unique_together = ('city', 'region', 'country')
@@ -135,7 +143,6 @@ class Place(models.Model):
         super().clean()
         if not (self.city or self.county or self.region or self.country):
             raise ValidationError('This is absolutely nowhere. Fill at least one field.')
-
 
     def save(self, *args, **kwargs):
         # Make sure that region and country don't conflict with selected city

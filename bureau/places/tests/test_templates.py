@@ -24,8 +24,10 @@ class BureauStateDetailViewTemplateTestCase(TestCase):
         expected_page_header = page_header.format(state=self.state, employee_count=0, employees='employees')
         self.assertInHTML(expected_page_header, rendered)
         for text in ['No statistics for this location', 'No assignments found']:
-            self.assertTrue(text in rendered,
-                "If no employees/assignments, BureauStateDetailView template should contain '{}'".format(text))
+            self.assertTrue(
+                text in rendered,
+                "If no employees/assignments, BureauStateDetailView template should contain '{}'".format(text)
+            )
 
         # One employee: employee count should be "1 employee"
         employee1 = EmployeeFactory(last_name='Butts', first_name='Simeon')

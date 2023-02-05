@@ -32,6 +32,7 @@ class InUseListFilter(admin.SimpleListFilter):
                 return queryset.filter(places__isnull=True)
         return queryset
 
+
 class PopulationListFilter(admin.SimpleListFilter):
     title = 'Population'
     parameter_name = 'population'
@@ -49,14 +50,15 @@ class PopulationListFilter(admin.SimpleListFilter):
             return queryset.filter(population__lt=self.value())
         return queryset
 
+
 class CityAdmin(CitiesLightCityAdmin):
     """
     Extend django-cities-light CityAdmin to include more fields
     """
     list_display = CitiesLightCityAdmin.list_display + ('region', 'feature_code', 'in_use')
     list_filter = CitiesLightCityAdmin.list_filter + ('region', 'feature_code', PopulationListFilter, InUseListFilter)
-    search_fields = ('name', 'alternate_names' )
-    readonly_fields = ('id','geonames_lookup' )
+    search_fields = ('name', 'alternate_names')
+    readonly_fields = ('id', 'geonames_lookup')
 
     list_select_related = (
         'region', 'country'
@@ -72,7 +74,7 @@ class CityAdmin(CitiesLightCityAdmin):
         return {}
 
     def get_fields(self, request, obj=None):
-        return ['geonames_lookup',] + super(CityAdmin, self).get_fields(request, obj)
+        return ['geonames_lookup', ] + super(CityAdmin, self).get_fields(request, obj)
 
     def in_use(self, obj):
         return obj.places.exists()
@@ -85,8 +87,12 @@ class CityAdmin(CitiesLightCityAdmin):
     geonames_lookup.short_description = 'Lookup in GeoNames'
     geonames_lookup.allow_tags = True
 
+
 admin.site.unregister(City)
+
+
 admin.site.register(City, CityAdmin)
+
 
 class RegionAdmin(CitiesLightRegionAdmin):
     """
@@ -97,7 +103,10 @@ class RegionAdmin(CitiesLightRegionAdmin):
     readonly_fields = ('id', )
     form = RegionForm
 
+
 admin.site.unregister(Region)
+
+
 admin.site.register(Region, RegionAdmin)
 
 
@@ -117,7 +126,7 @@ class CountyAdmin(admin.ModelAdmin):
         return {}
 
     def get_fields(self, request, obj=None):
-        return ['geonames_lookup',] + super(CountyAdmin, self).get_fields(request, obj)
+        return ['geonames_lookup', ] + super(CountyAdmin, self).get_fields(request, obj)
 
     def geonames_lookup(self, obj):
         return format_html(
@@ -133,7 +142,7 @@ admin.site.register(County, CountyAdmin)
 
 class PlaceAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'city', 'county', 'region', 'country')
-    list_filter = ( 'region__bureau_operations', 'country', 'region', )
+    list_filter = ('region__bureau_operations', 'country', 'region', )
     search_fields = ('city__name', 'city__alternate_names', 'county__name', 'region__name', 'country__name')
     fields = ('id', 'city', 'county', 'region', 'country')
     readonly_fields = ('id', )

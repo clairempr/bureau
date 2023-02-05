@@ -32,7 +32,7 @@ class ImportTestCase(TestCase):
     Test import of City and Region by cities_light
     """
 
-    @override_settings(LOAD_CITIES_FROM_COUNTRIES=['US',])
+    @override_settings(LOAD_CITIES_FROM_COUNTRIES=['US', ])
     def test_filter_city_import(self):
         """
         filter_city_import() is used by the city_items_pre_import signal to make sure only cities from specified
@@ -47,7 +47,7 @@ class ImportTestCase(TestCase):
         items = {ICity.countryCode: 'DE'}
         self.assertRaises(InvalidItems, filter_city_import, None, items)
 
-    @override_settings(LOAD_CITIES_FROM_COUNTRIES=['US',])
+    @override_settings(LOAD_CITIES_FROM_COUNTRIES=['US', ])
     def test_filter_region_import(self):
         """
         filter_region_import() is used by the region_items_pre_import signal to make sure only regions from specified
@@ -83,12 +83,12 @@ class ImportTestCase(TestCase):
         # State not in BUREAU_STATES list shouldn't get bureau_operations set to True
         set_region_fields(sender=None, instance=vermont, items={})
         self.assertFalse(vermont.bureau_operations,
-                        "State not in BUREAU_STATES list shouldn't get bureau_operations set to True")
+                         "State not in BUREAU_STATES list shouldn't get bureau_operations set to True")
 
         # Region not in US shouldn't get bureau_operations set to True
         set_region_fields(sender=None, instance=england, items={})
         self.assertFalse(england.bureau_operations,
-                        "Region not in US shouldn't get bureau_operations set to True")
+                         "Region not in US shouldn't get bureau_operations set to True")
 
 
 class PlaceTestCase(TestCase):
@@ -197,16 +197,16 @@ class RegionTestCase(TestCase):
         state = RegionFactory(name='Sunshine State')
 
         self.assertEqual(state.percent_vrc_employees(), 0,
-                        "Region with no employees should have percent_vrc_employees() 0")
+                         "Region with no employees should have percent_vrc_employees() 0")
 
         employee = EmployeeFactory(vrc=False)
         employee.bureau_states.add(state)
 
         self.assertEqual(state.percent_vrc_employees(), 0,
-                        "Region with no VRC employees should have percent_vrc_employees() 0")
+                         "Region with no VRC employees should have percent_vrc_employees() 0")
 
         employee = EmployeeFactory(vrc=True)
         employee.bureau_states.add(state)
 
         self.assertEqual(state.percent_vrc_employees(), 50,
-                        "Region with 50% VRC employees should have percent_vrc_employees() 50")
+                         "Region with 50% VRC employees should have percent_vrc_employees() 50")

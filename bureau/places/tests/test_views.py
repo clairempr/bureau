@@ -9,8 +9,10 @@ from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 from places.forms import GeoNamesLookupForm
 from places.tests.factories import CityFactory, CountyFactory, PlaceFactory, RegionFactory
-from places.views import BureauStateDetailView, BureauStateListView, GeoNamesCityLookupView, GeoNamesCountyLookupView, \
+from places.views import (
+    BureauStateDetailView, BureauStateListView, GeoNamesCityLookupView, GeoNamesCountyLookupView,
     GeoNamesLookupBaseView, get_float_format, get_number_employees_born_in_bureau_state
+)
 
 
 class BureauStateDetailViewTestCase(TestCase):
@@ -25,14 +27,14 @@ class BureauStateDetailViewTestCase(TestCase):
         self.bureau_headquarters_url = reverse('places:bureau_state_detail', kwargs={'pk': self.bureau_headquarters.pk})
 
     def test_get_context_data(self):
-        #Test it with no assignments at all
+        # Test it with no assignments at all
         response = self.client.get(self.state_url)
         for key in ['assignment_places', 'stats']:
             self.assertIn(key, response.context, "'{}' should be in context of BureauStateDetailView".format(key))
 
         # With no assignments, assignment_places should be empty
         self.assertFalse(response.context['assignment_places'].exists(),
-                          'BureauStateDetailView context assignment_places should be empty when no assignments in state')
+                         'BureauStateDetailView context assignment_places should be empty when no assignments in state')
 
         # Test returning the right assignment locations in context
         place_in_state = PlaceFactory(region=self.state)
@@ -47,15 +49,21 @@ class BureauStateDetailViewTestCase(TestCase):
         response = self.client.get(self.state_url)
         self.assertIn(place_in_state, response.context['assignment_places'],
                       'Assignment place in state should be returned by BureauStateDetailView for state')
-        self.assertNotIn(place_at_headquarters, response.context['assignment_places'],
-                      "Bureau Headquarters assignment place shouldn't be returned by BureauStateDetailView for state")
+        self.assertNotIn(
+            place_at_headquarters, response.context['assignment_places'],
+            "Bureau Headquarters assignment place shouldn't be returned by BureauStateDetailView for state"
+        )
 
         # If it's Bureau Headquarters, assignment_places should contain places of Bureau Headquarters assignments
         response = self.client.get(self.bureau_headquarters_url)
-        self.assertIn(place_at_headquarters, response.context['assignment_places'],
-                      'Bureau Headquarters assignment place should be returned by BureauStateDetailView for headquarters')
-        self.assertNotIn(place_in_state, response.context['assignment_places'],
-                      "State assignment place shouldn't be returned by BureauStateDetailView for Bureau Headquarters")
+        self.assertIn(
+            place_at_headquarters, response.context['assignment_places'],
+            'Bureau Headquarters assignment place should be returned by BureauStateDetailView for headquarters'
+        )
+        self.assertNotIn(
+            place_in_state, response.context['assignment_places'],
+            "State assignment place shouldn't be returned by BureauStateDetailView for Bureau Headquarters"
+        )
 
     def test_get_context_data_assignment_places_order(self):
         """

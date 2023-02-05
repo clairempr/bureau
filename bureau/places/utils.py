@@ -8,17 +8,20 @@ from django.conf import settings
 from places.models import Country, Region
 from places.settings import GEONAMES_USERNAME
 
+
 def geonames_county_lookup(geonames_search):
     """
     Get county by doing GeoNames search with feature code 'ADM2'
     """
     return geonames_lookup(geonames_search, ['ADM2'])
 
+
 def geonames_city_lookup(geonames_search):
     """
     Get city by doing GeoNames search with feature codes defined in settings
     """
     return geonames_lookup(geonames_search, settings.CITIES_LIGHT_INCLUDE_CITY_TYPES)
+
 
 def geonames_lookup(geonames_search, feature_codes=None):
     """

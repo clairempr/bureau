@@ -7,8 +7,8 @@ from django.contrib.auth.models import AnonymousUser
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
-from places.admin import CityAdmin, CountyAdmin, InUseListFilter, PopulationListFilter
-from places.models import City, County, Place
+from places.admin import CityAdmin, InUseListFilter, PopulationListFilter
+from places.models import City, Place
 from places.tests.factories import CityFactory, CountryFactory, CountyFactory, PlaceFactory, RegionFactory
 
 
@@ -122,7 +122,6 @@ class CityAdminListFilterTestCase(TestCase):
         queryset = changelist.get_queryset(request)
         self.assertSetEqual(set(queryset), set(City.objects.all()))
 
-
     def test_population_list_filter(self):
         """
         Test list filter for City by population
@@ -141,7 +140,9 @@ class CityAdminListFilterTestCase(TestCase):
 
         # Make sure that Yes and No are present in the list filter
         filter = PopulationListFilter(request, params='', model=City, model_admin=CityAdmin)
-        expected = [(number, label) for (number, label) in zip([1, 500, 1000, 15000],['0', '< 500', '< 1000', '< 15000'])]
+        expected = [
+            (number, label) for (number, label) in zip([1, 500, 1000, 15000], ['0', '< 500', '< 1000', '< 15000'])
+        ]
         self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
 
         # Make sure the correct queryset is returned

@@ -14,6 +14,7 @@ class CityForm(forms.ModelForm):
         fields = ('id', 'display_name', 'name', 'name_ascii', 'alternate_names', 'region', 'country', 'geoname_id',
                   'latitude', 'longitude', 'population', 'feature_code')
 
+
 class RegionForm(forms.ModelForm):
     """
     Region model form
@@ -22,6 +23,7 @@ class RegionForm(forms.ModelForm):
         model = Region
         fields = ('id', 'display_name', 'name', 'name_ascii', 'alternate_names', 'bureau_operations',
                   'bureau_headquarters', 'country', 'geoname_id', 'geoname_code', )
+
 
 class CountyForm(forms.ModelForm):
     """
@@ -41,4 +43,3 @@ class GeoNamesLookupForm(forms.Form):
 
     class Meta:
         fields = ('geonames_search',)
-
