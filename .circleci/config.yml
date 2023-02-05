@@ -2,20 +2,18 @@ version: 2.1
 jobs:
   build:
     working_directory: ~/bureau
-    environment:
-      PYTHON_VERSION: 3.11.1
     docker:
-      - image: cimg/python:{PYTHON_VERSION} # every job must define an image for the docker executor and subsequent jobs may define a different image.
+      - image: cimg/python:3.11.1 # every job must define an image for the docker executor and subsequent jobs may define a different image.
         environment:
           DATABASE_URL: postgres://postgres@localhost/test_db
           USE_DOCKER: no
-      - image: cimg/postgres:10.17 # an example of how to specify a service container
+      - image: cimg/postgres:14.1
         environment:
           POSTGRES_DB: test_db
     steps:
     - checkout  # checkout source code to working directory
     - run: sudo chown -R circleci:circleci /usr/local/bin
-    - run: sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.9.10/lib/python3.9/site-packages
+    - run: sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.11.10/lib/python3.11/site-packages
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
@@ -27,10 +25,10 @@ jobs:
         paths:
           - '/home/circleci/.cache/pip'
           - '/usr/local/bin'
-          - '/home/circleci/.pyenv/versions/3.9.10/lib/python3.9/site-packages'
+          - '/home/circleci/.pyenv/versions/3.11.1/lib/python3.11/site-packages'
     - run:
         command: |
-          /home/circleci/.pyenv/versions/3.9.10/bin/python3.9 -m coverage run manage.py test
+          /home/circleci/.pyenv/versions/3.11.1/bin/python3.11 -m coverage run manage.py test
     - run:
        command: |
-          /home/circleci/.pyenv/versions/3.9.10/bin/python3.9 -m coveralls
+          /home/circleci/.pyenv/versions/3.11.1/bin/python3.11 -m coveralls
