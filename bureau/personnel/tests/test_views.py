@@ -28,10 +28,11 @@ class EmployeeListViewTestCase(TestCase):
         self.bureau_state2 = BureauStateFactory()
         self.germany = PlaceFactory(country=CountryFactory(name='Germany'))
         self.bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
-        self.virginia = PlaceFactory(region=RegionFactory(name='Virginia'))
-        self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'))
+        us = CountryFactory(name='United States')
+        self.virginia = PlaceFactory(region=RegionFactory(name='Virginia'), country=us)
+        self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'), country=us)
         self.philadelphia = PlaceFactory(
-            city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania')
+            city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'), country=us
         )
         self.boolean_keys = ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
                              'former_slave', 'slaveholder']
