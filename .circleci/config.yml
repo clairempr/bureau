@@ -2,8 +2,10 @@ version: 2.1
 jobs:
   build:
     working_directory: ~/bureau
+    environment:
+      PYTHON_VERSION: 3.11.1
     docker:
-      - image: cimg/python:3.9.10 # every job must define an image for the docker executor and subsequent jobs may define a different image.
+      - image: cimg/python:{PYTHON_VERSION} # every job must define an image for the docker executor and subsequent jobs may define a different image.
         environment:
           DATABASE_URL: postgres://postgres@localhost/test_db
           USE_DOCKER: no
