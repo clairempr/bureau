@@ -17,6 +17,7 @@ jobs:
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
+        name: 'Install dependencies'
         command: |  # install dependencies
           pip install -r requirements/local.txt
           pip install coveralls
@@ -27,8 +28,14 @@ jobs:
           - '/usr/local/bin'
           - '/home/circleci/.pyenv/versions/3.11.1/lib/python3.11/site-packages'
     - run:
+        name: 'Linters'
+        command: |
+          flake8
+    - run:
+        name: 'Tests'
         command: |
           python3 -m coverage run manage.py test
     - run:
-       command: |
+        name: 'Coveralls'
+        command: |
           python3 -m coveralls
