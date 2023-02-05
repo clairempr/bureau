@@ -18,10 +18,7 @@ jobs:
           which python3
           echo /home/circleci/.pyenv/shims
           ls -al /home/circleci/.pyenv/shims
-          echo /home/circleci/.pyenv/shims/python3
-          ls -al /home/circleci/.pyenv/shims/python3
-          echo /home/circleci/.pyenv/shims/python3/virtualenv
-          ls -al /home/circleci/.pyenv/shims/python3/virtualenv
+          python3 -c 'import site; print(site.getsitepackages())'
     - run: sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.11.10/lib/python3.11/site-packages
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
