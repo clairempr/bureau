@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 
+
 class AilmentType(models.Model):
     """
     AilmentType class,
@@ -13,6 +14,7 @@ class AilmentType(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Ailment(models.Model):
     """
