@@ -104,8 +104,10 @@ class EmployeesWithAilmentListViewTemplateTestCase(TestCase):
         context = {'ailment': ailment_type}
         rendered = render_to_string(self.template, context)
         page_header = page_header_no_employees.format(ailment=ailment_type)
-        self.assertInHTML(page_header, rendered,
-                msg_prefix='Employees With <AilmentType> should be in page header if no employees with ailment type')
+        self.assertInHTML(
+            page_header, rendered,
+            msg_prefix='Employees With <AilmentType> should be in page header if no employees with ailment type'
+        )
 
         # "Employees With <Ailment> (count)" should be in html
         paginator = Paginator(object_list=[employee], per_page=1)
@@ -114,8 +116,10 @@ class EmployeesWithAilmentListViewTemplateTestCase(TestCase):
                    'paginator': paginator}
         rendered = render_to_string(self.template, context)
         page_header = page_header_with_employees.format(ailment=ailment, count=len(paginator.object_list))
-        self.assertInHTML(page_header, rendered,
-                msg_prefix='Employees With <Ailment> (<count>) should be in page header if employees with ailment type')
+        self.assertInHTML(
+            page_header, rendered,
+            msg_prefix='Employees With <Ailment> (<count>) should be in page header if employees with ailment type'
+        )
 
         # Employees should be listed
         self.assertTrue(employee.first_name in rendered, 'Employees should be listed in {}'.format(self.template))

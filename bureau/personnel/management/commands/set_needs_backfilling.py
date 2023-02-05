@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 
 from personnel.models import Employee
 
+
 class Command(BaseCommand):
     help = "Sets 'needs_backfilling' for all Employees"
 

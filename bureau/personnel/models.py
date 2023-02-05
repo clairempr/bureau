@@ -141,14 +141,19 @@ class Employee(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     last_name = models.CharField(max_length=100, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
-    gender = models.CharField(max_length=1,choices=Gender.choices, default=Gender.MALE)
+    gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.MALE)
 
     # Dates of birth and death use PartialDateField because often only the year is known
     date_of_birth = PartialDateField(null=True, blank=True)
-    place_of_birth = models.ForeignKey(Place, null=True, blank=True, on_delete=models.PROTECT, related_name='employees_born_in')
+    place_of_birth = models.ForeignKey(
+        Place, null=True, blank=True, on_delete=models.PROTECT, related_name='employees_born_in'
+    )
 
-    # Where was employee living at beginning of the war or when Bureau service started ("appointed from" in Bureau records)
-    place_of_residence = models.ForeignKey(Place, null=True, blank=True, on_delete=models.PROTECT, related_name='employees_residing_in')
+    # Where was employee living at beginning of the war or when Bureau service started
+    # ("appointed from" in Bureau records)
+    place_of_residence = models.ForeignKey(
+        Place, null=True, blank=True, on_delete=models.PROTECT, related_name='employees_residing_in'
+    )
 
     date_of_death = PartialDateField(null=True, blank=True)
     place_of_death = models.ForeignKey(Place, null=True, blank=True, on_delete=models.PROTECT,
@@ -198,7 +203,7 @@ class Employee(models.Model):
     # A large number were members of the Veteran Reserve Corps
     vrc = models.BooleanField(default=False)
     # Several employees entered William Oland Bourne's Left-Handed Penmanship Contest
-    penmanship_contest =  models.BooleanField(default=False)
+    penmanship_contest = models.BooleanField(default=False)
 
     # Keep track of which employees have already been backfilled when adding new fields
     needs_backfilling = models.BooleanField(default=False)

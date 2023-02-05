@@ -23,7 +23,7 @@ class EmployeeManagerTestCase(TestCase):
         self.assertIn(EmployeeFactory(place_of_birth=PlaceFactory()), Employee.objects.birthplace_known(),
                       "Employee with place_of_birth filled should be in Employee.objects.birthplace_known()")
         self.assertNotIn(EmployeeFactory(place_of_birth=None), Employee.objects.birthplace_known(),
-                      "Employee with place_of_birth empty shouldn't be in Employee.objects.birthplace_known()")
+                         "Employee with place_of_birth empty shouldn't be in Employee.objects.birthplace_known()")
 
     def test_employed_during_year(self):
         """
@@ -104,26 +104,29 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1865', end_date='1867', employee=employee)
         self.assertIn(employee, Employee.objects.employed_during_year(1866))
 
-
     def test_foreign_born(self):
         """
         Should return employees with place_of_birth filled and country code not 'US'
         """
         self.assertNotIn(EmployeeFactory(place_of_birth=None), Employee.objects.foreign_born(),
-                      "Employee with place_of_birth empty shouldn't be in Employee.objects.foreign_born()")
-        self.assertNotIn(EmployeeFactory(place_of_birth=PlaceFactory(country=CountryFactory(code2='US'))),
-                         Employee.objects.foreign_born(),
-                         "Employee with place_of_birth in 'US' shouldn't be in Employee.objects.foreign_born()")
-        self.assertIn(EmployeeFactory(place_of_birth=PlaceFactory(country=CountryFactory(code2='DE'))),
-                      Employee.objects.foreign_born(),
-                      "Employee with place_of_birth in 'DE' should be in Employee.objects.foreign_born()")
+                         "Employee with place_of_birth empty shouldn't be in Employee.objects.foreign_born()")
+        self.assertNotIn(
+            EmployeeFactory(place_of_birth=PlaceFactory(country=CountryFactory(code2='US'))),
+            Employee.objects.foreign_born(),
+            "Employee with place_of_birth in 'US' shouldn't be in Employee.objects.foreign_born()"
+        )
+        self.assertIn(
+            EmployeeFactory(place_of_birth=PlaceFactory(country=CountryFactory(code2='DE'))),
+            Employee.objects.foreign_born(),
+            "Employee with place_of_birth in 'DE' should be in Employee.objects.foreign_born()"
+        )
 
     def test_vrc(self):
         """
         Should return employees with vrc=True
         """
         self.assertNotIn(EmployeeFactory(vrc=False), Employee.objects.vrc(),
-                      "Employee with vrc=False shouldn't be in Employee.objects.vrc()")
+                         "Employee with vrc=False shouldn't be in Employee.objects.vrc()")
         self.assertIn(EmployeeFactory(vrc=True),
                       Employee.objects.vrc(),
                       "Employee with vrc=True should be in Employee.objects.vrc()")
@@ -133,10 +136,11 @@ class EmployeeManagerTestCase(TestCase):
         Should return employees with vrc=False
         """
         self.assertNotIn(EmployeeFactory(vrc=True), Employee.objects.non_vrc(),
-                      "Employee with vrc=True shouldn't be in Employee.objects.non_vrc()")
+                         "Employee with vrc=True shouldn't be in Employee.objects.non_vrc()")
         self.assertIn(EmployeeFactory(vrc=False),
                       Employee.objects.non_vrc(),
                       "Employee with vrc=False should be in Employee.objects.non_vrc()")
+
 
 class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
     """
@@ -146,24 +150,29 @@ class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
     def setUp(self):
         # Set up places in Germany and Prussia
         self.germany = PlaceFactory(city=None, county=None, region=None, country=CountryFactory(name='Germany'))
-        self.hanover = PlaceFactory(city=CityFactory(name='Hanover', country=self.germany.country), county=None,
-                                    region=None)
+        self.hanover = PlaceFactory(
+            city=CityFactory(name='Hanover', country=self.germany.country), county=None, region=None
+        )
         self.prussia = PlaceFactory(city=None, county=None, region=None, country=CountryFactory(name='Prussia'))
-        self.cologne = PlaceFactory(city=CityFactory(name='Cologne', country=self.prussia.country), county=None,
-                                    region=None)
+        self.cologne = PlaceFactory(
+            city=CityFactory(name='Cologne', country=self.prussia.country), county=None, region=None
+        )
 
         # Set up places in Virginia and West Virginia
         self.us = PlaceFactory(city=None, county=None, region=None, country=CountryFactory(name='United States'))
-        self.virginia = PlaceFactory(city=None, county=None,
-                                     region=RegionFactory(name='Virginia', country=self.us.country))
+        self.virginia = PlaceFactory(
+            city=None, county=None, region=RegionFactory(name='Virginia', country=self.us.country)
+        )
         self.richmond = PlaceFactory(city=CityFactory(name='Richmond', region=self.virginia.region), county=None)
-        self.west_virginia = PlaceFactory(city=None, county=None,
-                                     region=RegionFactory(name='West Virginia', country=self.us.country))
-        self.booger_hole = PlaceFactory(city=CityFactory(name='Booger Hole', region=self.west_virginia.region,
-                                                         country=self.us.country), county=None)
-        self.clay_county = PlaceFactory(city=None,
-                                        county=CountyFactory(name='Clay', state=self.west_virginia.region,
-                                                             country=self.us.country))
+        self.west_virginia = PlaceFactory(
+            city=None, county=None, region=RegionFactory(name='West Virginia', country=self.us.country)
+        )
+        self.booger_hole = PlaceFactory(
+            city=CityFactory(name='Booger Hole', region=self.west_virginia.region, country=self.us.country), county=None
+        )
+        self.clay_county = PlaceFactory(
+            city=None, county=CountyFactory(name='Clay', state=self.west_virginia.region, country=self.us.country)
+        )
 
     def test_born_in_place(self):
         """
@@ -231,10 +240,14 @@ class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
         # If it's West Virginia, then it should just be West Virginia and places in West Virginia
         self.assertIn(employee_born_in_west_virginia, Employee.objects.born_in_place(place=self.west_virginia),
                       'born_in_place() for a state should include employee born in that state')
-        self.assertIn(employee_born_in_booger_hole, Employee.objects.born_in_place(place=self.west_virginia),
-                      'born_in_place() should include employee born in city in West Virginia if place is West Virginia')
-        self.assertIn(employee_born_in_clay_county, Employee.objects.born_in_place(place=self.west_virginia),
-                      'born_in_place() should include employee born in county in West Virginia if place is West Virginia')
+        self.assertIn(
+            employee_born_in_booger_hole, Employee.objects.born_in_place(place=self.west_virginia),
+            'born_in_place() should include employee born in city in West Virginia if place is West Virginia'
+        )
+        self.assertIn(
+            employee_born_in_clay_county, Employee.objects.born_in_place(place=self.west_virginia),
+            'born_in_place() should include employee born in county in West Virginia if place is West Virginia'
+        )
         self.assertNotIn(employee_born_in_virginia, Employee.objects.born_in_place(place=self.west_virginia),
                          "born_in_place() shouldn't include employee born in another state (unless place is Virginia)")
 
@@ -297,22 +310,28 @@ class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
                       'died_in_place() for a country should include employee who died in that country')
         self.assertIn(employee_died_in_cologne, Employee.objects.died_in_place(place=self.prussia),
                       'died_in_place() should include employee who died in city in Prussia if place is Prussia')
-        self.assertNotIn(employee_died_in_germany, Employee.objects.died_in_place(place=self.prussia),
-                         "died_in_place() shouldn't include employee who died in another country (unless place is Germany)")
+        self.assertNotIn(
+            employee_died_in_germany, Employee.objects.died_in_place(place=self.prussia),
+            "died_in_place() shouldn't include employee who died in another country (unless place is Germany)"
+        )
 
         # If it's Cologne, Prussia, then it should just be Cologne
         self.assertIn(employee_died_in_cologne, Employee.objects.died_in_place(place=self.cologne),
                       'died_in_place() for a city should include employee who died in that city')
-        self.assertNotIn(employee_died_in_prussia, Employee.objects.died_in_place(place=self.cologne),
-                         "died_in_place() shouldn't include every employee who died in Prussia if place is city in Prussia")
+        self.assertNotIn(
+            employee_died_in_prussia, Employee.objects.died_in_place(place=self.cologne),
+            "died_in_place() shouldn't include every employee who died in Prussia if place is city in Prussia"
+        )
         self.assertNotIn(employee_died_in_germany, Employee.objects.died_in_place(place=self.cologne),
                          "died_in_place() shouldn't include employee who died in Germany if place is city in Prussia")
 
         # If it's Hanover, Germany, then it should just be Hanover
         self.assertIn(employee_died_in_hanover, Employee.objects.died_in_place(place=self.hanover),
                       'died_in_place() for a city should include employee who died in that city')
-        self.assertNotIn(employee_died_in_germany, Employee.objects.died_in_place(place=self.hanover),
-                         "died_in_place() shouldn't include every employee who died in Germany if place is city in Germany")
+        self.assertNotIn(
+            employee_died_in_germany, Employee.objects.died_in_place(place=self.hanover),
+            "died_in_place() shouldn't include every employee who died in Germany if place is city in Germany"
+        )
         self.assertNotIn(employee_died_in_prussia, Employee.objects.died_in_place(place=self.hanover),
                          "died_in_place() shouldn't include employee who died in Prussia if place is city in Germany")
 
@@ -320,9 +339,9 @@ class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
         self.assertIn(employee_died_in_west_virginia, Employee.objects.died_in_place(place=self.west_virginia),
                       'died_in_place() for a state should include employee who died in that state')
         self.assertIn(employee_died_in_booger_hole, Employee.objects.died_in_place(place=self.west_virginia),
-                      'died_in_place() should include employee who died in city in West Virginia if place is West Virginia')
+                      'died_in_place() should include employee who died in city in West Virginia if place is WV')
         self.assertIn(employee_died_in_clay_county, Employee.objects.died_in_place(place=self.west_virginia),
-                      'died_in_place() should include employee who died in county in West Virginia if place is West Virginia')
+                      'died_in_place() should include employee who died in county in West Virginia if place is WV')
         self.assertNotIn(employee_died_in_virginia, Employee.objects.died_in_place(place=self.west_virginia),
                          "died_in_place() shouldn't include employee who died in another state")
 
@@ -378,70 +397,100 @@ class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
                       'resided_in_place() for a country should include employee who resided in that country')
         self.assertIn(employee_resided_in_cologne, Employee.objects.resided_in_place(place=self.prussia),
                       'resided_in_place() should include employee who resided in city in Prussia if place is Prussia')
-        self.assertNotIn(employee_resided_in_germany, Employee.objects.resided_in_place(place=self.prussia),
-                         "resided_in_place() shouldn't include employee who resided in another country (unless place is Germany)")
+        self.assertNotIn(
+            employee_resided_in_germany, Employee.objects.resided_in_place(place=self.prussia),
+            "resided_in_place() shouldn't include employee who resided in another country (unless place is Germany)"
+        )
 
         # If it's Cologne, Prussia, then it should just be Cologne
         self.assertIn(employee_resided_in_cologne, Employee.objects.resided_in_place(place=self.cologne),
                       'resided_in_place() for a city should include employee who resided in that city')
-        self.assertNotIn(employee_resided_in_prussia, Employee.objects.resided_in_place(place=self.cologne),
-                         "resided_in_place() shouldn't include every employee who resided in Prussia if place is city in Prussia")
-        self.assertNotIn(employee_resided_in_germany, Employee.objects.resided_in_place(place=self.cologne),
-                         "resided_in_place() shouldn't include employee who resided in Germany if place is city in Prussia")
+        self.assertNotIn(
+            employee_resided_in_prussia, Employee.objects.resided_in_place(place=self.cologne),
+            "resided_in_place() shouldn't include every employee who resided in Prussia if place is city in Prussia"
+        )
+        self.assertNotIn(
+            employee_resided_in_germany, Employee.objects.resided_in_place(place=self.cologne),
+            "resided_in_place() shouldn't include employee who resided in Germany if place is city in Prussia"
+        )
 
         # If it's Hanover, Germany, then it should just be Hanover
         self.assertIn(employee_resided_in_hanover, Employee.objects.resided_in_place(place=self.hanover),
                       'resided_in_place() for a city should include employee who resided in that city')
-        self.assertNotIn(employee_resided_in_germany, Employee.objects.resided_in_place(place=self.hanover),
-                         "resided_in_place() shouldn't include every employee who resided in Germany if place is city in Germany")
-        self.assertNotIn(employee_resided_in_prussia, Employee.objects.resided_in_place(place=self.hanover),
-                         "resided_in_place() shouldn't include employee who resided in Prussia if place is city in Germany")
+        self.assertNotIn(
+            employee_resided_in_germany, Employee.objects.resided_in_place(place=self.hanover),
+            "resided_in_place() shouldn't include every employee who resided in Germany if place is city in Germany"
+        )
+        self.assertNotIn(
+            employee_resided_in_prussia, Employee.objects.resided_in_place(place=self.hanover),
+            "resided_in_place() shouldn't include employee who resided in Prussia if place is city in Germany"
+        )
 
         # If it's Virginia, then employees who resided in West Virginia and places in West Virginia should be included
         self.assertIn(employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.virginia),
                       'resided_in_place() for a state should include employee who resided in that state')
         self.assertIn(employee_resided_in_west_virginia, Employee.objects.resided_in_place(place=self.virginia),
                       'resided_in_place() should include employee who resided in West Virginia if place is Virginia')
-        self.assertIn(employee_resided_in_booger_hole, Employee.objects.resided_in_place(place=self.virginia),
-                      'resided_in_place() should include employee who resided in city in West Virginia if place is Virginia')
-        self.assertIn(employee_resided_in_clay_county, Employee.objects.resided_in_place(place=self.virginia),
-                      'resided_in_place() should include employee who resided in county in West Virginia if place is Virginia')
+        self.assertIn(
+            employee_resided_in_booger_hole, Employee.objects.resided_in_place(place=self.virginia),
+            'resided_in_place() should include employee who resided in city in West Virginia if place is Virginia'
+        )
+        self.assertIn(
+            employee_resided_in_clay_county, Employee.objects.resided_in_place(place=self.virginia),
+            'resided_in_place() should include employee who resided in county in West Virginia if place is Virginia'
+        )
 
         # If it's West Virginia, then it should just be West Virginia and places in West Virginia
         self.assertIn(employee_resided_in_west_virginia, Employee.objects.resided_in_place(place=self.west_virginia),
                       'resided_in_place() for a state should include employee who resided in that state')
-        self.assertIn(employee_resided_in_booger_hole, Employee.objects.resided_in_place(place=self.west_virginia),
-                      'resided_in_place() should include employee who resided in city in West Virginia if place is West Virginia')
-        self.assertIn(employee_resided_in_clay_county, Employee.objects.resided_in_place(place=self.west_virginia),
-                      'resided_in_place() should include employee who resided in county in West Virginia if place is West Virginia')
-        self.assertNotIn(employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.west_virginia),
-                         "resided_in_place() shouldn't include employee who resided in another state (unless place is Virginia)")
+        self.assertIn(
+            employee_resided_in_booger_hole, Employee.objects.resided_in_place(place=self.west_virginia),
+            'resided_in_place() should include employee who resided in city in West Virginia if place is West Virginia'
+        )
+        self.assertIn(
+            employee_resided_in_clay_county, Employee.objects.resided_in_place(place=self.west_virginia),
+            'resided_in_place() should include employee who resided in county in West Virginia if place is WV'
+        )
+        self.assertNotIn(
+            employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.west_virginia),
+            "resided_in_place() shouldn't include employee who resided in another state (unless place is Virginia)"
+        )
 
         # If it's Booger Hole, West Virginia, then it should just be Booger Hole
         self.assertIn(employee_resided_in_booger_hole, Employee.objects.resided_in_place(place=self.booger_hole),
                       'resided_in_place() for a city should include employee who resided in that city')
         for employee in [employee_resided_in_west_virginia, employee_resided_in_clay_county]:
-            self.assertNotIn(employee, Employee.objects.resided_in_place(place=self.booger_hole),
-                             "resided_in_place() shouldn't include every employee who resided in state if place is a city")
-        self.assertNotIn(employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.booger_hole),
-                         "resided_in_place() shouldn't include employee who resided in another state if place is a city")
+            self.assertNotIn(
+                employee, Employee.objects.resided_in_place(place=self.booger_hole),
+                "resided_in_place() shouldn't include every employee who resided in state if place is a city"
+            )
+        self.assertNotIn(
+            employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.booger_hole),
+            "resided_in_place() shouldn't include employee who resided in another state if place is a city"
+        )
 
         # If it's Clay County, West Virginia, then it should just be Clay County
         self.assertIn(employee_resided_in_clay_county, Employee.objects.resided_in_place(place=self.clay_county),
                       'resided_in_place() for a county should include employee who resided in that county')
         for employee in [employee_resided_in_west_virginia, employee_resided_in_booger_hole]:
-            self.assertNotIn(employee, Employee.objects.resided_in_place(place=self.clay_county),
-                             "resided_in_place() shouldn't include every employee who resided in state if place is a county")
-        self.assertNotIn(employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.clay_county),
-                         "resided_in_place() shouldn't include employee who resided in another state if place is a county")
+            self.assertNotIn(
+                employee, Employee.objects.resided_in_place(place=self.clay_county),
+                "resided_in_place() shouldn't include every employee who resided in state if place is a county"
+            )
+        self.assertNotIn(
+            employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.clay_county),
+            "resided_in_place() shouldn't include employee who resided in another state if place is a county"
+        )
 
         # If it's Richmond, Virginia, then it should just be Richmond
         self.assertIn(employee_resided_in_richmond, Employee.objects.resided_in_place(place=self.richmond),
                       'resided_in_place() for a city should include employee who resided in that city')
         self.assertNotIn(employee_resided_in_virginia, Employee.objects.resided_in_place(place=self.richmond),
                          "resided_in_place() shouldn't include every employee resided in state if place is a city")
-        self.assertNotIn(employee_resided_in_west_virginia, Employee.objects.resided_in_place(place=self.richmond),
-                         "resided_in_place() shouldn't include employee who resided in another state if place is a city")
+        self.assertNotIn(
+            employee_resided_in_west_virginia, Employee.objects.resided_in_place(place=self.richmond),
+            "resided_in_place() shouldn't include employee who resided in another state if place is a city"
+        )
 
 
 class EmployeeTestCase(TestCase):
@@ -456,7 +505,7 @@ class EmployeeTestCase(TestCase):
 
         employee = EmployeeFactory()
         self.assertEqual(str(employee), '{}, {}'.format(employee.last_name, employee.first_name),
-                        "Employee.__str__ should be equal to Employee.last_name, Employee.first_name")
+                         "Employee.__str__ should be equal to Employee.last_name, Employee.first_name")
 
     def test_age_at_death(self):
         """
@@ -472,7 +521,8 @@ class EmployeeTestCase(TestCase):
                           "age_at_death() should be None for employee with no birth date")
         self.assertEqual(
             EmployeeFactory(date_of_birth=PartialDate('1840'), date_of_death=PartialDate('1890')).age_at_death(), 50,
-                            "age_at_death() should be death year - birth year")
+            "age_at_death() should be death year - birth year"
+        )
 
     def test_assignments_in_order(self):
         """
@@ -500,7 +550,7 @@ class EmployeeTestCase(TestCase):
         self.assertIsNone(EmployeeFactory().calculate_age(1865),
                           "calculate_age() should be None for employee with no birth date")
         self.assertEqual(EmployeeFactory(date_of_birth=PartialDate('1840')).calculate_age(1865), 25,
-                          "calculate_age() should be year - birth year")
+                         "calculate_age() should be year - birth year")
 
     def test_vrc_set_on_save(self):
         """

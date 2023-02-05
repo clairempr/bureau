@@ -12,8 +12,10 @@ from assignments.tests.factories import AssignmentFactory
 from military.tests.factories import RegimentFactory
 from places.tests.factories import PlaceFactory, RegionFactory
 
-from personnel.admin import DateOfBirthFilledListFilter, EmployeeAdmin, EmploymentYearListFilter, FirstLetterListFilter, \
+from personnel.admin import (
+    DateOfBirthFilledListFilter, EmployeeAdmin, EmploymentYearListFilter, FirstLetterListFilter,
     PlaceOfBirthFilledListFilter, USCTListFilter, YES_NO_LOOKUPS
+)
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 
@@ -70,7 +72,7 @@ class EmployeeAdminTestCase(TestCase):
         )
 
         self.assertTrue(Employee.objects.first().vrc,
-                "Employee in VRC unit should have 'vrc' set to true after saving")
+                        "Employee in VRC unit should have 'vrc' set to true after saving")
 
     def test_save_model_vrc_false(self):
         """
@@ -90,7 +92,7 @@ class EmployeeAdminTestCase(TestCase):
         )
 
         self.assertFalse(Employee.objects.first().vrc,
-                "Employee not in VRC unit shouldn't have 'vrc' set to true after saving")
+                         "Employee not in VRC unit shouldn't have 'vrc' set to true after saving")
 
 
 class EmployeeAdminFilterTestCase(TestCase):

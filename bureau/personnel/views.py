@@ -127,9 +127,9 @@ class EmployeeListView(ListView):
             return qs.filter(place_of_birth__country__name__in=GERMANY_COUNTRY_NAMES)
         else:
             return qs.filter(Q(place_of_birth__country__name__icontains=place_of_birth)
-                           | Q(place_of_birth__region__name__icontains=place_of_birth)
-                           | Q(place_of_birth__county__name__icontains=place_of_birth)
-                           | Q(place_of_birth__city__name__icontains=place_of_birth))
+                             | Q(place_of_birth__region__name__icontains=place_of_birth)
+                             | Q(place_of_birth__county__name__icontains=place_of_birth)
+                             | Q(place_of_birth__city__name__icontains=place_of_birth))
 
     def filter_place_of_death(self, qs, place_of_death):
         # Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of
@@ -142,9 +142,9 @@ class EmployeeListView(ListView):
             return qs.filter(place_of_death__region__name__iexact=place_of_death)
         else:
             return qs.filter(Q(place_of_death__country__name__icontains=place_of_death)
-                           | Q(place_of_death__region__name__icontains=place_of_death)
-                           | Q(place_of_death__county__name__icontains=place_of_death)
-                           | Q(place_of_death__city__name__icontains=place_of_death))
+                             | Q(place_of_death__region__name__icontains=place_of_death)
+                             | Q(place_of_death__county__name__icontains=place_of_death)
+                             | Q(place_of_death__city__name__icontains=place_of_death))
 
 
 employee_list_view = EmployeeListView.as_view()

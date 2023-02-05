@@ -2,7 +2,7 @@ import string
 
 from django.contrib import admin
 
-from assignments.models import Assignment, Place, Position
+from assignments.models import Assignment
 
 from .models import Employee
 
@@ -10,7 +10,7 @@ from .models import Employee
 YES_NO_LOOKUPS = (
             ('Yes', 'Yes'),
             ('No', 'No'),
-        )
+)
 
 
 class DateOfBirthFilledListFilter(admin.SimpleListFilter):
@@ -51,7 +51,8 @@ class EmploymentYearListFilter(admin.SimpleListFilter):
 
     def lookups(self, request, model_admin):
         if Assignment.objects.exists():
-            min_year = Assignment.objects.filter(start_date__isnull=False).order_by('start_date').first().start_date.date.year
+            min_year = Assignment.objects.filter(
+                    start_date__isnull=False).order_by('start_date').first().start_date.date.year
             max_year = Assignment.objects.filter(end_date__isnull=False).order_by('end_date').last().end_date.date.year
             return [(year, year) for year in range(min_year, max_year + 1)]
         return []
@@ -73,6 +74,7 @@ class FirstLetterListFilter(admin.SimpleListFilter):
         if self.value():
             return queryset.filter(last_name__startswith=self.value())
         return queryset
+
 
 class USCTListFilter(admin.SimpleListFilter):
     title = 'USCT'

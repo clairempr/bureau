@@ -18,15 +18,21 @@ class EmployeeListViewTestCase(TestCase):
 
     def setUp(self):
         self.url = 'personnel:employee_list'
-        self.rebecca_crumpler = EmployeeFactory(first_name='Rebecca Lee', last_name='Crumpler', gender=Employee.Gender.FEMALE)
-        self.william_van_duyn = EmployeeFactory(first_name='William B.', last_name='Van Duyn', gender=Employee.Gender.MALE)
+        self.rebecca_crumpler = EmployeeFactory(
+            first_name='Rebecca Lee', last_name='Crumpler', gender=Employee.Gender.FEMALE
+        )
+        self.william_van_duyn = EmployeeFactory(
+            first_name='William B.', last_name='Van Duyn', gender=Employee.Gender.MALE
+        )
         self.bureau_state1 = BureauStateFactory()
         self.bureau_state2 = BureauStateFactory()
         self.germany = PlaceFactory(country=CountryFactory(name='Germany'))
         self.bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
         self.virginia = PlaceFactory(region=RegionFactory(name='Virginia'))
         self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'))
-        self.philadelphia = PlaceFactory(city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'))
+        self.philadelphia = PlaceFactory(
+            city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania')
+        )
         self.boolean_keys = ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
                              'former_slave', 'slaveholder']
         self.search_keys = ['first_name', 'last_name', 'gender', 'place_of_birth', 'place_of_death']
@@ -104,31 +110,41 @@ class EmployeeListViewTestCase(TestCase):
     def test_get_queryset_by_gender(self):
         request = RequestFactory().get('/')
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {self.rebecca_crumpler, self.william_van_duyn},
-                    'If no gender specified, EmployeeListView should return employees of any gender')
+        self.assertSetEqual(
+            set(view.get_queryset()), {self.rebecca_crumpler, self.william_van_duyn},
+            'If no gender specified, EmployeeListView should return employees of any gender'
+        )
 
         request = RequestFactory().get('/', {'gender': 'Female'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {self.rebecca_crumpler},
-                    'If gender specified, EmployeeListView should return employees of that gender')
+        self.assertSetEqual(
+            set(view.get_queryset()), {self.rebecca_crumpler},
+            'If gender specified, EmployeeListView should return employees of that gender'
+        )
 
         request = RequestFactory().get('/', {'gender': 'Male'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {self.william_van_duyn},
-                    'If gender specified, EmployeeListView should return employees of that gender')
+        self.assertSetEqual(
+            set(view.get_queryset()), {self.william_van_duyn},
+            'If gender specified, EmployeeListView should return employees of that gender'
+        )
 
     def test_get_queryset_by_name(self):
         for text in ['Rebecca', 'Lee', 'Rebecca Lee']:
             request = RequestFactory().get('/', {'first_name': text})
             view = EmployeeListView(kwargs={}, object_list=[], request=request)
-            self.assertSetEqual(set(view.get_queryset()), {self.rebecca_crumpler},
-                    'If first_name specified, EmployeeListView should return employees with search text in first_name')
+            self.assertSetEqual(
+                set(view.get_queryset()), {self.rebecca_crumpler},
+                'If first_name specified, EmployeeListView should return employees with search text in first_name'
+            )
 
         for text in ['Van', 'Duyn', 'Van Duyn']:
             request = RequestFactory().get('/', {'last_name': text})
             view = EmployeeListView(kwargs={}, object_list=[], request=request)
-            self.assertSetEqual(set(view.get_queryset()), {self.william_van_duyn},
-                    'If last_name specified, EmployeeListView should return employees with search text in last_name')
+            self.assertSetEqual(
+                set(view.get_queryset()), {self.william_van_duyn},
+                'If last_name specified, EmployeeListView should return employees with search text in last_name'
+            )
 
     def test_get_queryset_by_place_of_birth(self):
         employee_born_in_germany = EmployeeFactory(place_of_birth=self.germany)
@@ -141,28 +157,38 @@ class EmployeeListViewTestCase(TestCase):
         # otherwise it should be just that country
         request = RequestFactory().get('/', {'place_of_birth': 'Germany'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_germany, employee_born_in_bavaria},
-            'If Germany specified as place_of_birth, EmployeeListView should return employees born in Germany and Bavaria')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_germany, employee_born_in_bavaria},
+            'If Germany is place_of_birth, EmployeeListView should return employees born in Germany and Bavaria'
+        )
         request = RequestFactory().get('/', {'place_of_birth': 'Bavaria'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_bavaria},
-            'If country specified as place_of_birth, EmployeeListView should return employees born in that country')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_bavaria},
+            'If country specified as place_of_birth, EmployeeListView should return employees born in that country'
+        )
 
         # State: search for "Virginia" will automatically include West Virginia, which is what we want
         request = RequestFactory().get('/', {'place_of_birth': 'Virginia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_virginia, employee_born_in_west_virginia},
-            'If state place_of_birth specified, EmployeeListView should return employees with search text in state name')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_virginia, employee_born_in_west_virginia},
+            'If state place_of_birth specified, EmployeeListView should return employees with search text in state name'
+        )
         request = RequestFactory().get('/', {'place_of_birth': 'West Virginia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_west_virginia},
-            'If state place_of_birth specified, EmployeeListView should return employees with search text in state name')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_west_virginia},
+            'If state place_of_birth specified, EmployeeListView should return employees with search text in state name'
+        )
 
         # City
         request = RequestFactory().get('/', {'place_of_birth': 'Philadelphia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_philadelphia},
-            'If city place_of_birth specified, EmployeeListView should return employees with search text in city name')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_philadelphia},
+            'If city place_of_birth specified, EmployeeListView should return employees with search text in city name'
+        )
 
     def test_get_queryset_by_year_of_birth(self):
         employee_born_in_1828 = EmployeeFactory(date_of_birth=PartialDate('1828'))
@@ -173,37 +199,45 @@ class EmployeeListViewTestCase(TestCase):
         request = RequestFactory().get('/', {'year_of_birth_start': '1831', 'year_of_birth_end': '1840'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         self.assertEqual(view.get_queryset().count(), 0,
-            'If no employees in specified birth year range, queryset should be empty')
+                         'If no employees in specified birth year range, queryset should be empty')
         # First employee with birth year between start and end years
         request = RequestFactory().get('/', {'year_of_birth_start': '1810', 'year_of_birth_end': '1829'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1828},
-            'Employee with birth year in range should be returned')
+                            'Employee with birth year in range should be returned')
         # Last employee with birth year between start and end years
         request = RequestFactory().get('/', {'year_of_birth_start': '1840', 'year_of_birth_end': '1850'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1843},
-            'Employee with birth year in range should be returned')
+                            'Employee with birth year in range should be returned')
         # All employees with birth year between start and end years
         request = RequestFactory().get('/', {'year_of_birth_start': '1810', 'year_of_birth_end': '1850'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1828, employee_born_in_1830, employee_born_in_1843},
-            'Employee with birth year in range should be returned')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_1828, employee_born_in_1830, employee_born_in_1843},
+            'Employee with birth year in range should be returned'
+        )
         # Employee with birth year in start year
         request = RequestFactory().get('/', {'year_of_birth_start': '1830', 'year_of_birth_end': '1840'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1830},
-            'Employee with birth year in range should be returned')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_1830},
+            'Employee with birth year in range should be returned'
+        )
         # Employee with birth year in end year
         request = RequestFactory().get('/', {'year_of_birth_start': '1829', 'year_of_birth_end': '1830'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1830},
-            'Employee with birth year in range should be returned')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_1830},
+            'Employee with birth year in range should be returned'
+        )
         # Start and end year the same
         request = RequestFactory().get('/', {'year_of_birth_start': '1828', 'year_of_birth_end': '1828'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_born_in_1828},
-            'Employee with birth year in range should be returned')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_born_in_1828},
+            'Employee with birth year in range should be returned'
+        )
 
     def test_get_queryset_by_place_of_death(self):
         employee_died_in_germany = EmployeeFactory(place_of_death=self.germany)
@@ -216,28 +250,38 @@ class EmployeeListViewTestCase(TestCase):
         # otherwise it should be just that country
         request = RequestFactory().get('/', {'place_of_death': 'Germany'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_germany, employee_died_in_bavaria},
-            'If Germany specified as place_of_death, EmployeeListView should return employees who died in Germany and Bavaria')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_died_in_germany, employee_died_in_bavaria},
+            'If Germany given as place_of_death, EmployeeListView should return employees who died in DE and Bavaria'
+        )
         request = RequestFactory().get('/', {'place_of_death': 'Bavaria'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_bavaria},
-            'If country specified as place_of_death, EmployeeListView should return employees who died in that country')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_died_in_bavaria},
+            'If country specified as place_of_death, EmployeeListView should return employees who died in that country'
+        )
 
         # State: search for "Virginia" should not include West Virginia
         request = RequestFactory().get('/', {'place_of_death': 'Virginia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_virginia},
-            'If Virginia specified as place_of_death, EmployeeListView should return employees who died in Virginia only')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_died_in_virginia},
+            'If Virginia specified as place_of_death, EmployeeListView should return employees who died in VA only'
+        )
         request = RequestFactory().get('/', {'place_of_death': 'West Virginia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_west_virginia},
-            'If state place_of_death specified, EmployeeListView should return employees with search text in state name')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_died_in_west_virginia},
+            'If state place_of_death specified, EmployeeListView should return employees with search text in state name'
+        )
 
         # City
         request = RequestFactory().get('/', {'place_of_death': 'Philadelphia'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_died_in_philadelphia},
-            'If city place_of_death specified, EmployeeListView should return employees with search text in city name')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_died_in_philadelphia},
+            'If city place_of_death specified, EmployeeListView should return employees with search text in city name'
+        )
 
     def test_get_queryset_by_bureau_states(self):
         employee_in_state_1 = EmployeeFactory()
@@ -247,13 +291,17 @@ class EmployeeListViewTestCase(TestCase):
 
         request = RequestFactory().get('/', {'bureau_states': [self.bureau_state1.pk, self.bureau_state2.pk]})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_in_state_1, employee_in_states_1_and_2},
-                    'If bureau_states specified, EmployeeListView should return employees who worked in at least one')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_in_state_1, employee_in_states_1_and_2},
+            'If bureau_states specified, EmployeeListView should return employees who worked in at least one'
+        )
 
         request = RequestFactory().get('/', {'bureau_states': [self.bureau_state2.pk]})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertSetEqual(set(view.get_queryset()), {employee_in_states_1_and_2},
-                    'If bureau_states specified, EmployeeListView should return employees who worked in at least one')
+        self.assertSetEqual(
+            set(view.get_queryset()), {employee_in_states_1_and_2},
+            'If bureau_states specified, EmployeeListView should return employees who worked in at least one'
+        )
 
     def test_get_queryset_by_vrc_status(self):
         vrc_employee = EmployeeFactory(vrc=True)
@@ -272,7 +320,7 @@ class EmployeeListViewTestCase(TestCase):
         self.assertIn(vrc_employee, queryset,
                       'If VRC specified, EmployeeListView should return VRC employees')
         self.assertNotIn(non_vrc_employee, queryset,
-                      'If VRC specified, EmployeeListView should return only VRC employees')
+                         'If VRC specified, EmployeeListView should return only VRC employees')
 
     def test_get_queryset_by_veteran_status(self):
         union_employee = EmployeeFactory(union_veteran=True)
@@ -283,8 +331,10 @@ class EmployeeListViewTestCase(TestCase):
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         for employee in [union_employee, confederate_employee, non_veteran_employee]:
-            self.assertIn(employee, queryset,
-                    'If veteran status not specified, EmployeeListView should return veteran and non-veteran employees')
+            self.assertIn(
+                employee, queryset,
+                'If veteran status not specified, EmployeeListView should return veteran and non-veteran employees'
+            )
 
         request = RequestFactory().get('/', {'union_veteran': 'union_veteran'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
@@ -293,16 +343,18 @@ class EmployeeListViewTestCase(TestCase):
                       'If union_veteran specified, EmployeeListView should return Union veteran employees')
         for employee in [confederate_employee, non_veteran_employee]:
             self.assertNotIn(employee, queryset,
-                      'If union_veteran specified, EmployeeListView should return only Union veteran employees')
+                             'If union_veteran specified, EmployeeListView should return only Union veteran employees')
 
         request = RequestFactory().get('/', {'confederate_veteran': 'confederate_veteran'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         self.assertIn(confederate_employee, queryset,
-                    'If confederate_veteran specified, EmployeeListView should return Confederate veteran employees')
+                      'If confederate_veteran specified, EmployeeListView should return Confederate veteran employees')
         for employee in [union_employee, non_veteran_employee]:
-            self.assertNotIn(employee, queryset,
-                    'If confederate_veteran specified, EmployeeListView should return only Confederate veteran employees')
+            self.assertNotIn(
+                employee, queryset,
+                'If confederate_veteran specified, EmployeeListView should return only Confederate veteran employees'
+            )
 
     def test_get_queryset_by_colored_status(self):
         """
@@ -315,8 +367,10 @@ class EmployeeListViewTestCase(TestCase):
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         for employee in [colored_employee, non_colored_employee]:
-            self.assertIn(employee, queryset,
-                    'If "Colored" not specified, EmployeeListView should return "Colored" and non-"Colored" employees')
+            self.assertIn(
+                employee, queryset,
+                'If "Colored" not specified, EmployeeListView should return "Colored" and non-"Colored" employees'
+            )
 
         request = RequestFactory().get('/', {'colored': 'colored'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
@@ -335,16 +389,22 @@ class EmployeeListViewTestCase(TestCase):
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         for employee in [died_during_assignment_employee, non_died_during_assignment_employee]:
-            self.assertIn(employee, queryset,
-                'If died_during_assignment not specified, EmployeeListView should return employees whether they died during assignment or not')
+            self.assertIn(
+                employee, queryset,
+                'If died_during_assignment not specified, EmployeeListView should return all employees'
+            )
 
         request = RequestFactory().get('/', {'died_during_assignment': 'died_during_assignment'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertIn(died_during_assignment_employee, queryset,
-            'If died_during_assignment specified, EmployeeListView should return employees who died during assignment')
-        self.assertNotIn(non_died_during_assignment_employee, queryset,
-            'If died_during_assignment_employee specified, EmployeeListView should return only employees who died during assignment')
+        self.assertIn(
+            died_during_assignment_employee, queryset,
+            'If died_during_assignment specified, EmployeeListView should return employees who died during assignment'
+        )
+        self.assertNotIn(
+            non_died_during_assignment_employee, queryset,
+            'If died_during_assignment_employee specified, EmployeeListView should return only employees who died'
+        )
 
     def test_get_queryset_by_former_slave_status(self):
         former_slave_employee = EmployeeFactory(former_slave=True)
@@ -354,8 +414,10 @@ class EmployeeListViewTestCase(TestCase):
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         for employee in [former_slave_employee, non_former_slave_employee]:
-            self.assertIn(employee, queryset,
-                'If former_slave not specified, EmployeeListView should return employees whether or not they were a former slave')
+            self.assertIn(
+                employee, queryset,
+                'If former_slave not specified, EmployeeListView should return all employees'
+            )
 
         request = RequestFactory().get('/', {'former_slave': 'former_slave'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
@@ -373,8 +435,10 @@ class EmployeeListViewTestCase(TestCase):
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         for employee in [slaveholder_employee, non_slaveholder_employee]:
-            self.assertIn(employee, queryset,
-                'If slaveholder not specified, EmployeeListView should return employees whether or not they were a slaveholder')
+            self.assertIn(
+                employee, queryset,
+                'If slaveholder not specified, EmployeeListView should return all employees'
+            )
 
         request = RequestFactory().get('/', {'slaveholder': 'slaveholder'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
@@ -428,10 +492,10 @@ class EmployeesBornResidedDiedInPlaceViewTestCase(TestCase):
 
         self.view.kwargs = {'place': self.place.pk}
         self.assertEqual(self.view.get_place(), self.place,
-                          "EmployeesBornResidedDiedInPlaceView.get_place() should return Place with pk 'place'")
+                         "EmployeesBornResidedDiedInPlaceView.get_place() should return Place with pk 'place'")
 
     @patch.object(EmployeesBornResidedDiedInPlaceView, 'get_place', autospec=True)
-    @patch.object(EmployeeManager, 'born_in_place', return_value='employees_born_in_place',autospec=True)
+    @patch.object(EmployeeManager, 'born_in_place', return_value='employees_born_in_place', autospec=True)
     @patch.object(EmployeeManager, 'resided_in_place', return_value='employees_resided_in_place', autospec=True)
     @patch.object(EmployeeManager, 'died_in_place', return_value='employees_died_in_place', autospec=True)
     def test_get_context_data(self, mock_died_in_place, mock_resided_in_place, mock_born_in_place, mock_get_place):
@@ -445,26 +509,38 @@ class EmployeesBornResidedDiedInPlaceViewTestCase(TestCase):
         # If 'place' not found, context['place'] should be empty and employees_* shouldn't be in context at all
         mock_get_place.return_value = None
         context_data = self.view.get_context_data()
-        self.assertIsNone(context_data['place'],
-                "If place is None, EmployeesBornResidedDiedInPlaceView context['place'] should be None")
+        self.assertIsNone(
+            context_data['place'],
+            "If place is None, EmployeesBornResidedDiedInPlaceView context['place'] should be None"
+        )
         for key in context_keys:
-            self.assertNotIn(key, context_data,
-                "'{}' shouldn't be in context of EmployeesBornResidedDiedInPlaceView if place is None".format(key))
+            self.assertNotIn(
+                key, context_data,
+                "'{}' shouldn't be in context of EmployeesBornResidedDiedInPlaceView if place is None".format(key)
+            )
 
         # If 'place' is found, it should go in context['place']
         mock_get_place.return_value = self.place
         context_data = self.view.get_context_data()
-        self.assertEqual(context_data['place'], self.place,
-                "If place is found, it should go in EmployeesBornResidedDiedInPlaceView context['place']")
+        self.assertEqual(
+            context_data['place'], self.place,
+            "If place is found, it should go in EmployeesBornResidedDiedInPlaceView context['place']"
+        )
 
         # If place is set, other context keys should be filled using EmployeeManager.born_in_place(),
         # resided_in_place(), and died_in_place()
-        self.assertEqual(context_data['employees_born_in_place'], mock_born_in_place.return_value,
-            "'employees_born_in_place' in context of EmployeesBornResidedDiedInPlaceView should be set to born_in_place()")
-        self.assertEqual(context_data['employees_resided_in_place'], mock_resided_in_place.return_value,
-            "'employees_resided_in_place' in context of EmployeesBornResidedDiedInPlaceView should be set to resided_in_place()")
-        self.assertEqual(context_data['employees_died_in_place'], mock_died_in_place.return_value,
-            "'employees_died_in_place' in context of EmployeesBornResidedDiedInPlaceView should be set to died_in_place()")
+        self.assertEqual(
+            context_data['employees_born_in_place'], mock_born_in_place.return_value,
+            "'employees_born_in_place' in context of EmployeesBornResidedDiedInPlaceView should be born_in_place()"
+        )
+        self.assertEqual(
+            context_data['employees_resided_in_place'], mock_resided_in_place.return_value,
+            "'employees_resided_in_place' in EmployeesBornResidedDiedInPlaceView context should be resided_in_place()"
+        )
+        self.assertEqual(
+            context_data['employees_died_in_place'], mock_died_in_place.return_value,
+            "'employees_died_in_place' in context of EmployeesBornResidedDiedInPlaceView should be died_in_place()"
+        )
 
 
 class EmployeesWithAilmentListViewTestCase(TestCase):
@@ -493,7 +569,7 @@ class EmployeesWithAilmentListViewTestCase(TestCase):
 
         self.view.kwargs = {'ailment': self.ailment.pk}
         self.assertEqual(self.view.get_ailment(), self.ailment,
-                          "EmployeesWithAilmentListView.get_ailment() should return Ailment with pk 'ailment'")
+                         "EmployeesWithAilmentListView.get_ailment() should return Ailment with pk 'ailment'")
 
     def test_get_ailment_type(self):
         """
@@ -502,16 +578,22 @@ class EmployeesWithAilmentListViewTestCase(TestCase):
         """
 
         self.view.kwargs = {}
-        self.assertIsNone(self.view.get_ailment_type(),
-                "EmployeesWithAilmentListView.get_ailment_type() should return None if 'ailment_type' not in kwargs")
+        self.assertIsNone(
+            self.view.get_ailment_type(),
+            "EmployeesWithAilmentListView.get_ailment_type() should return None if 'ailment_type' not in kwargs"
+        )
 
         self.view.kwargs = {'ailment_type': 1}
-        self.assertIsNone(self.view.get_ailment_type(),
-                "EmployeesWithAilmentListView.get_ailment_type() should return None if AilmentType obj not found")
+        self.assertIsNone(
+            self.view.get_ailment_type(),
+            "EmployeesWithAilmentListView.get_ailment_type() should return None if AilmentType obj not found"
+        )
 
         self.view.kwargs = {'ailment_type': self.ailment_type.pk}
-        self.assertEqual(self.view.get_ailment_type(), self.ailment_type,
-                "EmployeesWithAilmentListView.get_ailment_type() should return AilmentType with pk 'ailment_type'")
+        self.assertEqual(
+            self.view.get_ailment_type(), self.ailment_type,
+            "EmployeesWithAilmentListView.get_ailment_type() should return AilmentType with pk 'ailment_type'"
+        )
 
     @patch.object(EmployeesWithAilmentListView, 'get_ailment', autospec=True)
     @patch.object(EmployeesWithAilmentListView, 'get_ailment_type', autospec=True)
@@ -524,22 +606,26 @@ class EmployeesWithAilmentListViewTestCase(TestCase):
         employees_with_ailment_url = reverse('personnel:employees_with_ailment_list',
                                              kwargs={'ailment': self.ailment.pk})
         employees_with_ailment_type_url = reverse('personnel:employees_with_ailment_type_list',
-                                             kwargs={'ailment_type': self.ailment_type.pk})
+                                                  kwargs={'ailment_type': self.ailment_type.pk})
 
         # If get_ailment() returns an Ailment, context['ailment'] should be filled
         # and 'ailment_type' shouldn't be in context at all
         mock_get_ailment.return_value = self.ailment
         response = self.client.get(employees_with_ailment_url)
-        self.assertEqual(response.context['ailment'], self.ailment,
-            "If EmployeesBornResidedDiedInPlaceView.get_ailment() returns an Ailment, it should be in context")
+        self.assertEqual(
+            response.context['ailment'], self.ailment,
+            "If EmployeesBornResidedDiedInPlaceView.get_ailment() returns an Ailment, it should be in context"
+        )
 
         # If get_ailment() returns an Ailment, context['ailment'] should be filled
         # and 'ailment_type' shouldn't be in context at all
         mock_get_ailment.return_value = None
         mock_get_ailment_type.return_value = self.ailment_type
         response = self.client.get(employees_with_ailment_type_url)
-        self.assertEqual(response.context['ailment'], self.ailment_type,
-            "If EmployeesBornResidedDiedInPlaceView.get_ailment() returns None, AilmentType should be in context")
+        self.assertEqual(
+            response.context['ailment'], self.ailment_type,
+            "If EmployeesBornResidedDiedInPlaceView.get_ailment() returns None, AilmentType should be in context"
+        )
 
     @patch.object(EmployeesWithAilmentListView, 'get_ailment', autospec=True)
     @patch.object(EmployeesWithAilmentListView, 'get_ailment_type', autospec=True)
@@ -558,20 +644,28 @@ class EmployeesWithAilmentListViewTestCase(TestCase):
         # If get_ailment() returns an Ailment, get_queryset() should return employees with ailment
         mock_get_ailment.return_value = self.ailment
         queryset = self.view.get_queryset()
-        self.assertIn(employee_with_ailment, queryset,
-            'EmployeesWithAilmentListView.get_queryset() should return employees with ailment if ailment specified')
-        self.assertNotIn(employee_with_ailment_type, queryset,
-            "EmployeesWithAilmentListView.get_queryset() shouldn't return employees with ailment type if ailment specified")
+        self.assertIn(
+            employee_with_ailment, queryset,
+            'EmployeesWithAilmentListView.get_queryset() should return employees with ailment if ailment specified'
+        )
+        self.assertNotIn(
+            employee_with_ailment_type, queryset,
+            "EmployeesWithAilmentListView.get_queryset() shouldn't return employees with ailment type if ailment given"
+        )
 
         # If get_ailment() returns None and get_ailment_type() returns an AilmentType,
         # get_queryset() should return employees with ailment type
         mock_get_ailment.return_value = None
         mock_get_ailment_type.return_value = self.ailment_type
         queryset = self.view.get_queryset()
-        self.assertIn(employee_with_ailment_type, queryset,
-            'EmployeesWithAilmentListView.get_queryset() should return employees with ailment type if ailment type specified')
-        self.assertNotIn(employee_with_ailment, queryset,
-            "EmployeesWithAilmentListView.get_queryset() shouldn't return employees with ailment if ailment type specified")
+        self.assertIn(
+            employee_with_ailment_type, queryset,
+            'EmployeesWithAilmentListView.get_queryset() should return employees with ailment type if type specified'
+        )
+        self.assertNotIn(
+            employee_with_ailment, queryset,
+            "EmployeesWithAilmentListView.get_queryset() shouldn't return employees with ailment if type specified"
+        )
 
         # If get_ailment() and get_ailment_type() both return None,
         # get_queryset() should return the view's default queryset (all employees)
@@ -579,5 +673,7 @@ class EmployeesWithAilmentListViewTestCase(TestCase):
         mock_get_ailment_type.return_value = None
         queryset = self.view.get_queryset()
         for employee in [employee_with_ailment, employee_with_ailment_type]:
-            self.assertIn(employee, queryset,
-            'EmployeesWithAilmentListView.get_queryset() should return all employees if no ailment or ailment type specified')
+            self.assertIn(
+                employee, queryset,
+                'EmployeesWithAilmentListView.get_queryset() should return all employees if no ailment or type given'
+            )
