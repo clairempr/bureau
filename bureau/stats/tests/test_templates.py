@@ -21,7 +21,7 @@ class StatisticsTemplateTestCase(SimpleTestCase):
                    'colored_count': 2,
                    'confederate_count': 3,
                    'female_count': 4,
-                   'vrc_count': 5,}
+                   'vrc_count': 5, }
 
         rendered = render_to_string(self.template, context)
         self.assertInHTML('<title>Statistics</title>', rendered)

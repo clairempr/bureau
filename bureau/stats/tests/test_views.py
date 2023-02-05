@@ -1,4 +1,4 @@
-from django.test import SimpleTestCase, TestCase
+from django.test import TestCase
 from django.urls import reverse
 
 from medical.tests.factories import AilmentFactory, AilmentTypeFactory
@@ -16,8 +16,10 @@ class DetailedViewTestCase(TestCase):
 
     def setUp(self):
         self.url = reverse('stats:detailed')
-        self.context_keys = ['average_age_in_1865', 'median_age_in_1865','average_age_at_death', 'median_age_at_death',
-                    'foreign_born', 'top_birthplaces', 'ailments']
+        self.context_keys = [
+            'average_age_in_1865', 'median_age_in_1865', 'average_age_at_death', 'median_age_at_death',
+            'foreign_born', 'top_birthplaces', 'ailments'
+        ]
 
     def test_get_context_data(self):
         """
@@ -93,8 +95,10 @@ class GetPlacesWithPksForContextTestCase(TestCase):
         expected_output = [('New York', new_york.pk, 43), ('Spain', spain.pk, 5)]
 
         # Compare the lists as sets because order isn't important
-        self.assertSetEqual(set(get_places_with_pks_for_context(input)), set(expected_output),
-                            'get_places_with_pks_for_context() should return names, pks, and counts for places from input')
+        self.assertSetEqual(
+            set(get_places_with_pks_for_context(input)), set(expected_output),
+            'get_places_with_pks_for_context() should return names, pks, and counts for places from input'
+        )
 
 
 class GetStateComparisonStatsTestCase(TestCase):
@@ -384,8 +388,10 @@ class GetStateComparisonStatsTestCase(TestCase):
         stats = get_state_comparison_stats(number=2)
         top_states = self.get_state_stats_for_key(stats, key)
 
-        self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of employees who died during assignment".format(key))
+        self.assertListEqual(
+            top_states, expected_output,
+            "'{}' should contain states with the top x % of employees who died during assignment".format(key)
+        )
 
     def test_get_state_comparison_stats_identified_as_colored(self):
         """
@@ -421,8 +427,10 @@ class GetStateComparisonStatsTestCase(TestCase):
         stats = get_state_comparison_stats(number=2)
         top_states = self.get_state_stats_for_key(stats, key)
 
-        self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of employees identified as 'colored'".format(key))
+        self.assertListEqual(
+            top_states, expected_output,
+            "'{}' should contain states with the top x % of employees identified as 'colored'".format(key)
+        )
 
     def test_get_state_comparison_stats_former_slave(self):
         """
@@ -568,8 +576,10 @@ class GetStateComparisonStatsTestCase(TestCase):
         stats = get_state_comparison_stats(number=2)
         top_states = self.get_state_stats_for_key(stats, key)
 
-        self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x number of employees who entered contest".format(key))
+        self.assertListEqual(
+            top_states, expected_output,
+            "'{}' should contain states with the top x number of employees who entered contest".format(key)
+        )
 
     def test_get_state_comparison_stats_ailments(self):
         """
@@ -631,21 +641,27 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% With Sprain or Bruise'
         expected_output = [('Texas', 50), ('Kentucky', 25)]
         top_states = self.get_state_stats_for_key(stats, key)
-        self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of employees with sprain or bruise".format(key))
+        self.assertListEqual(
+            top_states, expected_output,
+            "'{}' should contain states with the top x % of employees with sprain or bruise".format(key)
+        )
 
         # Ailments should be treated individually
         key = '% With Migraine Headache'
         expected_output = [('Mississippi', 50), ('Kentucky', 25)]
         top_states = self.get_state_stats_for_key(stats, key)
-        self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of employees with migraine headache".format(key))
+        self.assertListEqual(
+            top_states, expected_output,
+            "'{}' should contain states with the top x % of employees with migraine headache".format(key)
+        )
 
         key = '% With Tension Headache'
         expected_output = [('Mississippi', 50), ('Kentucky', 25)]
         top_states = self.get_state_stats_for_key(stats, key)
-        self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of employees with tension headache".format(key))
+        self.assertListEqual(
+            top_states, expected_output,
+            "'{}' should contain states with the top x % of employees with tension headache".format(key)
+        )
 
         # There should be no breakdown for sprain, because it's the only ailment of that type
         key = '% With Sprain'
@@ -664,7 +680,7 @@ class StateComparisonViewTestCase(TestCase):
     def test_get_context_data(self):
         response = self.client.get(self.url)
         self.assertIn('stats', response.context,
-                        "StateComparisonView's context should contain 'stats'")
+                      "StateComparisonView's context should contain 'stats'")
 
     def test_template_used(self):
         response = self.client.get(self.url)

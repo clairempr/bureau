@@ -44,15 +44,19 @@ class DetailedView(TemplateView):
         ages_usct = get_ages_in_year(employees_with_dob.intersection(Employee.objects.usct()), 1865)
         ages_everyone = ages_vrc + ages_non_vrc
 
-        average_age_in_1865 = {'vrc': get_mean(ages_vrc),
-                      'non_vrc': get_mean(ages_non_vrc),
-                      'usct': get_mean(ages_usct),
-                      'everyone': get_mean(ages_everyone)}
+        average_age_in_1865 = {
+            'vrc': get_mean(ages_vrc),
+            'non_vrc': get_mean(ages_non_vrc),
+            'usct': get_mean(ages_usct),
+            'everyone': get_mean(ages_everyone)
+        }
 
-        median_age_in_1865 = {'vrc': get_median(ages_vrc),
-                      'non_vrc': get_median(ages_non_vrc),
-                      'usct': get_median(ages_usct),
-                      'everyone': get_median(ages_everyone)}
+        median_age_in_1865 = {
+            'vrc': get_median(ages_vrc),
+            'non_vrc': get_median(ages_non_vrc),
+            'usct': get_median(ages_usct),
+            'everyone': get_median(ages_everyone)
+        }
 
         # Age at time of death
         ages_vrc_at_death = get_ages_at_death(employees_with_dob_and_dod.filter(vrc=True))
@@ -60,15 +64,19 @@ class DetailedView(TemplateView):
         ages_usct_at_death = get_ages_at_death(employees_with_dob_and_dod.intersection(Employee.objects.usct()))
         ages_everyone_at_death = ages_vrc_at_death + ages_non_vrc_at_death
 
-        average_age_at_death ={'vrc': get_mean(ages_vrc_at_death),
-                      'non_vrc': get_mean(ages_non_vrc_at_death),
-                      'usct': get_mean(ages_usct_at_death),
-                      'everyone': get_mean(ages_everyone_at_death)}
+        average_age_at_death = {
+            'vrc': get_mean(ages_vrc_at_death),
+            'non_vrc': get_mean(ages_non_vrc_at_death),
+            'usct': get_mean(ages_usct_at_death),
+            'everyone': get_mean(ages_everyone_at_death)
+        }
 
-        median_age_at_death = {'vrc': get_median(ages_vrc_at_death),
-                      'non_vrc': get_median(ages_non_vrc_at_death),
-                      'usct': get_median(ages_usct_at_death),
-                      'everyone': get_median(ages_everyone_at_death)}
+        median_age_at_death = {
+            'vrc': get_median(ages_vrc_at_death),
+            'non_vrc': get_median(ages_non_vrc_at_death),
+            'usct': get_median(ages_usct_at_death),
+            'everyone': get_median(ages_everyone_at_death)
+        }
 
         # Foreign born
         foreign_born_vrc = Employee.objects.foreign_born(vrc=True).count()
