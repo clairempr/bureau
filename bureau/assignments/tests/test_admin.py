@@ -23,7 +23,8 @@ class AssignmentAdminTestCase(TestCase):
         modeladmin = AssignmentAdmin(Assignment, site)
         request = RequestFactory().get('/')
 
-        # Queryset hasn't yet been retrieved with prefetch_related, so instances should have no _prefetched_objects_cache
+        # Queryset hasn't yet been retrieved with prefetch_related,
+        # so instances should have no _prefetched_objects_cache
         instance = Assignment.objects.first()
         self.assertFalse(hasattr(instance, '_prefetched_objects_cache'))
 

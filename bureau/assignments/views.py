@@ -4,6 +4,7 @@ from django.views.generic import ListView
 from assignments.models import Assignment
 from places.models import Place
 
+
 class AssignmentListView(ListView):
 
     model = Assignment
@@ -51,6 +52,7 @@ class AssignmentListView(ListView):
 
 
 assignment_list_view = AssignmentListView.as_view()
+
 
 class BureauHeadquartersAssignmentListView(AssignmentListView):
 

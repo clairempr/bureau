@@ -92,12 +92,12 @@ class Assignment(models.Model):
 
     def __str__(self):
 
-        # In cases where one of the elements used in __str__() can't be accessed without causing an exception
+        # In cases where one of the elements used in __str__() can't be accessed without causing an error
         # (deleting an inline Assignment in Employee admin, for example), __str__() should return Assignment.description
         try:
             return '{positions}, {places}, {dates}'.format(positions=self.position_list(), places=self.place_list(),
                                                            dates=self.dates())
-        except:
+        except (RecursionError, ValueError):
             return self.description
 
     def bureau_state_list(self):
