@@ -13,6 +13,12 @@ jobs:
     steps:
     - checkout  # checkout source code to working directory
     - run: sudo chown -R circleci:circleci /usr/local/bin
+    - run:
+        command: |
+          which python3
+          ls /home/circleci/.pyenv/versions
+          ls /home/circleci/.pyenv/versions/3.11.10
+          ls /home/circleci/.pyenv/versions/3.11.10/lib
     - run: sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.11.10/lib/python3.11/site-packages
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
