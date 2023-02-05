@@ -95,15 +95,19 @@ class PaginationTemplateTestCase(SimpleTestCase):
                    'paginator': paginator,
                    'page_obj': paginator.page(number=1)}
         rendered = render_to_string(self.template, context)
-        self.assertTrue(content_if_paginated in rendered,
-                "If 'is_paginated' is in context, rendered html should contain '{}'".format(content_if_paginated))
+        self.assertTrue(
+            content_if_paginated in rendered,
+            "If 'is_paginated' is in context, rendered html should contain '{}'".format(content_if_paginated)
+        )
 
         context = {'is_paginated': False,
                    'paginator': paginator,
                    'page_obj': paginator.page(number=1)}
         rendered = render_to_string(self.template, context)
-        self.assertFalse(content_if_paginated in rendered,
-                "If 'is_paginated' not in context, rendered html shouldn't contain '{}'".format(content_if_paginated))
+        self.assertFalse(
+            content_if_paginated in rendered,
+            "If 'is_paginated' not in context, rendered html shouldn't contain '{}'".format(content_if_paginated)
+        )
 
     def test_page_obj_has_previous_or_not(self):
         """
@@ -124,7 +128,7 @@ class PaginationTemplateTestCase(SimpleTestCase):
         rendered = render_to_string(self.template, context)
         self.assertIn(previous_page_link, rendered)
         self.assertFalse(disabled_previous_page in rendered,
-                          "If there's a previous page, there should be no disabled 'previous page'")
+                         "If there's a previous page, there should be no disabled 'previous page'")
 
         # If there's no previous page, there should be a disabled "previous page"
         paginator = Paginator(object_list=['a'], per_page=1)
@@ -156,7 +160,7 @@ class PaginationTemplateTestCase(SimpleTestCase):
         rendered = render_to_string(self.template, context)
         self.assertIn(next_page_link, rendered)
         self.assertFalse(disabled_next_page in rendered,
-                          "If there's a next page, there should be no disabled 'next page'")
+                         "If there's a next page, there should be no disabled 'next page'")
 
         # If there's no next page, there should be a disabled "next page"
         paginator = Paginator(object_list=['a'], per_page=1)
@@ -167,7 +171,7 @@ class PaginationTemplateTestCase(SimpleTestCase):
         self.assertTrue(disabled_next_page in rendered,
                         "If there's no next page, there should be a disabled 'next page'")
         self.assertFalse(next_page_link in rendered,
-                          "If there's no next page, there should be no link to a next page")
+                         "If there's no next page, there should be no link to a next page")
 
     def test_paginator_page_range(self):
         """
@@ -192,8 +196,10 @@ class PaginationTemplateTestCase(SimpleTestCase):
         # and page numbers within 3 pages of current page (5-7 and 9-11) should have a link to them
         page_link = '<a class="page-link" href="?page={page_number}'
         for page_number in [1, 2, 5, 6, 7, 9, 10, 11, 14, 15]:
-            self.assertIn(page_link.format(page_number=page_number), rendered,
-                        '1st and last 2, and page numbers within 3 pages of current page should have a link to them')
+            self.assertIn(
+                page_link.format(page_number=page_number), rendered,
+                '1st and last 2, and page numbers within 3 pages of current page should have a link to them'
+            )
 
         # Page numbers that are not the first 2 or last 2, or within 3 pages of current page should not have links
         context = {'is_paginated': True,

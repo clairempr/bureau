@@ -1,1 +1,1 @@
-docker-compose -f local.yml run django ./manage.py shell_plus
+docker-compose -f local.yml run --rm django ./manage.py shell_plus

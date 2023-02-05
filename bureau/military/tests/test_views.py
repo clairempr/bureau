@@ -61,7 +61,7 @@ class RegimentListViewTestCase(TestCase):
         view = RegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         self.assertSetEqual(set(queryset), set(Regiment.objects.all()),
-                            msg="RegimentListView.get_queryset() should return all regiments if no search_text supplied")
+                            msg="RegimentListView.get_queryset() should return all regiments if no search_text")
 
         # If 'search_text' parameter supplied, get_queryset() should filter the default queryset
         request = RequestFactory().get('/', {'search_text': 'Maine'})
@@ -70,8 +70,10 @@ class RegimentListViewTestCase(TestCase):
         self.assertIn(self.maine_regt, queryset,
                       "RegimentListView.get_queryset() should return regiments whose names contain search_text")
         for regiment in Regiment.objects.exclude(pk=self.maine_regt.pk):
-            self.assertNotIn(regiment, queryset,
-                      "RegimentListView.get_queryset() should return only regiments whose names contain search_text")
+            self.assertNotIn(
+                regiment, queryset,
+                "RegimentListView.get_queryset() should return only regiments whose names contain search_text"
+            )
 
 
 class ConfederateRegimentListViewTestCase(RegimentListViewTestCase):
@@ -90,15 +92,19 @@ class ConfederateRegimentListViewTestCase(RegimentListViewTestCase):
         request = RequestFactory().get('/')
         view = ConfederateRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset), {self.confederate_alabama_regt, self.confederate_georgia_regt},
-            "ConfederateRegimentListView.get_queryset() should return all Confederate regiments if no search_text supplied")
+        self.assertSetEqual(
+            set(queryset), {self.confederate_alabama_regt, self.confederate_georgia_regt},
+            "ConfederateRegimentListView.get_queryset() should return all Confederate regiments if no search_text"
+        )
 
         # If 'search_text' parameter supplied, get_queryset() should filter the default queryset
         request = RequestFactory().get('/', {'search_text': 'Georgia'})
         view = ConfederateRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset), {self.confederate_georgia_regt},
-                "ConfederateRegimentListView.get_queryset() should return regiments whose names contain search_text")
+        self.assertSetEqual(
+            set(queryset), {self.confederate_georgia_regt},
+            "ConfederateRegimentListView.get_queryset() should return regiments whose names contain search_text"
+        )
 
 
 class RegularArmyRegimentListViewTestCase(RegimentListViewTestCase):
@@ -117,15 +123,19 @@ class RegularArmyRegimentListViewTestCase(RegimentListViewTestCase):
         request = RequestFactory().get('/')
         view = RegularArmyRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset), {self.regular_4th_artillery_regt, self.regular_33rd_infantry_regt},
-            "RegularArmyRegimentListView.get_queryset() should return all Regular Army regiments if no search_text supplied")
+        self.assertSetEqual(
+            set(queryset), {self.regular_4th_artillery_regt, self.regular_33rd_infantry_regt},
+            "RegularArmyRegimentListView.get_queryset() should return all Regular Army regiments if no search_text"
+        )
 
         # If 'search_text' parameter supplied, get_queryset() should filter the default queryset
         request = RequestFactory().get('/', {'search_text': '33rd'})
         view = RegularArmyRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset), {self.regular_33rd_infantry_regt},
-                "RegularArmyRegimentListView.get_queryset() should return regiments whose names contain search_text")
+        self.assertSetEqual(
+            set(queryset), {self.regular_33rd_infantry_regt},
+            "RegularArmyRegimentListView.get_queryset() should return regiments whose names contain search_text"
+        )
 
 
 class StateRegimentListViewTestCase(RegimentListViewTestCase):
@@ -144,16 +154,20 @@ class StateRegimentListViewTestCase(RegimentListViewTestCase):
         request = RequestFactory().get('/')
         view = StateRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset),
-                            {self.maine_regt, self.confederate_alabama_regt, self.confederate_georgia_regt},
-            "StateRegimentListView.get_queryset() should return all state regiments if no search_text supplied")
+        self.assertSetEqual(
+            set(queryset),
+            {self.maine_regt, self.confederate_alabama_regt, self.confederate_georgia_regt},
+            "StateRegimentListView.get_queryset() should return all state regiments if no search_text supplied"
+        )
 
         # If 'search_text' parameter supplied, get_queryset() should filter the default queryset
         request = RequestFactory().get('/', {'search_text': 'Georgia'})
         view = StateRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset), {self.confederate_georgia_regt},
-                "StateRegimentListView.get_queryset() should return regiments whose names contain search_text")
+        self.assertSetEqual(
+            set(queryset), {self.confederate_georgia_regt},
+            "StateRegimentListView.get_queryset() should return regiments whose names contain search_text"
+        )
 
 
 class USCTRegimentListViewTestCase(RegimentListViewTestCase):
@@ -172,16 +186,20 @@ class USCTRegimentListViewTestCase(RegimentListViewTestCase):
         request = RequestFactory().get('/')
         view = USCTRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset),
-                            {self.usct_3rd_regt, self.usct_113th_regt},
-            "USCTRegimentListView.get_queryset() should return all USCT regiments if no search_text supplied")
+        self.assertSetEqual(
+            set(queryset),
+            {self.usct_3rd_regt, self.usct_113th_regt},
+            "USCTRegimentListView.get_queryset() should return all USCT regiments if no search_text supplied"
+        )
 
         # If 'search_text' parameter supplied, get_queryset() should filter the default queryset
         request = RequestFactory().get('/', {'search_text': '113th'})
         view = USCTRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset), {self.usct_113th_regt},
-                "USCTRegimentListView.get_queryset() should return USCT regiments whose names contain search_text")
+        self.assertSetEqual(
+            set(queryset), {self.usct_113th_regt},
+            "USCTRegimentListView.get_queryset() should return USCT regiments whose names contain search_text"
+        )
 
 
 class VRCRegimentListViewTestCase(RegimentListViewTestCase):
@@ -200,13 +218,16 @@ class VRCRegimentListViewTestCase(RegimentListViewTestCase):
         request = RequestFactory().get('/')
         view = VRCRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset),
-                            {self.vrc_7th_regt, self.vrc_24th_regt},
-            "VRCRegimentListView.get_queryset() should return all VRC regiments if no search_text supplied")
+        self.assertSetEqual(
+            set(queryset), {self.vrc_7th_regt, self.vrc_24th_regt},
+            "VRCRegimentListView.get_queryset() should return all VRC regiments if no search_text supplied"
+        )
 
         # If 'search_text' parameter supplied, get_queryset() should filter the default queryset
         request = RequestFactory().get('/', {'search_text': '7th'})
         view = VRCRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
-        self.assertSetEqual(set(queryset), {self.vrc_7th_regt},
-                "VRCRegimentListView.get_queryset() should return VRC regiments whose names contain search_text")
+        self.assertSetEqual(
+            set(queryset), {self.vrc_7th_regt},
+            "VRCRegimentListView.get_queryset() should return VRC regiments whose names contain search_text"
+        )

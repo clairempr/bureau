@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from military.tests.factories import RegimentFactory
 
+
 class RegimentListViewTemplateTestCase(TestCase):
     """
     Test template of military.views.RegimentListView

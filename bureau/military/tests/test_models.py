@@ -15,4 +15,4 @@ class RegimentTestCase(TestCase):
 
         regiment = RegimentFactory(name='3rd Maine Volunteer Infantry Regiment')
         self.assertEqual(str(regiment), regiment.name,
-                        "Regiment.__str__ should be equal to Regiment.name")
+                         "Regiment.__str__ should be equal to Regiment.name")
