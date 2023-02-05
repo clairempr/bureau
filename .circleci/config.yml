@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: ~/bureau
     docker:
-      - image: cimg/python:3.11.1 # every job must define an image for the docker executor and subsequent jobs may define a different image.
+      - image: cimg/python:3.11.1
         environment:
           DATABASE_URL: postgres://postgres@localhost/test_db
           USE_DOCKER: no
@@ -12,13 +12,15 @@ jobs:
           POSTGRES_DB: test_db
     steps:
     - checkout  # checkout source code to working directory
-    - run: sudo chown -R circleci:circleci /usr/local/bin
-    - run: sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.11.1/lib/python3.11/site-packages
+    - run:
+        command: |
+          sudo chown -R circleci:circleci /usr/local/bin
+          sudo chown -R circleci:circleci /home/circleci/.pyenv/versions/3.11.1/lib/python3.11/site-packages
     - restore_cache: # restore cached dependencies
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         name: 'Install dependencies'
-        command: |  # install dependencies
+        command: |  
           pip install -r requirements/local.txt
           pip install coveralls
     - save_cache: # cache installed dependencies
