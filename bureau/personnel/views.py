@@ -7,6 +7,7 @@ from medical.models import Ailment, AilmentType
 from personnel.models import Employee
 from places.models import Place, Region
 from places.settings import GERMANY_COUNTRY_NAMES
+from places.utils import get_place_or_none
 
 
 class EmployeeDetailView(DetailView):
@@ -156,16 +157,9 @@ class EmployeesBornResidedDiedInPlaceView(TemplateView):
     template_name = "personnel/employees_born_resided_died_in_place.html"
 
     def get_place(self):
-        # If place is in kwargs and it's the pk of a Place, return the Place
-        # otherwise return None
+        # If place is in kwargs, try to return the Place
         place_pk = self.kwargs.get('place')
-        if place_pk:
-            try:
-                return Place.objects.get(pk=place_pk)
-            except Place.DoesNotExist:
-                pass
-
-        return None
+        return get_place_or_none(place_pk) if place_pk else None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

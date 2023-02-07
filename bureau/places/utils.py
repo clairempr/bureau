@@ -5,7 +5,7 @@ from urllib.parse import urlencode
 
 from django.conf import settings
 
-from places.models import Country, Region
+from places.models import Country, Place, Region
 from places.settings import GEONAMES_USERNAME
 
 
@@ -68,3 +68,12 @@ def geonames_lookup(geonames_search, feature_codes=None):
     }
 
     return result
+
+
+def get_place_or_none(pk):
+    try:
+        return Place.objects.get(pk=pk)
+    except Place.DoesNotExist:
+        pass
+
+    return None

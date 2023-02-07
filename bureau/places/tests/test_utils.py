@@ -5,8 +5,8 @@ from unittest.mock import Mock, patch
 from django.conf import settings
 from django.test import override_settings, TestCase
 
-from places.tests.factories import CountryFactory, RegionFactory
-from places.utils import geonames_city_lookup, geonames_county_lookup, geonames_lookup
+from places.tests.factories import CountryFactory, PlaceFactory, RegionFactory
+from places.utils import geonames_city_lookup, geonames_county_lookup, geonames_lookup, get_place_or_none
 
 
 class GeonamesLookupTestCase(TestCase):
@@ -82,3 +82,19 @@ class GeonamesLookupTestCase(TestCase):
             args, kwargs = mock_requests_get.call_args
             self.assertFalse('featureCode' in args[0],
                              "GeoNames API request shouldn't include feature codes if none passed to geonames_lookup()")
+
+
+class GetPlaceOrNoneTestCase(TestCase):
+    """
+    Test for get_place_or_none()
+    """
+    def test_get_place_or_none(self):
+        """
+        If 'place' is the pk of a Place, then Place should be returned,
+        otherwise None should be returned
+        """
+
+        self.assertIsNone(get_place_or_none(1), 'get_place_or_none() should return None if Place obj not found')
+
+        place = PlaceFactory()
+        self.assertEqual(get_place_or_none(place.pk), place, 'get_place_or_none() should return Place with pk of place')

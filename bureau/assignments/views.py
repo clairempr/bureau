@@ -3,6 +3,7 @@ from django.views.generic import ListView
 
 from assignments.models import Assignment
 from places.models import Place
+from places.utils import get_place_or_none
 
 
 class AssignmentListView(ListView):
@@ -13,16 +14,9 @@ class AssignmentListView(ListView):
     template_name = "assignments/assignment_list.html"
 
     def get_place(self):
-        # If place is in kwargs and it's the pk of a Place, return the Place
-        # otherwise return None
+        # If place is in kwargs, try to return the Place
         place_pk = self.kwargs.get('place')
-        if place_pk:
-            try:
-                return Place.objects.get(pk=place_pk)
-            except Place.DoesNotExist:
-                pass
-
-        return None
+        return get_place_or_none(place_pk) if place_pk else None
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
