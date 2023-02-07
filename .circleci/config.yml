@@ -20,7 +20,7 @@ jobs:
         key: pip-env-{{ checksum "requirements/local.txt" }}
     - run:
         name: 'Install dependencies'
-        command: |  
+        command: |
           pip install -r requirements/local.txt
           pip install coveralls
     - save_cache: # cache installed dependencies

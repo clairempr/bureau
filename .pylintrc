@@ -1,5 +1,6 @@
 [MASTER]
-load-plugins=pylint_common, pylint_django
+load-plugins=pylint_django
+ignore=migrations
 
 [FORMAT]
 max-line-length=120
@@ -12,3 +13,7 @@ max-parents=13
 
 [TYPECHECK]
 generated-members=REQUEST,acl_users,aq_parent,"[a-zA-Z]+_set{1,2}",save,delete
+
+[SIMILARITIES]
+ignore-comments=yes
+ignore-docstrings=yes

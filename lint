@@ -1,1 +1,1 @@
-docker-compose -f local.yml run --rm django flake8
+docker-compose -f local.yml run --rm django /bin/sh -c "flake8; pylint bureau"
