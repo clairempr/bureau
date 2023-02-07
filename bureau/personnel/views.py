@@ -5,7 +5,7 @@ from django.views.generic import DetailView, ListView, TemplateView
 
 from medical.models import Ailment, AilmentType
 from personnel.models import Employee
-from places.models import Place, Region
+from places.models import Region
 from places.settings import GERMANY_COUNTRY_NAMES
 from places.utils import get_place_or_none
 

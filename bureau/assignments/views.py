@@ -2,7 +2,6 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.views.generic import ListView
 
 from assignments.models import Assignment
-from places.models import Place
 from places.utils import get_place_or_none
 
 
