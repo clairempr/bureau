@@ -8,6 +8,6 @@ class UsersAppConfig(AppConfig):
 
     def ready(self):
         try:
-            import users.signals  # noqa F401
+            import users.signals  # noqa F401 pylint: disable=unused-import, import-outside-toplevel
         except ImportError:
             pass

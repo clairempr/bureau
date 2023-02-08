@@ -1,5 +1,6 @@
-from partial_date import PartialDate
 from unittest.mock import patch
+
+from partial_date import PartialDate
 
 from django.conf import settings
 from django.test import TestCase
@@ -93,9 +94,7 @@ class AssignmentTestCase(TestCase):
         assignment = AssignmentFactory()
         self.assertEqual(
             assignment.dates(), settings.DEFAULT_EMPTY_FIELD_STRING,
-            "Assignment.dates() should return '{}' if Assignment has no dates".format(
-                settings.DEFAULT_EMPTY_FIELD_STRING
-            )
+            f"Assignment.dates() should return '{settings.DEFAULT_EMPTY_FIELD_STRING}' if Assignment has no dates"
         )
 
     def test_place_list(self):
@@ -113,9 +112,7 @@ class AssignmentTestCase(TestCase):
         assignment = AssignmentFactory()
         self.assertEqual(
             assignment.place_list(), settings.DEFAULT_EMPTY_FIELD_STRING,
-            "Assignment.place_list() should return '{}' if Assignment has no places".format(
-                settings.DEFAULT_EMPTY_FIELD_STRING
-            )
+            f"Assignment.place_list() should return '{settings.DEFAULT_EMPTY_FIELD_STRING}' if Assignment has no places"
         )
 
     def test_position_list(self):
@@ -133,9 +130,7 @@ class AssignmentTestCase(TestCase):
         assignment = AssignmentFactory()
         self.assertEqual(
             assignment.position_list(), settings.DEFAULT_EMPTY_FIELD_STRING,
-            "Assignment.position_list() should return '{}' if Assignment has no positions".format(
-                settings.DEFAULT_EMPTY_FIELD_STRING
-            )
+            f"Assignment.position_list() should return '{settings.DEFAULT_EMPTY_FIELD_STRING}' if no positions"
         )
 
 

@@ -29,8 +29,8 @@ class AssignmentManager(models.Manager):
 
     def during_year(self, year, **kwargs):
         return self.filter(
-            Q(start_date__lte='{}'.format(year), end_date__gte='{}'.format(year)) |
-            Q(start_date__gte='{}'.format(year)), start_date__lt='{}'.format(year + 1))
+            Q(start_date__lte=f'{year}', end_date__gte=f'{year}') |
+            Q(start_date__gte=f'{year}'), start_date__lt=f'{year + 1}')
 
     def in_place(self, place, exact=False, **kwargs):
         """
@@ -95,8 +95,7 @@ class Assignment(models.Model):
         # In cases where one of the elements used in __str__() can't be accessed without causing an error
         # (deleting an inline Assignment in Employee admin, for example), __str__() should return Assignment.description
         try:
-            return '{positions}, {places}, {dates}'.format(positions=self.position_list(), places=self.place_list(),
-                                                           dates=self.dates())
+            return f'{self.position_list()}, {self.place_list()}, {self.dates()}'
         except (RecursionError, ValueError):
             return self.description
 
@@ -106,10 +105,10 @@ class Assignment(models.Model):
     def dates(self):
         # An assignment can have a start date and end date, or just one of those, or none at all
         if self.start_date and self.end_date:
-            return '{start} - {end}'.format(start=self.start_date, end=self.end_date)
-        elif self.start_date:
+            return f'{self.start_date} - {self.end_date}'
+        if self.start_date:
             return str(self.start_date)
-        elif self.end_date:
+        if self.end_date:
             return str(self.end_date)
 
         return settings.DEFAULT_EMPTY_FIELD_STRING

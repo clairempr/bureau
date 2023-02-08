@@ -12,7 +12,7 @@ class AssignmentAdmin(admin.ModelAdmin):
     list_per_page = 50
 
     def get_queryset(self, request):
-        qs = super(AssignmentAdmin, self).get_queryset(request)
+        qs = super().get_queryset(request)
         qs = qs.prefetch_related('positions').prefetch_related('places')
         return qs
 

@@ -26,10 +26,10 @@ class AssignmentListViewTemplateTestCase(TestCase):
         rendered = render_to_string(self.template, context)
 
         # "Assignments in <Place>" should be in html
-        text = 'Assignments in {}'.format(place)
-        self.assertTrue(text in rendered, "'{}' should be in {}".format(text, self.template))
+        text = f'Assignments in {place}'
+        self.assertTrue(text in rendered, f"'{text}' should be in {self.template}")
 
         # Assignments should be listed
-        self.assertTrue(str(assignment) in rendered, 'Assignments should be listed in {}'.format(self.template))
+        self.assertTrue(str(assignment) in rendered, f'Assignments should be listed in {self.template}')
         self.assertTrue(str(assignment.employee) in rendered,
-                        'Assignment employees should be listed in {}'.format(self.template))
+                        f'Assignment employees should be listed in {self.template}')
