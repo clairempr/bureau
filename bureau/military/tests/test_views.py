@@ -23,8 +23,6 @@ class RegimentListViewTestCase(TestCase):
                                                         state=RegionFactory(), confederate=True)
         self.confederate_georgia_regt = RegimentFactory(name='2nd Georgia Cavalry',
                                                         state=RegionFactory(), confederate=True)
-        self.regular_4th_artillery_regt = RegimentFactory(name='4th US Artillery', us=True)
-        self.regular_33rd_infantry_regt = RegimentFactory(name='33rd US Infantry', us=True)
 
     def test_get_context_data(self):
         """
@@ -118,13 +116,16 @@ class RegularArmyRegimentListViewTestCase(RegimentListViewTestCase):
         (all Regular Army Regiments)
         """
 
+        regular_33rd_infantry_regt = RegimentFactory(name='33rd US Infantry', us=True)
+        regular_4th_artillery_regt = RegimentFactory(name='4th US Artillery', us=True)
+
         # If no GET parameter 'search_text' supplied, get_queryset() should return default queryset
         # (all Regular Army Regiments)
         request = RequestFactory().get('/')
         view = RegularArmyRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         self.assertSetEqual(
-            set(queryset), {self.regular_4th_artillery_regt, self.regular_33rd_infantry_regt},
+            set(queryset), {regular_4th_artillery_regt, regular_33rd_infantry_regt},
             "RegularArmyRegimentListView.get_queryset() should return all Regular Army regiments if no search_text"
         )
 
@@ -133,7 +134,7 @@ class RegularArmyRegimentListViewTestCase(RegimentListViewTestCase):
         view = RegularArmyRegimentListView(kwargs={}, object_list=[], request=request)
         queryset = view.get_queryset()
         self.assertSetEqual(
-            set(queryset), {self.regular_33rd_infantry_regt},
+            set(queryset), {regular_33rd_infantry_regt},
             "RegularArmyRegimentListView.get_queryset() should return regiments whose names contain search_text"
         )
 

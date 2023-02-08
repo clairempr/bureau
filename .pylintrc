@@ -1,6 +1,7 @@
 [MASTER]
 load-plugins=pylint_django
 ignore=migrations
+init-hook='import sys; sys.path.append("/app/bureau")'
 
 [FORMAT]
 max-line-length=120

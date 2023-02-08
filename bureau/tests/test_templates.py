@@ -65,15 +65,13 @@ class MainNavMenyTemplateTestCase(TestCase):
         # Non-authenticated user should see "Sign Up" and "Sign In" in menu
         response = self.client.get(self.url)
         for text in ['Sign Up', 'Sign In']:
-            self.assertContains(response, text,
-                                msg_prefix="Non-authenticated user should see '{}' in menu".format(text))
+            self.assertContains(response, text, msg_prefix=f"Non-authenticated user should see '{text}' in menu")
 
         User.objects.create_user(username='fred', password='secret')
         self.client.login(username='fred', password='secret')
         response = self.client.get(self.url)
         for text in ['My Profile', 'Sign Out']:
-            self.assertContains(response, text,
-                                msg_prefix="Non-authenticated user should see '{}' in menu".format(text))
+            self.assertContains(response, text, msg_prefix=f"Non-authenticated user should see '{text}' in menu")
 
 
 class PaginationTemplateTestCase(SimpleTestCase):
@@ -97,7 +95,7 @@ class PaginationTemplateTestCase(SimpleTestCase):
         rendered = render_to_string(self.template, context)
         self.assertTrue(
             content_if_paginated in rendered,
-            "If 'is_paginated' is in context, rendered html should contain '{}'".format(content_if_paginated)
+            f"If 'is_paginated' is in context, rendered html should contain '{content_if_paginated}'"
         )
 
         context = {'is_paginated': False,
@@ -106,7 +104,7 @@ class PaginationTemplateTestCase(SimpleTestCase):
         rendered = render_to_string(self.template, context)
         self.assertFalse(
             content_if_paginated in rendered,
-            "If 'is_paginated' not in context, rendered html shouldn't contain '{}'".format(content_if_paginated)
+            f"If 'is_paginated' not in context, rendered html shouldn't contain '{content_if_paginated}'"
         )
 
     def test_page_obj_has_previous_or_not(self):
@@ -226,8 +224,7 @@ class SearchParametersTemplateTestCase(TestCase):
         search_text = 'That thing to search for'
         context = {'search_text': search_text}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&search_text={}'.format(search_text) in rendered,
-                        'If search text supplied, that should be in link')
+        self.assertTrue(f'&search_text={search_text}' in rendered, 'If search text supplied, that should be in link')
 
     def test_name(self):
         """
@@ -237,10 +234,8 @@ class SearchParametersTemplateTestCase(TestCase):
         first_name = 'First Name'
         context = {'last_name': last_name, 'first_name': first_name}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&last_name={}'.format(last_name) in rendered,
-                        'If last name supplied, that should be in link')
-        self.assertTrue('&first_name={}'.format(first_name) in rendered,
-                        'If first name supplied, that should be in link')
+        self.assertTrue(f'&last_name={last_name}' in rendered, 'If last name supplied, that should be in link')
+        self.assertTrue(f'&first_name={first_name}' in rendered, 'If first name supplied, that should be in link')
 
     def test_gender(self):
         """
@@ -249,7 +244,7 @@ class SearchParametersTemplateTestCase(TestCase):
         gender = 'Female'
         context = {'gender': gender}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&gender={}'.format(gender) in rendered, 'If gender supplied, that should be in link')
+        self.assertTrue(f'&gender={gender}' in rendered, 'If gender supplied, that should be in link')
 
     def test_place_of_birth(self):
         """
@@ -258,7 +253,7 @@ class SearchParametersTemplateTestCase(TestCase):
         place_of_birth = 'New York'
         context = {'place_of_birth': place_of_birth}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&place_of_birth={}'.format(place_of_birth) in rendered,
+        self.assertTrue('f&place_of_birth={place_of_birth}' in rendered,
                         'If place_of_birth supplied, that should be in link')
 
     def test_place_of_death(self):
@@ -268,7 +263,7 @@ class SearchParametersTemplateTestCase(TestCase):
         place_of_death = 'New York'
         context = {'place_of_death': place_of_death}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&place_of_death={}'.format(place_of_death) in rendered,
+        self.assertTrue(f'&place_of_death={place_of_death}' in rendered,
                         'If place_of_death supplied, that should be in link')
 
     def test_bureau_state(self):
@@ -282,7 +277,7 @@ class SearchParametersTemplateTestCase(TestCase):
         bureau_states = [(alabama, False), (arkansas, True)]
         context = {'bureau_states': bureau_states}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&bureau_states={}'.format(arkansas.pk) in rendered,
+        self.assertTrue(f'&bureau_states={arkansas.pk}' in rendered,
                         'If bureau_states supplied, selected states should be in link')
 
     def test_ailment(self):
@@ -296,7 +291,7 @@ class SearchParametersTemplateTestCase(TestCase):
         ailments = [(shell_wound, False), (hernia, True)]
         context = {'ailments': ailments}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('&ailments={}'.format(hernia.pk) in rendered,
+        self.assertTrue(f'&ailments={hernia.pk}' in rendered,
                         'If ailments supplied, selected ailments should be in link')
 
     def test_booleans(self):

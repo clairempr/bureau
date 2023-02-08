@@ -22,10 +22,10 @@ class RegimentListViewTemplateTestCase(TestCase):
 
         # "Regiments of Bureau Employees" should be in html
         text = 'Regiments of Bureau Employees'
-        self.assertTrue(text in rendered, "'{}' should be in {}".format(text, self.template))
+        self.assertTrue(text in rendered, f"'{text}' should be in {self.template}")
 
         # Search text should be in html
-        self.assertTrue(search_text in rendered, "'{}' should be in {}".format(text, self.template))
+        self.assertTrue(search_text in rendered, f"'{text}' should be in {self.template}")
 
         # Regiments should be listed
-        self.assertTrue(regiment.name in rendered, 'Regiments should be listed in {}'.format(self.template))
+        self.assertTrue(regiment.name in rendered, f'Regiments should be listed in {self.template}')

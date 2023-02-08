@@ -20,11 +20,11 @@ class GetProperElidedPageRangeTestCase(SimpleTestCase):
         # and page numbers within 3 pages of current page (5-7 and 9-11) should be listed in the elided page range
         # All other pages (3-4 and 12-13) should not be listed, and there should be 2 "..."
         for page_number in [1, 2, 5, 6, 7, 9, 10, 11, 14, 15]:
-            self.assertIn(page_number, elided_page_range, 'Page {} should be in elided page range'.format(page_number))
+            self.assertIn(page_number, elided_page_range, f'Page {page_number} should be in elided page range')
 
         for page_number in [3, 4, 12, 13]:
             self.assertNotIn(page_number, elided_page_range,
-                             'Page {} should not be in elided page range'.format(page_number))
+                             f'Page {page_number} should not be in elided page range')
 
         self.assertEqual(elided_page_range.count(str(Paginator.ELLIPSIS)), 2)
 
