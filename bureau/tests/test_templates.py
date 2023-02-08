@@ -253,7 +253,7 @@ class SearchParametersTemplateTestCase(TestCase):
         place_of_birth = 'New York'
         context = {'place_of_birth': place_of_birth}
         rendered = render_to_string(self.template, context)
-        self.assertTrue('f&place_of_birth={place_of_birth}' in rendered,
+        self.assertTrue(f'&place_of_birth={place_of_birth}' in rendered,
                         'If place_of_birth supplied, that should be in link')
 
     def test_place_of_death(self):
