@@ -47,7 +47,6 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1865', employee=employee)
         self.assertNotIn(employee, Employee.objects.employed_during_year(1866))
 
-
     def test_employed_during_year_started_before_and_ended_after(self):
         """
         Should return employees with assignments during a given year
@@ -62,7 +61,6 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1865', end_date='1867', employee=employee)
         self.assertIn(employee, Employee.objects.employed_during_year(1866))
 
-
     def test_employed_during_year_started_that_year_and_into_next(self):
         """
         Should return employees with assignments during a given year
@@ -76,7 +74,6 @@ class EmployeeManagerTestCase(TestCase):
         employee = EmployeeFactory()
         AssignmentFactory(start_date='1866', end_date='1867', employee=employee)
         self.assertIn(employee, Employee.objects.employed_during_year(1866))
-
 
     def test_employed_during_year_entirely_in_year(self):
         """
@@ -96,7 +93,6 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1866', employee=employee)
         self.assertIn(employee, Employee.objects.employed_during_year(1866))
 
-
     def test_employed_during_year_started_year_before_and_into_year(self):
         """
         Should return employees with assignments during a given year
@@ -111,12 +107,10 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1865', end_date='1866', employee=employee)
         self.assertIn(employee, Employee.objects.employed_during_year(1866))
 
-
     def test_employed_during_year_started_after_year(self):
         """
         Should return employees with assignments during a given year
         """
-
 
         # Employee with assignment that started after year shouldn't be returned
         employee = EmployeeFactory()
@@ -134,7 +128,6 @@ class EmployeeManagerTestCase(TestCase):
         employee = EmployeeFactory()
         AssignmentFactory(start_date='1867', employee=employee)
         self.assertNotIn(employee, Employee.objects.employed_during_year(1866))
-
 
     def test_foreign_born(self):
         """
