@@ -2,7 +2,7 @@ from django.template.loader import render_to_string
 from django.test import TestCase
 
 from personnel.tests.factories import EmployeeFactory
-from places.tests.factories import CityFactory, PlaceFactory, BureauStateFactory
+from places.tests.factories import CityFactory, CountryFactory, PlaceFactory, BureauStateFactory
 
 
 class BureauStateDetailViewTemplateTestCase(TestCase):
@@ -45,7 +45,9 @@ class BureauStateDetailViewTemplateTestCase(TestCase):
         self.assertInHTML(expected_page_header, rendered)
 
         # Stats/assignment places: should be in html
-        assignment_place = PlaceFactory(city=CityFactory(name='Vernon', region=self.state))
+        assignment_place = PlaceFactory(
+            city=CityFactory(name='Vernon', region=self.state), country=CountryFactory(code2='US')
+        )
         context = {'object': self.state,
                    'stats': [('% VRC', '50.0')],
                    'assignment_places': {assignment_place}}

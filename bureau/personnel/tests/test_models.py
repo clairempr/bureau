@@ -25,7 +25,7 @@ class EmployeeManagerTestCase(TestCase):
         self.assertNotIn(EmployeeFactory(place_of_birth=None), Employee.objects.birthplace_known(),
                          "Employee with place_of_birth empty shouldn't be in Employee.objects.birthplace_known()")
 
-    def test_employed_during_year(self):
+    def test_employed_during_year_ended_before_year(self):
         """
         Should return employees with assignments during a given year
         """
@@ -47,6 +47,77 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1865', employee=employee)
         self.assertNotIn(employee, Employee.objects.employed_during_year(1866))
 
+
+    def test_employed_during_year_started_before_and_ended_after(self):
+        """
+        Should return employees with assignments during a given year
+        """
+
+        # Employee with assignment that started before year and ended after year should be returned
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1865-08', end_date='1867-10', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+        # Check start and end dates just year
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1865', end_date='1867', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+
+
+    def test_employed_during_year_started_that_year_and_into_next(self):
+        """
+        Should return employees with assignments during a given year
+        """
+
+        # Employee with assignment that started that year and continued into next year should be returned
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1866-08', end_date='1867-10', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+        # Check start and end dates just year
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1866', end_date='1867', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+
+
+    def test_employed_during_year_entirely_in_year(self):
+        """
+        Should return employees with assignments during a given year
+        """
+
+        # Employee with assignment entirely in year should be returned
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1866-08', end_date='1866-10', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+        # Check start date and no end date
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1866-02', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+        # Check start date just year and no end date
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1866', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+
+
+    def test_employed_during_year_started_year_before_and_into_year(self):
+        """
+        Should return employees with assignments during a given year
+        """
+
+        # Employee with assignment that started year before and continued into that year should be returned
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1865-08', end_date='1866-10', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+        # Check start and end dates just year
+        employee = EmployeeFactory()
+        AssignmentFactory(start_date='1865', end_date='1866', employee=employee)
+        self.assertIn(employee, Employee.objects.employed_during_year(1866))
+
+
+    def test_employed_during_year_started_after_year(self):
+        """
+        Should return employees with assignments during a given year
+        """
+
+
         # Employee with assignment that started after year shouldn't be returned
         employee = EmployeeFactory()
         AssignmentFactory(start_date='1867-08', end_date='1867-10', employee=employee)
@@ -64,45 +135,6 @@ class EmployeeManagerTestCase(TestCase):
         AssignmentFactory(start_date='1867', employee=employee)
         self.assertNotIn(employee, Employee.objects.employed_during_year(1866))
 
-        # Employee with assignment that started year before and continued into that year should be returned
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1865-08', end_date='1866-10', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-        # Check start and end dates just year
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1865', end_date='1866', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-
-        # Employee with assignment entirely in year should be returned
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1866-08', end_date='1866-10', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-        # Check start date and no end date
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1866-02', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-        # Check start date just year and no end date
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1866', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-
-        # Employee with assignment that started that year and continued into next year should be returned
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1866-08', end_date='1867-10', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-        # Check start and end dates just year
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1866', end_date='1867', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-
-        # Employee with assignment that started before year and ended after year should be returned
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1865-08', end_date='1867-10', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
-        # Check start and end dates just year
-        employee = EmployeeFactory()
-        AssignmentFactory(start_date='1865', end_date='1867', employee=employee)
-        self.assertIn(employee, Employee.objects.employed_during_year(1866))
 
     def test_foreign_born(self):
         """
@@ -147,6 +179,8 @@ class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
     Test EmployeeManager.born_in_place(), died_in_place(), and resided_in_place()
     """
 
+    # pylint: disable=too-many-instance-attributes
+
     def setUp(self):
         # Set up places in Germany and Prussia
         self.germany = PlaceFactory(city=None, county=None, region=None, country=CountryFactory(name='Germany'))
@@ -159,19 +193,19 @@ class EmployeeManagerBornDiedResidedInPlaceTestCase(TestCase):
         )
 
         # Set up places in Virginia and West Virginia
-        self.us = PlaceFactory(city=None, county=None, region=None, country=CountryFactory(name='United States'))
+        us = PlaceFactory(city=None, county=None, region=None, country=CountryFactory(name='United States'))
         self.virginia = PlaceFactory(
-            city=None, county=None, region=RegionFactory(name='Virginia', country=self.us.country)
+            city=None, county=None, region=RegionFactory(name='Virginia', country=us.country)
         )
         self.richmond = PlaceFactory(city=CityFactory(name='Richmond', region=self.virginia.region), county=None)
         self.west_virginia = PlaceFactory(
-            city=None, county=None, region=RegionFactory(name='West Virginia', country=self.us.country)
+            city=None, county=None, region=RegionFactory(name='West Virginia', country=us.country)
         )
         self.booger_hole = PlaceFactory(
-            city=CityFactory(name='Booger Hole', region=self.west_virginia.region, country=self.us.country), county=None
+            city=CityFactory(name='Booger Hole', region=self.west_virginia.region, country=us.country), county=None
         )
         self.clay_county = PlaceFactory(
-            city=None, county=CountyFactory(name='Clay', state=self.west_virginia.region, country=self.us.country)
+            city=None, county=CountyFactory(name='Clay', state=self.west_virginia.region, country=us.country)
         )
 
     def test_born_in_place(self):
@@ -504,7 +538,7 @@ class EmployeeTestCase(TestCase):
         """
 
         employee = EmployeeFactory()
-        self.assertEqual(str(employee), '{}, {}'.format(employee.last_name, employee.first_name),
+        self.assertEqual(str(employee), f'{employee.last_name}, {employee.first_name}',
                          "Employee.__str__ should be equal to Employee.last_name, Employee.first_name")
 
     def test_age_at_death(self):

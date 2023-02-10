@@ -120,8 +120,8 @@ class DateOfBirthFilledListFilterTestCase(EmployeeAdminFilterTestCase):
         changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
-        filter = DateOfBirthFilledListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
-        self.assertEqual(sorted(filter.lookup_choices), sorted(YES_NO_LOOKUPS))
+        list_filter = DateOfBirthFilledListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
+        self.assertEqual(sorted(list_filter.lookup_choices), sorted(YES_NO_LOOKUPS))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
@@ -172,9 +172,9 @@ class EmploymentYearListFilterTestCase(EmployeeAdminFilterTestCase):
         changelist = self.modeladmin.get_changelist_instance(request)
 
         # Lookups should be a range of years from earliest Assignment start_date to latest Assignment end_date
-        filter = EmploymentYearListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
+        list_filter = EmploymentYearListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
         expected = [(year, year) for year in [1865, 1866, 1867, 1868]]
-        self.assertEqual(sorted(filter.lookup_choices), expected)
+        self.assertEqual(sorted(list_filter.lookup_choices), expected)
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
@@ -204,9 +204,9 @@ class FirstLetterListFilterTestCase(EmployeeAdminFilterTestCase):
         changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure that all capital letters are present in the list filter
-        filter = FirstLetterListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
+        list_filter = FirstLetterListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
         expected = [(letter, letter) for letter in list(string.ascii_uppercase)]
-        self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
+        self.assertEqual(sorted(list_filter.lookup_choices), sorted(expected))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
@@ -236,8 +236,8 @@ class PlaceOfBirthFilledListFilterTestCase(EmployeeAdminFilterTestCase):
         changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
-        filter = PlaceOfBirthFilledListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
-        self.assertEqual(sorted(filter.lookup_choices), sorted(YES_NO_LOOKUPS))
+        list_filter = PlaceOfBirthFilledListFilter(request, params='', model=Employee, model_admin=self.modeladmin)
+        self.assertEqual(sorted(list_filter.lookup_choices), sorted(YES_NO_LOOKUPS))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
@@ -288,8 +288,8 @@ class USCTListFilterTestCase(EmployeeAdminFilterTestCase):
         changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
-        filter = USCTListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
-        self.assertEqual(sorted(filter.lookup_choices), sorted(YES_NO_LOOKUPS))
+        list_filter = USCTListFilter(request, params='', model=Employee, model_admin=EmployeeAdmin)
+        self.assertEqual(sorted(list_filter.lookup_choices), sorted(YES_NO_LOOKUPS))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
