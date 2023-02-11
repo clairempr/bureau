@@ -78,18 +78,6 @@ class DetailedView(TemplateView):
             'everyone': get_median(ages_everyone_at_death)
         }
 
-        # Foreign born
-        foreign_born_vrc = Employee.objects.foreign_born(vrc=True).count()
-        foreign_born_non_vrc = Employee.objects.foreign_born(vrc=False).count()
-        foreign_born_usct = Employee.objects.foreign_born().intersection(Employee.objects.usct()).count()
-        foreign_born = {'vrc': get_percent(foreign_born_vrc, Employee.objects.birthplace_known(vrc=True).count()),
-                        'non_vrc': get_percent(
-                            foreign_born_non_vrc, Employee.objects.birthplace_known(vrc=False).count()),
-                        'usct': get_percent(foreign_born_usct, Employee.objects.birthplace_known().intersection(
-                            Employee.objects.usct()).count()),
-                        'everyone': get_percent(
-                            (foreign_born_vrc + foreign_born_non_vrc), Employee.objects.birthplace_known().count())}
-
         # Ailments
         ailments = []
         for ailment in Ailment.objects.all():
@@ -121,7 +109,7 @@ class DetailedView(TemplateView):
         context['median_age_in_1865'] = median_age_in_1865
         context['average_age_at_death'] = average_age_at_death
         context['median_age_at_death'] = median_age_at_death
-        context['foreign_born'] = foreign_born
+        context['foreign_born'] = get_foreign_born_stats()
         context['top_birthplaces'] = get_top_birthplaces(number=25)
         context['top_deathplaces'] = get_top_deathplaces(number=25)
         context['ailments'] = ailments
@@ -129,6 +117,23 @@ class DetailedView(TemplateView):
 
 
 detailed_view = DetailedView.as_view()
+
+
+def get_foreign_born_stats():
+    """
+    Return stats of foreign-born employees
+    """
+    foreign_born_vrc = Employee.objects.foreign_born(vrc=True).count()
+    foreign_born_non_vrc = Employee.objects.foreign_born(vrc=False).count()
+    foreign_born_usct = Employee.objects.foreign_born().intersection(Employee.objects.usct()).count()
+    return {
+        'vrc': get_percent(foreign_born_vrc, Employee.objects.birthplace_known(vrc=True).count()),
+        'non_vrc': get_percent(foreign_born_non_vrc, Employee.objects.birthplace_known(vrc=False).count()),
+        'usct': get_percent(
+            foreign_born_usct, Employee.objects.birthplace_known().intersection(Employee.objects.usct()).count()
+        ),
+        'everyone': get_percent((foreign_born_vrc + foreign_born_non_vrc), Employee.objects.birthplace_known().count())
+    }
 
 
 def get_top_birthplaces(number=25):

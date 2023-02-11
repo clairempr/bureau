@@ -6,7 +6,10 @@ from military.tests.factories import RegimentFactory
 from personnel.models import Employee
 from personnel.tests.factories import EmployeeFactory
 from places.tests.factories import BureauStateFactory, CountryFactory, PlaceFactory, RegionFactory
-from stats.views import get_places_with_pks_for_context, get_state_comparison_stats
+from stats.views import (
+    get_foreign_born_stats, get_places_with_pks_for_context, get_state_comparison_stats, get_top_birthplaces,
+    get_top_deathplaces
+)
 
 
 class DetailedViewTestCase(TestCase):
@@ -99,6 +102,29 @@ class GetPlacesWithPksForContextTestCase(TestCase):
             set(get_places_with_pks_for_context(places_input)), set(expected_output),
             'get_places_with_pks_for_context() should return names, pks, and counts for places from input'
         )
+
+
+class GetForeignBornStatsTestCase(TestCase):
+    """
+    get_foreign_born_stats() should return stats of foreign-born employees
+    """
+
+    def test_get_foreign_born_stats(self):
+        germany = PlaceFactory(country=CountryFactory(name='Germany'))
+        new_york = PlaceFactory(region=RegionFactory(name='New York', country=CountryFactory(code2='US')))
+
+        EmployeeFactory(place_of_birth=new_york)
+        EmployeeFactory(place_of_birth=germany, vrc=True)
+        usct_employee = EmployeeFactory(place_of_birth=germany, vrc=False)
+        usct_employee.regiments.add(RegimentFactory(usct=True))
+        EmployeeFactory(place_of_birth=germany, vrc=False)
+
+        stats = get_foreign_born_stats()
+
+        self.assertEqual(stats['vrc'], 100, '100% of VRC employees should be foreign-born')
+        self.assertEqual(stats['non_vrc'], 2/3 * 100, f'{2/3}% of non-VRC employees should be foreign-born')
+        self.assertEqual(stats['usct'], 100, '100% of USCT employees should be foreign-born')
+        self.assertEqual(stats['everyone'], 75, '75% of employees should be foreign-born')
 
 
 class GetStateComparisonStatsTestCase(TestCase):
@@ -667,6 +693,63 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% With Sprain'
         self.assertEqual(len([item for item in stats if key in item]), 0,
                          "There should be no breakdown for an ailment if it's the only one of its type")
+
+
+class GetTopBirthplacesTestCase(TestCase):
+    """
+    get_top_birthplaces() should return top places where employees were born,
+    grouping Germany, Prussia, Bavaria, and Saxony, etc. together, and Virginia and West Virginia together
+    """
+
+    def test_get_top_birthplaces(self):
+        us = CountryFactory(code2='US')
+        germany = PlaceFactory(country=CountryFactory(name='Germany'))
+        bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
+        prussia = PlaceFactory(country=CountryFactory(name='Prussia'))
+        new_york = PlaceFactory(region=RegionFactory(name='New York', country=us))
+        virginia = PlaceFactory(region=RegionFactory(name='Virginia', country=us))
+        west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia', country=us))
+
+        # 4 employees born in New York, 1 in Germany, 1 in Bavaria, 1 in Prussia, 1 in Virginia, 1 in West Virginia
+        for _ in range(4):
+            EmployeeFactory(place_of_birth=new_york)
+        EmployeeFactory(place_of_birth=germany)
+        EmployeeFactory(place_of_birth=bavaria)
+        EmployeeFactory(place_of_birth=prussia)
+        EmployeeFactory(place_of_birth=virginia)
+        EmployeeFactory(place_of_birth=west_virginia)
+
+        self.assertEqual([place for place, _, _ in get_top_birthplaces()], ['New York', 'Germany', 'Virginia'])
+
+
+class GetTopDeathplacesTestCase(TestCase):
+    """
+    get_top_deathplaces() should return top places where employees died,
+    grouping Germany, Prussia, Bavaria, and Saxony, etc. together, but Virginia and West Virginia separate
+    """
+
+    def test_get_top_deathplaces(self):
+        us = CountryFactory(code2='US')
+        germany = PlaceFactory(country=CountryFactory(name='Germany'))
+        bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
+        prussia = PlaceFactory(country=CountryFactory(name='Prussia'))
+        new_york = PlaceFactory(region=RegionFactory(name='New York', country=us))
+        virginia = PlaceFactory(region=RegionFactory(name='Virginia', country=us))
+        west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia', country=us))
+
+        # 4 employees born in New York, 1 in Germany, 1 in Bavaria, 1 in Prussia, 2 in Virginia, 1 in West Virginia
+        for _ in range(4):
+            EmployeeFactory(place_of_death=new_york)
+        EmployeeFactory(place_of_death=germany)
+        EmployeeFactory(place_of_death=bavaria)
+        EmployeeFactory(place_of_death=prussia)
+        for _ in range(2):
+            EmployeeFactory(place_of_death=virginia)
+        EmployeeFactory(place_of_death=west_virginia)
+
+        self.assertEqual(
+            [place for place, _, _ in get_top_deathplaces()], ['New York', 'Germany', 'Virginia', 'West Virginia']
+        )
 
 
 class StateComparisonViewTestCase(TestCase):
