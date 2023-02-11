@@ -31,6 +31,7 @@ class DetailedView(TemplateView):
     template_name = 'stats/detailed.html'
 
     def get_context_data(self, **kwargs):
+        # pylint: disable=too-many-locals
         employee_count = Employee.objects.count()
 
         # Employees with date of birth filled

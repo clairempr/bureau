@@ -1,5 +1,6 @@
 [MASTER]
 load-plugins=pylint_django
+django-settings-module=config.settings
 ignore=migrations
 init-hook='import sys; sys.path.append("/app/bureau")'
 
