@@ -33,7 +33,8 @@ jobs:
         name: 'Linters'
         command: |
           python3 -m flake8
-          python3 -m pylint .
+          pwd
+          python3 -m pylint bureau
     - run:
         name: 'Tests'
         command: |
