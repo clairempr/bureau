@@ -29,8 +29,10 @@ class AssignmentManager(models.Manager):
 
     def during_year(self, year, **kwargs):
         return self.filter(
-            Q(start_date__lte=f'{year}', end_date__gte=f'{year}') |
-            Q(start_date__gte=f'{year}'), start_date__lt=f'{year + 1}')
+            Q(start_date__lte=str(year), end_date__gte=str(year)) |
+            # PartialDateField.year can't be accessed in query, so an assignment in that year with no end date
+            # has to be queried like this
+            Q(start_date__gte=str(year), start_date__lte=str(year + 1)))
 
     def in_place(self, place, exact=False, **kwargs):
         """

@@ -68,17 +68,6 @@ class BureauStateDetailView(DetailView):
         total_employees = employees.count()
 
         birthplace_known_count = Employee.objects.birthplace_known(bureau_states=self.object).count()
-        born_in_state_count = get_number_employees_born_in_bureau_state(employees, self.object)
-        colored_count = employees.filter(colored=True).count()
-        confederate_count = employees.filter(confederate_veteran=True).count()
-        died_during_assignment_count = employees.filter(died_during_assignment=True).count()
-        female_count = employees.filter(gender=Employee.Gender.FEMALE).count()
-        foreign_born_count = Employee.objects.foreign_born(bureau_states=self.object).count()
-        former_slave_count = employees.filter(former_slave=True).count()
-        former_slaveholder_count = employees.filter(slaveholder=True).count()
-        penmanship_contest_count = employees.filter(penmanship_contest=True).count()
-        union_count = employees.filter(union_veteran=True).count()
-        usct_count = Employee.objects.usct(bureau_states=self.object).count()
 
         # Employees with date of birth filled
         employees_with_dob = employees.exclude(date_of_birth='')
@@ -89,33 +78,50 @@ class BureauStateDetailView(DetailView):
             ('Avg. age in 1865', get_float_format(get_mean(ages), places=1)),
             ('Median age in 1865', get_float_format(get_median(ages), places=0)),
             ('% VRC', get_float_format(self.object.percent_vrc_employees())),
-            ('% USCT', get_float_format(get_percent(part=usct_count, total=total_employees))),
-            ('% Foreign-born', get_float_format(get_percent(part=foreign_born_count, total=birthplace_known_count))),
-            ('% Born there', get_float_format(get_percent(part=born_in_state_count, total=birthplace_known_count))),
-            ('% Female', get_float_format(get_percent(part=female_count, total=total_employees))),
-            ('% Identified as "colored"', get_float_format(get_percent(part=colored_count, total=total_employees))),
-            ('% Died during assignment', get_float_format(get_percent(part=died_during_assignment_count,
-                                                                      total=total_employees))),
-            ('Former slaves', former_slave_count),
-            ('% Former slaveholder', get_float_format(get_percent(part=former_slaveholder_count,
-                                                                  total=total_employees))),
-            ('% Union veterans', get_float_format(get_percent(part=union_count, total=total_employees))),
-
-            ('% Confederate veterans', get_float_format(get_percent(part=confederate_count, total=total_employees))),
-            ('Left-hand penmanship contest entrants', penmanship_contest_count),
+            ('% USCT', get_float_format(
+                get_percent(part=Employee.objects.usct(bureau_states=self.object).count(), total=total_employees))
+             ),
+            ('% Foreign-born', get_float_format(
+                get_percent(part=Employee.objects.foreign_born(bureau_states=self.object).count(),
+                            total=birthplace_known_count))
+             ),
+            ('% Born there', get_float_format(
+                get_percent(part=get_number_employees_born_in_bureau_state(employees, self.object),
+                            total=birthplace_known_count))
+             ),
+            ('% Female', get_float_format(
+                get_percent(part=employees.filter(gender=Employee.Gender.FEMALE).count(), total=total_employees))
+             ),
+            ('% Identified as "colored"', get_float_format(
+                get_percent(part=employees.filter(colored=True).count(), total=total_employees))
+             ),
+            ('% Died during assignment', get_float_format(
+                get_percent(part=employees.filter(died_during_assignment=True).count(), total=total_employees))
+             ),
+            ('Former slaves', employees.filter(former_slave=True).count()),
+            ('% Former slaveholder', get_float_format(
+                get_percent(part=employees.filter(slaveholder=True).count(), total=total_employees))
+             ),
+            ('% Union veterans', get_float_format(
+                get_percent(part=employees.filter(union_veteran=True).count(), total=total_employees))
+             ),
+            ('% Confederate veterans', get_float_format(
+                get_percent(part=employees.filter(confederate_veteran=True).count(), total=total_employees))
+             ),
+            ('Left-hand penmanship contest entrants', employees.filter(penmanship_contest=True).count()),
         ]
 
         # Breakdown per AilmentType
         for ailment_type in AilmentType.objects.all():
             ailment_type_count = employees.filter(ailments__type=ailment_type).count()
-            stats.append(('% with {}'.format(str(ailment_type)),
+            stats.append((f'% with {ailment_type}',
                           get_float_format(get_percent(part=ailment_type_count, total=total_employees))))
 
             # Breakdown per Ailment, if more than one for the type
             if ailment_type.ailments.count() > 1:
                 for ailment in ailment_type.ailments.all():
                     ailment_count = employees.filter(ailments=ailment).count()
-                    stats.append(('% with {}'.format(str(ailment)),
+                    stats.append((f'% with {ailment}',
                                   get_float_format(get_percent(part=ailment_count, total=total_employees))))
 
         return stats
@@ -139,7 +145,7 @@ class GeoNamesLookupBaseView(FormView):
 class GeoNamesCityLookupView(GeoNamesLookupBaseView):
 
     def get_success_url(self):
-        return reverse_lazy('admin:places_city_add') + '?geonames_search={}'.format(self.geonames_search)
+        return reverse_lazy('admin:places_city_add') + f'?geonames_search={self.geonames_search}'
 
 
 geonames_city_lookup_view = GeoNamesCityLookupView.as_view(extra_context={'lookup_type': 'city'})
@@ -148,7 +154,7 @@ geonames_city_lookup_view = GeoNamesCityLookupView.as_view(extra_context={'looku
 class GeoNamesCountyLookupView(GeoNamesLookupBaseView):
 
     def get_success_url(self):
-        return reverse_lazy('admin:places_county_add') + '?geonames_search={}'.format(self.geonames_search)
+        return reverse_lazy('admin:places_county_add') + f'?geonames_search={self.geonames_search}'
 
 
 geonames_county_lookup_view = GeoNamesCountyLookupView.as_view(extra_context={'lookup_type': 'county'})

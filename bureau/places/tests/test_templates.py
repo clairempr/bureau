@@ -21,6 +21,7 @@ class BureauStateDetailViewTemplateTestCase(TestCase):
         # "No statistics for this location" and "No assignments found"
         context = {'object': self.state}
         rendered = render_to_string(self.template, context)
+        # pylint: disable=consider-using-f-string
         expected_page_header = page_header.format(state=self.state, employee_count=0, employees='employees')
         self.assertInHTML(expected_page_header, rendered)
         for text in ['No statistics for this location', 'No assignments found']:

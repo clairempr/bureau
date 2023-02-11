@@ -96,14 +96,16 @@ class EmployeesWithAilmentListViewTemplateTestCase(TestCase):
         # "Employees With <Ailment>" should be in page header if 'ailment' is an Ailment and no employees found
         context = {'ailment': ailment}
         rendered = render_to_string(self.template, context)
-        page_header = page_header_no_employees.format(ailment=ailment)  # pylint: disable=consider-using-f-string, useless-suppression
+        # pylint: disable=consider-using-f-string, useless-suppression
+        page_header = page_header_no_employees.format(ailment=ailment)
         self.assertInHTML(page_header, rendered,
                           msg_prefix='Employees With <Ailment> should be in page header if no employees with ailment')
 
         # "Employees With <AilmentType>" should be in html if 'ailment' is an AilmentType and no employees found
         context = {'ailment': ailment_type}
         rendered = render_to_string(self.template, context)
-        page_header = page_header_no_employees.format(ailment=ailment_type)  # pylint: disable=consider-using-f-string, useless-suppression
+        # pylint: disable=consider-using-f-string, useless-suppression
+        page_header = page_header_no_employees.format(ailment=ailment_type)
         self.assertInHTML(
             page_header, rendered,
             msg_prefix='Employees With <AilmentType> should be in page header if no employees with ailment type'
@@ -115,7 +117,8 @@ class EmployeesWithAilmentListViewTemplateTestCase(TestCase):
                    'employee_list': paginator.object_list,
                    'paginator': paginator}
         rendered = render_to_string(self.template, context)
-        page_header = page_header_with_employees.format(ailment=ailment, count=len(paginator.object_list))  # pylint: disable=consider-using-f-string, useless-suppression
+        # pylint: disable=consider-using-f-string, useless-suppression
+        page_header = page_header_with_employees.format(ailment=ailment, count=len(paginator.object_list))
         self.assertInHTML(
             page_header, rendered,
             msg_prefix='Employees With <Ailment> (<count>) should be in page header if employees with ailment type'

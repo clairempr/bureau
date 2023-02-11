@@ -1,7 +1,7 @@
 import json
-import requests
-
 from urllib.parse import urlencode
+
+import requests
 
 from django.conf import settings
 
@@ -33,9 +33,10 @@ def geonames_lookup(geonames_search, feature_codes=None):
 
     # Search for multiple feature codes in GeoNames like this: featureCode=PPLC&featureCode=PPLX
     if feature_codes:
-        params = '{}&{}'.format(params, '&'.join(['featureCode={}'.format(fc) for fc in feature_codes]))
+        joined_feature_codes = '&'.join([f'featureCode={fc}' for fc in feature_codes])
+        params = f'{params}&{joined_feature_codes}'
 
-    response = requests.get('http://api.geonames.org/searchJSON?{}'.format(params))
+    response = requests.get(f'http://api.geonames.org/searchJSON?{params}', timeout=5)
     response = json.loads(response.text)
 
     geonames = response.get('geonames')
@@ -53,13 +54,23 @@ def geonames_lookup(geonames_search, feature_codes=None):
     population = geonames.get('population')
     feature_code = geonames.get('fcode')
 
+    try:
+        state = Region.objects.get(name=state)
+    except Region.DoesNotExist:
+        state = None
+
+    try:
+        country = Country.objects.get(name=country)
+    except Country.DoesNotExist:
+        country = None
+
     result = {
-        'display_name': '{name}, {state}, {country}'.format(name=name, state=state, country=country),
+        'display_name': f'{name}, {state}, {country}',
         'name': name,
         'name_ascii': name,
-        'region': Region.objects.get(name=state),
-        'state': Region.objects.get(name=state),
-        'country': Country.objects.get(name=country),
+        'region': state,
+        'state': state,
+        'country': country,
         'geoname_id': geoname_id,
         'latitude': latitude,
         'longitude': longitude,

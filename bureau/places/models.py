@@ -20,7 +20,7 @@ connect_default_signals(City)
 
 
 # Signal to import only cities from certain countries
-def filter_city_import(sender, items, **kwargs):
+def filter_city_import(sender, items, **kwargs):  # pylint: disable=unused-argument
     if items[ICity.countryCode] not in LOAD_CITIES_FROM_COUNTRIES:
         raise InvalidItems()
 
@@ -53,7 +53,7 @@ connect_default_signals(Region)
 
 
 # Signal to import only regions from certain countries
-def filter_region_import(sender, items, **kwargs):
+def filter_region_import(sender, items, **kwargs):  # pylint: disable=unused-argument
     if items[IRegion.code][:2] not in LOAD_REGIONS_FROM_COUNTRIES:
         raise InvalidItems()
 
@@ -62,7 +62,7 @@ region_items_pre_import.connect(filter_region_import)
 
 
 # Signal to set bureau_operations to True in selected states post-import
-def set_region_fields(sender, instance, items, **kwargs):
+def set_region_fields(sender, instance, items, **kwargs):  # pylint: disable=unused-argument
     if instance.country.code2 == 'US' and instance.geoname_code in BUREAU_STATES:
         instance.bureau_operations = True
 
@@ -87,16 +87,16 @@ class County(AbstractRegion):
 
     class Meta(Region.Meta):
         unique_together = ('country', 'state', 'name')
-        verbose_name = ('county')
-        verbose_name_plural = ('counties')
+        verbose_name = 'county'
+        verbose_name_plural = 'counties'
 
     def __str__(self):
         """
         Not all counties (Irish, for example) will have a state set
         """
         if self.state:
-            return '{name}, {state}, {country}'.format(name=self.name, state=self.state.name, country=self.country.name)
-        return '{name}, {country}'.format(name=self.name, country=self.country.name)
+            return f'{self.name}, {self.state.name}, {self.country.name}'
+        return f'{self.name}, {self.country.name}'
 
 
 class Country(AbstractCountry):
@@ -123,9 +123,9 @@ class Place(models.Model):
     def __str__(self):
         if self.city:
             return str(self.city)
-        elif self.county:
+        if self.county:
             return str(self.county)
-        elif self.region:
+        if self.region:
             return str(self.region)
         return str(self.country)
 
@@ -133,7 +133,7 @@ class Place(models.Model):
         # Return place name without country, if place has a region defined
         name = str(self)
 
-        country_suffix = ', {}'.format(str(self.country))
+        country_suffix = f', {self.country}'
         if self.region and name.endswith(country_suffix):
             name = name[:-len(country_suffix)]
 

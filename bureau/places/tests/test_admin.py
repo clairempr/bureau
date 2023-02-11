@@ -89,9 +89,9 @@ class CityAdminListFilterTestCase(TestCase):
         changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
-        filter = InUseListFilter(request, params='', model=City, model_admin=CityAdmin)
+        list_filter = InUseListFilter(request, params='', model=City, model_admin=CityAdmin)
         expected = [(choice, choice) for choice in ['Yes', 'No']]
-        self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
+        self.assertEqual(sorted(list_filter.lookup_choices), sorted(expected))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)
@@ -139,11 +139,9 @@ class CityAdminListFilterTestCase(TestCase):
         changelist = self.modeladmin.get_changelist_instance(request)
 
         # Make sure that Yes and No are present in the list filter
-        filter = PopulationListFilter(request, params='', model=City, model_admin=CityAdmin)
-        expected = [
-            (number, label) for (number, label) in zip([1, 500, 1000, 15000], ['0', '< 500', '< 1000', '< 15000'])
-        ]
-        self.assertEqual(sorted(filter.lookup_choices), sorted(expected))
+        list_filter = PopulationListFilter(request, params='', model=City, model_admin=CityAdmin)
+        expected = list(zip([1, 500, 1000, 15000], ['0', '< 500', '< 1000', '< 15000']))
+        self.assertEqual(sorted(list_filter.lookup_choices), sorted(expected))
 
         # Make sure the correct queryset is returned
         queryset = changelist.get_queryset(request)

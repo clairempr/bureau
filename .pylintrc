@@ -19,3 +19,6 @@ generated-members=REQUEST,acl_users,aq_parent,"[a-zA-Z]+_set{1,2}",save,delete
 [SIMILARITIES]
 ignore-comments=yes
 ignore-docstrings=yes
+
+[REFACTOR]
+min-public-methods=1

@@ -30,7 +30,7 @@ class BureauStateDetailViewTestCase(TestCase):
         # Test it with no assignments at all
         response = self.client.get(self.state_url)
         for key in ['assignment_places', 'stats']:
-            self.assertIn(key, response.context, "'{}' should be in context of BureauStateDetailView".format(key))
+            self.assertIn(key, response.context, f"'{key}' should be in context of BureauStateDetailView")
 
         # With no assignments, assignment_places should be empty
         self.assertFalse(response.context['assignment_places'].exists(),
@@ -139,13 +139,13 @@ class BureauStateDetailViewTestCase(TestCase):
         # The following stats should always be returned
         for label in expected_stats_labels:
             self.assertIn(label, returned_stats_labels,
-                          "'{}' should be returned by BureauStateDetailView.get_stats()".format(label))
+                          f"'{label}' should be returned by BureauStateDetailView.get_stats()")
 
         # Test AilmentType and Ailment breakdown per AilmentType
         for obj in [ailment_type_sprain, ailment_type_headache, ailment_migraine_headache, ailment_tension_headache]:
-            label = '% with {}'.format(obj.name)
+            label = f'% with {obj.name}'
             self.assertIn(label, returned_stats_labels,
-                          "'{}' should be returned by BureauStateDetailView.get_stats()".format(label))
+                          f"'{label}' should be returned by BureauStateDetailView.get_stats()")
 
         # All stats should returned in float format except the two that are counts (former slaves and left-hand
         # penmanship contest entrants), so get_float_format() should be called a certain number of times
@@ -207,7 +207,7 @@ class GeoNamesCityLookupViewTestCase(SimpleTestCase):
         view = GeoNamesCityLookupView()
         view.geonames_search = 'Null Island'
 
-        self.assertTrue('geonames_search={}'.format(view.geonames_search) in view.get_success_url(),
+        self.assertTrue(f'geonames_search={view.geonames_search}' in view.get_success_url(),
                         "GeoNamesCityLookupView's success_url should include value of geonames_search in parameters")
 
 
@@ -224,7 +224,7 @@ class GeoNamesCountyLookupViewTestCase(SimpleTestCase):
         view = GeoNamesCountyLookupView()
         view.geonames_search = 'Null Island'
 
-        self.assertTrue('geonames_search={}'.format(view.geonames_search) in view.get_success_url(),
+        self.assertTrue(f'geonames_search={view.geonames_search}'in view.get_success_url(),  # noqa
                         "GeoNamesCountyLookupView's success_url should include value of geonames_search in parameters")
 
 
@@ -256,13 +256,13 @@ class GetNumberEmployeesBornInBureauStateTestCase(TestCase):
         # Employees born in DC
         self.number_employees_born_in_dc = 2
         district_of_columbia = PlaceFactory(region=RegionFactory(name='District of Columbia'))
-        for i in range(self.number_employees_born_in_dc):
+        for _ in range(self.number_employees_born_in_dc):
             EmployeeFactory(place_of_birth=district_of_columbia)
 
         # Employees born in state
         self.number_employees_born_in_state = 3
         state = PlaceFactory(region=self.state)
-        for i in range(self.number_employees_born_in_state):
+        for _ in range(self.number_employees_born_in_state):
             EmployeeFactory(place_of_birth=state)
 
         # All employees

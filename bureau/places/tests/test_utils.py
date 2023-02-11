@@ -59,8 +59,8 @@ class GeonamesLookupTestCase(TestCase):
             # request to GeoNames API should've been sent with feature codes in the params
             args, kwargs = mock_requests_get.call_args
             for feature_code in settings.CITIES_LIGHT_INCLUDE_CITY_TYPES:
-                param = 'featureCode={}'.format(feature_code)
-                self.assertTrue(param in args[0], "GeoNames API request should include '{}'".format(param))
+                param = f'featureCode={feature_code}'
+                self.assertTrue(param in args[0], f"GeoNames API request should include '{param}'")
 
         # If nothing was found (no 'geonames' in response, response should be returned to the 'alternate_names'field
         response_content = {

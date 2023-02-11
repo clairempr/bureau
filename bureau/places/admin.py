@@ -28,7 +28,7 @@ class InUseListFilter(admin.SimpleListFilter):
         if self.value():
             if self.value() == 'Yes':
                 return queryset.filter(places__isnull=False)
-            elif self.value() == 'No':
+            if self.value() == 'No':
                 return queryset.filter(places__isnull=True)
         return queryset
 
@@ -74,12 +74,12 @@ class CityAdmin(CitiesLightCityAdmin):
         return {}
 
     def get_fields(self, request, obj=None):
-        return ['geonames_lookup', ] + super(CityAdmin, self).get_fields(request, obj)
+        return ['geonames_lookup', ] + super().get_fields(request, obj)
 
     def in_use(self, obj):
         return obj.places.exists()
 
-    def geonames_lookup(self, obj):
+    def geonames_lookup(self, obj):  # pylint: disable=unused-argument
         return format_html(
             '<a class="button" href="{}">Search</a>',
             reverse('places:geonames_city_lookup'),
@@ -126,9 +126,9 @@ class CountyAdmin(admin.ModelAdmin):
         return {}
 
     def get_fields(self, request, obj=None):
-        return ['geonames_lookup', ] + super(CountyAdmin, self).get_fields(request, obj)
+        return ['geonames_lookup', ] + super().get_fields(request, obj)
 
-    def geonames_lookup(self, obj):
+    def geonames_lookup(self, obj):  # pylint: disable=unused-argument
         return format_html(
             '<a class="button" href="{}">Search</a>',
             reverse('places:geonames_county_lookup'),
@@ -169,7 +169,7 @@ class PlaceAdmin(admin.ModelAdmin):
         elif region:
             obj.country = region.country
 
-        super(PlaceAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
 
 
 admin.site.register(Place, PlaceAdmin)
