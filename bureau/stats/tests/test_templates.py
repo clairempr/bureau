@@ -41,11 +41,11 @@ class StateComparisonViewTemplateTestCase(TestCase):
         self.florida_employee_count = 3
         self.south_carolina_employee_count = 5
 
-        for i in range(self.florida_employee_count):
+        for _ in range(self.florida_employee_count):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.florida)
 
-        for i in range(self.south_carolina_employee_count):
+        for _ in range(self.south_carolina_employee_count):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.south_carolina)
 

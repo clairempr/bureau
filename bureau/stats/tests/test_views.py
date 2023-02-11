@@ -28,13 +28,13 @@ class DetailedViewTestCase(TestCase):
         # First test it with no data at all
         response = self.client.get(self.url)
         for key in self.context_keys:
-            self.assertIn(key, response.context, "'{}' should be in context of DetailedView".format(key))
+            self.assertIn(key, response.context, f"'{key}' should be in context of DetailedView")
 
         # Now test with an Ailment but no Employees
         AilmentFactory()
         response = self.client.get(self.url)
         for key in self.context_keys:
-            self.assertIn(key, response.context, "'{}' should be in context of DetailedView".format(key))
+            self.assertIn(key, response.context, f"'{key}' should be in context of DetailedView")
 
         # Test with a birthplace to see if it appears in top birthplaces
         place = PlaceFactory()
@@ -91,12 +91,12 @@ class GetPlacesWithPksForContextTestCase(TestCase):
         new_york = PlaceFactory(region=RegionFactory(name='New York', country=CountryFactory(name='United States')))
         spain = PlaceFactory(country=CountryFactory(name='Spain'))
 
-        input = [('New York', 'United States', 43), (None, 'Spain', 5)]
+        places_input = [('New York', 'United States', 43), (None, 'Spain', 5)]
         expected_output = [('New York', new_york.pk, 43), ('Spain', spain.pk, 5)]
 
         # Compare the lists as sets because order isn't important
         self.assertSetEqual(
-            set(get_places_with_pks_for_context(input)), set(expected_output),
+            set(get_places_with_pks_for_context(places_input)), set(expected_output),
             'get_places_with_pks_for_context() should return names, pks, and counts for places from input'
         )
 
@@ -117,7 +117,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         [(key, state queryset), (key, state queryset)]
         """
 
-        label, states = [item for item in stats if key in item][0]
+        _, states = [item for item in stats if key in item][0]
 
         # Most have been annotated with a 'value' field, but a least one has a 'total' instead
         return [(state.name, state.value or state.total) for state in states]
@@ -130,17 +130,17 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = 'Employee count'
 
         # 1 employee in Kentucky
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # 2 employees in Texas
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
         # 3 employees in Mississippi
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.mississippi)
 
@@ -150,7 +150,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x employee counts".format(key))
+                             f"'{key}' should contain states with the top x employee counts")
 
     def test_get_state_comparison_stats_vrc(self):
         """
@@ -160,23 +160,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% VRC employees'
 
         # 1 VRC employee in Texas, and 3 non-VRC
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(vrc=True)
             employee.bureau_states.add(self.texas)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
         # 1 VRC employee in Kentucky, and 1 non-VRC
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(vrc=True)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # 3 VRC employees in Mississippi
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(vrc=True)
             employee.bureau_states.add(self.mississippi)
 
@@ -186,7 +186,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % VRC member employees".format(key))
+                             f"'{key}' should contain states with the top x % VRC member employees")
 
     def test_get_state_comparison_stats_usct(self):
         """
@@ -199,27 +199,27 @@ class GetStateComparisonStatsTestCase(TestCase):
         non_usct_regiment = RegimentFactory()
 
         # 0 USCT employees in Kentucky, and 2 non-USCT
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.regiments.add(non_usct_regiment)
             employee.bureau_states.add(self.kentucky)
 
         # 1 USCT employee in Texas, and 3 non-USCT
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.regiments.add(usct_regiment)
             employee.bureau_states.add(self.texas)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.regiments.add(non_usct_regiment)
             employee.bureau_states.add(self.texas)
 
         # 3 USCT employees in Mississippi, and 1 non-USCT
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.regiments.add(usct_regiment)
             employee.bureau_states.add(self.mississippi)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.regiments.add(non_usct_regiment)
             employee.bureau_states.add(self.mississippi)
@@ -230,7 +230,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % USCT member employees".format(key))
+                             f"'{key}' should contain states with the top x % USCT member employees")
 
     def test_get_state_comparison_stats_foreign_born(self):
         """
@@ -244,26 +244,26 @@ class GetStateComparisonStatsTestCase(TestCase):
         germany = CountryFactory(name='Germany')
 
         # Mississippi: 0 employees born in Germany, 3 in US
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(place_of_birth=PlaceFactory(country=us))
             employee.bureau_states.add(self.mississippi)
 
         # Texas: 2 employees born in Germany, 2 in US
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory(place_of_birth=PlaceFactory(country=germany))
             employee.bureau_states.add(self.texas)
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory(place_of_birth=PlaceFactory(country=us))
             employee.bureau_states.add(self.texas)
 
         # Kentucky: 3 employees born in Germany, 1 employee in US, 3 unknown
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(place_of_birth=PlaceFactory(country=germany))
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(place_of_birth=PlaceFactory(country=us))
             employee.bureau_states.add(self.kentucky)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
@@ -273,7 +273,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % foreign-born employees".format(key))
+                             "'{key}' should contain states with the top x % foreign-born employees")
 
     def test_get_state_comparison_stats_born_there(self):
         """
@@ -287,26 +287,26 @@ class GetStateComparisonStatsTestCase(TestCase):
         place_texas = PlaceFactory(region=self.texas)
 
         # Mississippi: 0 employees born in Mississippi, 3 born elsewhere
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(place_of_birth=PlaceFactory())
             employee.bureau_states.add(self.mississippi)
 
         # Texas: 2 employees born in Texas, 2 born elsewhere
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory(place_of_birth=place_texas)
             employee.bureau_states.add(self.texas)
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory(place_of_birth=PlaceFactory())
             employee.bureau_states.add(self.texas)
 
         # Kentucky: 3 employees born in Kentucky, 1 employee elsewhere, 3 unknown
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(place_of_birth=place_kentucky)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(place_of_birth=PlaceFactory())
             employee.bureau_states.add(self.kentucky)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
@@ -316,7 +316,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % employees born there".format(key))
+                             f"'{key}' should contain states with the top x % employees born there")
 
     def test_get_state_comparison_stats_female(self):
         """
@@ -326,23 +326,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% Female employees'
 
         # 1 female employee in Texas, and 3 male
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(gender=Employee.Gender.FEMALE)
             employee.bureau_states.add(self.texas)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(gender=Employee.Gender.MALE)
             employee.bureau_states.add(self.texas)
 
         # 1 female employee in Kentucky, and 1 male
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(gender=Employee.Gender.FEMALE)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(gender=Employee.Gender.MALE)
             employee.bureau_states.add(self.kentucky)
 
         # 3 female employees in Mississippi
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(gender=Employee.Gender.FEMALE)
             employee.bureau_states.add(self.mississippi)
 
@@ -352,7 +352,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % female employees".format(key))
+                             f"'{key}' should contain states with the top x % female employees")
 
     def test_get_state_comparison_stats_died_during_assignment(self):
         """
@@ -363,23 +363,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% Employees who died during assignment'
 
         # Kentucky: 0 employees who died during an assignment, and 2 who didn't
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # Mississippi: 1 employee who died during an assignment, and 1 who didn't
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(died_during_assignment=True)
             employee.bureau_states.add(self.mississippi)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.mississippi)
 
         # Texas: 9 employees who died during an assignment, and 1 who didn't
-        for i in range(9):
+        for _ in range(9):
             employee = EmployeeFactory(died_during_assignment=True)
             employee.bureau_states.add(self.texas)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
@@ -390,7 +390,7 @@ class GetStateComparisonStatsTestCase(TestCase):
 
         self.assertListEqual(
             top_states, expected_output,
-            "'{}' should contain states with the top x % of employees who died during assignment".format(key)
+            f"'{key}' should contain states with the top x % of employees who died during assignment"
         )
 
     def test_get_state_comparison_stats_identified_as_colored(self):
@@ -402,23 +402,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% Employees identified as "colored"'
 
         # 1 "colored" employee in Texas, and 3 not
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(colored=True)
             employee.bureau_states.add(self.texas)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
         # 1 "colored" employee in Kentucky, and 1 not
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(colored=True)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # 3 "colored" employees in Mississippi
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(colored=True)
             employee.bureau_states.add(self.mississippi)
 
@@ -429,7 +429,7 @@ class GetStateComparisonStatsTestCase(TestCase):
 
         self.assertListEqual(
             top_states, expected_output,
-            "'{}' should contain states with the top x % of employees identified as 'colored'".format(key)
+            f"'{key}' should contain states with the top x % of employees identified as 'colored'"
         )
 
     def test_get_state_comparison_stats_former_slave(self):
@@ -440,23 +440,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = 'Former slave employees'
 
         # 0 former slave employees in Kentucky, and 2 not
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # 1 former slave employee in Texas, and 3 not
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(former_slave=True)
             employee.bureau_states.add(self.texas)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
         # 3 former slave employees in Mississippi, and 1 not
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(former_slave=True)
             employee.bureau_states.add(self.mississippi)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.mississippi)
 
@@ -466,7 +466,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x number of former slave employees".format(key))
+                             f"'{key}' should contain states with the top x number of former slave employees")
 
     def test_get_state_comparison_stats_former_slaveholder(self):
         """
@@ -477,23 +477,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% Former slaveholder employees'
 
         # Kentucky: 0 former slaveholder employees, and 2 who weren't
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # Mississippi: 1 former slaveholder employee who died during an assignment, and 1 who wasn't
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(slaveholder=True)
             employee.bureau_states.add(self.mississippi)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.mississippi)
 
         # Texas: 1 former slaveholder employee, and 9 who weren't
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(slaveholder=True)
             employee.bureau_states.add(self.texas)
-        for i in range(9):
+        for _ in range(9):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
@@ -503,7 +503,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of former slaveholder employees".format(key))
+                             f"'{key}' should contain states with the top x % of former slaveholder employees")
 
     def test_get_state_comparison_stats_confederate(self):
         """
@@ -514,23 +514,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = '% Ex-Confederate employees'
 
         # 1 ex-Confederate employee in Texas, and 3 not
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(confederate_veteran=True)
             employee.bureau_states.add(self.texas)
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
         # 1 ex-Confederate employee in Kentucky, and 1 not
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory(confederate_veteran=True)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # 3 ex-Confederate employees in Mississippi
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(confederate_veteran=True)
             employee.bureau_states.add(self.mississippi)
 
@@ -540,7 +540,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
 
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of Confederate veteran employees".format(key))
+                             f"'{key}' should contain states with the top x % of Confederate veteran employees")
 
     def test_get_state_comparison_stats_penmanship_contest(self):
         """
@@ -551,23 +551,23 @@ class GetStateComparisonStatsTestCase(TestCase):
         key = 'Left-hand penmanship contest entrants'
 
         # Mississippi: 0 employees who entered the contest, 3 who didn't
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.mississippi)
 
         # Texas: 2 employees who entered the contest, 2 who didn't
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory(penmanship_contest=True)
             employee.bureau_states.add(self.texas)
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
         # Kentucky: 3 employees who entered the contest, 1 who didn't
-        for i in range(3):
+        for _ in range(3):
             employee = EmployeeFactory(penmanship_contest=True)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
@@ -578,7 +578,7 @@ class GetStateComparisonStatsTestCase(TestCase):
 
         self.assertListEqual(
             top_states, expected_output,
-            "'{}' should contain states with the top x number of employees who entered contest".format(key)
+            f"'{key}' should contain states with the top x number of employees who entered contest"
         )
 
     def test_get_state_comparison_stats_ailments(self):
@@ -594,37 +594,37 @@ class GetStateComparisonStatsTestCase(TestCase):
         ailment_sprain = AilmentFactory(name='Sprain', type=ailment_type_sprain_or_bruise)
 
         # Texas: 2 with sprain and 2 with nothing
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.ailments.add(ailment_sprain)
             employee.bureau_states.add(self.texas)
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.texas)
 
         # Kentucky: 1 with migraine headache, 1 with sprain, 1 with tension headache, and 1 with nothing
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.ailments.add(ailment_migraine_headache)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.ailments.add(ailment_sprain)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.ailments.add(ailment_tension_headache)
             employee.bureau_states.add(self.kentucky)
-        for i in range(1):
+        for _ in range(1):
             employee = EmployeeFactory()
             employee.bureau_states.add(self.kentucky)
 
         # Mississippi: 2 with migraine headache, 2 with tension headache
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.ailments.add(ailment_migraine_headache)
             employee.bureau_states.add(self.mississippi)
-        for i in range(2):
+        for _ in range(2):
             employee = EmployeeFactory()
             employee.ailments.add(ailment_tension_headache)
             employee.bureau_states.add(self.mississippi)
@@ -636,14 +636,14 @@ class GetStateComparisonStatsTestCase(TestCase):
         expected_output = [('Mississippi', 100), ('Kentucky', 50)]
         top_states = self.get_state_stats_for_key(stats, key)
         self.assertListEqual(top_states, expected_output,
-                             "'{}' should contain states with the top x % of employees with headache".format(key))
+                             f"'{key}' should contain states with the top x % of employees with headache")
 
         key = '% With Sprain or Bruise'
         expected_output = [('Texas', 50), ('Kentucky', 25)]
         top_states = self.get_state_stats_for_key(stats, key)
         self.assertListEqual(
             top_states, expected_output,
-            "'{}' should contain states with the top x % of employees with sprain or bruise".format(key)
+            f"'{key}' should contain states with the top x % of employees with sprain or bruise"
         )
 
         # Ailments should be treated individually
@@ -652,7 +652,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
         self.assertListEqual(
             top_states, expected_output,
-            "'{}' should contain states with the top x % of employees with migraine headache".format(key)
+            f"'{key}' should contain states with the top x % of employees with migraine headache"
         )
 
         key = '% With Tension Headache'
@@ -660,7 +660,7 @@ class GetStateComparisonStatsTestCase(TestCase):
         top_states = self.get_state_stats_for_key(stats, key)
         self.assertListEqual(
             top_states, expected_output,
-            "'{}' should contain states with the top x % of employees with tension headache".format(key)
+            f"'{key}' should contain states with the top x % of employees with tension headache"
         )
 
         # There should be no breakdown for sprain, because it's the only ailment of that type

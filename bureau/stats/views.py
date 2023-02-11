@@ -90,10 +90,6 @@ class DetailedView(TemplateView):
                         'everyone': get_percent(
                             (foreign_born_vrc + foreign_born_non_vrc), Employee.objects.birthplace_known().count())}
 
-        # Top places where employees were born or died, with certain places grouped together
-        top_birthplaces = get_top_birthplaces(number=25)
-        top_deathplaces = get_top_deathplaces(number=25)
-
         # Ailments
         ailments = []
         for ailment in Ailment.objects.all():
@@ -126,8 +122,8 @@ class DetailedView(TemplateView):
         context['average_age_at_death'] = average_age_at_death
         context['median_age_at_death'] = median_age_at_death
         context['foreign_born'] = foreign_born
-        context['top_birthplaces'] = top_birthplaces
-        context['top_deathplaces'] = top_deathplaces
+        context['top_birthplaces'] = get_top_birthplaces(number=25)
+        context['top_deathplaces'] = get_top_deathplaces(number=25)
         context['ailments'] = ailments
         return context
 
@@ -211,6 +207,8 @@ def get_state_comparison_stats(number=5):
     """
     Return stats on the top number Bureau states for various measures
     """
+
+    # pylint: disable=too-many-locals
 
     stats = []
 
@@ -297,7 +295,7 @@ def get_state_comparison_stats(number=5):
         top_ailment_type_percent = total_employees.annotate(
             value=Cast(Count('employee_employed', filter=Q(employee_employed__ailments__type=ailment_type)),
                        FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
-        stats.append(('% With {}'.format(ailment_type), top_ailment_type_percent))
+        stats.append((f'% With {ailment_type}', top_ailment_type_percent))
 
         # Breakdown per Ailment, if more than one for the type
         if ailment_type.ailments.count() > 1:
@@ -305,6 +303,6 @@ def get_state_comparison_stats(number=5):
                 top_ailment_percent = total_employees.annotate(
                     value=Cast(Count('employee_employed', filter=Q(employee_employed__ailments=ailment)),
                                FloatField()) / F('total') * 100).exclude(value=0).order_by('-value')[:number]
-                stats.append(('% With {}'.format(ailment), top_ailment_percent))
+                stats.append((f'% With {ailment}', top_ailment_percent))
 
     return stats
