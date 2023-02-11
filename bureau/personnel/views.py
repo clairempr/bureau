@@ -49,14 +49,15 @@ class EmployeeListView(ListView):
                 if key in self.request.GET:
                     context[key] = key
 
-        context['bureau_states'] = [(state, True if str(state.pk) in selected_bureau_states else False)
+        context['bureau_states'] = [(state, str(state.pk) in selected_bureau_states)
                                     for state in Region.objects.bureau_state()]
-        context['ailments'] = [(ailment, True if str(ailment.pk) in selected_ailments else False)
+        context['ailments'] = [(ailment, str(ailment.pk) in selected_ailments)
                                for ailment in Ailment.objects.all()]
 
         return context
 
     def get_queryset(self):
+        # pylint: disable=too-many-branches
         qs = Employee.objects.all()
 
         # If search criteria have been cleared, just return default queryset
@@ -126,11 +127,11 @@ class EmployeeListView(ListView):
         # German places in the sources
         if place_of_birth.upper() == 'GERMANY':
             return qs.filter(place_of_birth__country__name__in=GERMANY_COUNTRY_NAMES)
-        else:
-            return qs.filter(Q(place_of_birth__country__name__icontains=place_of_birth)
-                             | Q(place_of_birth__region__name__icontains=place_of_birth)
-                             | Q(place_of_birth__county__name__icontains=place_of_birth)
-                             | Q(place_of_birth__city__name__icontains=place_of_birth))
+
+        return qs.filter(Q(place_of_birth__country__name__icontains=place_of_birth)
+                         | Q(place_of_birth__region__name__icontains=place_of_birth)
+                         | Q(place_of_birth__county__name__icontains=place_of_birth)
+                         | Q(place_of_birth__city__name__icontains=place_of_birth))
 
     def filter_place_of_death(self, qs, place_of_death):
         # Group Germany, Prussia, Bavaria, and Saxony, etc. together, because of inconsistencies in reporting of
@@ -139,13 +140,12 @@ class EmployeeListView(ListView):
             return qs.filter(place_of_death__country__name__in=GERMANY_COUNTRY_NAMES)
         # Virginia and West Virginia shouldn't be grouped together, because West Virginia was already a state
         # when the war ended
-        elif place_of_death.upper() == 'VIRGINIA':
+        if place_of_death.upper() == 'VIRGINIA':
             return qs.filter(place_of_death__region__name__iexact=place_of_death)
-        else:
-            return qs.filter(Q(place_of_death__country__name__icontains=place_of_death)
-                             | Q(place_of_death__region__name__icontains=place_of_death)
-                             | Q(place_of_death__county__name__icontains=place_of_death)
-                             | Q(place_of_death__city__name__icontains=place_of_death))
+        return qs.filter(Q(place_of_death__country__name__icontains=place_of_death)
+                         | Q(place_of_death__region__name__icontains=place_of_death)
+                         | Q(place_of_death__county__name__icontains=place_of_death)
+                         | Q(place_of_death__city__name__icontains=place_of_death))
 
 
 employee_list_view = EmployeeListView.as_view()

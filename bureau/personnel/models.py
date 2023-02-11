@@ -122,9 +122,9 @@ class EmployeeManager(models.Manager):
 
     def employed_during_year(self, year, **kwargs):
         return self.filter(
-            Q(assignments__start_date__lte='{}'.format(year), assignments__end_date__gte='{}'.format(year)) |
-            Q(assignments__start_date__gte='{}'.format(year)),
-            assignments__start_date__lt='{}'.format(year + 1)).distinct().filter(**kwargs)
+            Q(assignments__start_date__lte=f'{year}', assignments__end_date__gte=f'{year}') |
+            Q(assignments__start_date__gte=f'{year}'),
+            assignments__start_date__lt=f'{year + 1}').distinct().filter(**kwargs)
 
 
 class Employee(models.Model):
@@ -214,7 +214,7 @@ class Employee(models.Model):
         ordering = ['last_name', 'first_name']
 
     def __str__(self):
-        return '{}, {}'.format(self.last_name, self.first_name)
+        return f'{self.last_name}, {self.first_name}'
 
     def save(self, *args, **kwargs):
         # Make sure someone who's a member of a VRC regiment has VRC set to true
@@ -227,7 +227,7 @@ class Employee(models.Model):
         Quick and dirty calculation just using birth and death years, if filled
         """
         if self.date_of_birth and self.date_of_death:
-            return self.date_of_death.date.year - self.date_of_birth.date.year
+            return self.date_of_death.date.year - self.date_of_birth.date.year  # pylint: disable=no-member
         return None
 
     def assignments_in_order(self):
@@ -241,5 +241,5 @@ class Employee(models.Model):
 
     def calculate_age(self, year):
         if self.date_of_birth:
-            return year - self.date_of_birth.date.year
+            return year - self.date_of_birth.date.year  # pylint: disable=no-member
         return None

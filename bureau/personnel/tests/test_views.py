@@ -1,5 +1,6 @@
-from partial_date import PartialDate
 from unittest.mock import patch
+
+from partial_date import PartialDate
 
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
@@ -16,6 +17,8 @@ class EmployeeListViewTestCase(TestCase):
     Test EmployeeListView
     """
 
+    # pylint: disable=too-many-instance-attributes
+
     def setUp(self):
         self.url = 'personnel:employee_list'
         self.rebecca_crumpler = EmployeeFactory(
@@ -24,8 +27,6 @@ class EmployeeListViewTestCase(TestCase):
         self.william_van_duyn = EmployeeFactory(
             first_name='William B.', last_name='Van Duyn', gender=Employee.Gender.MALE
         )
-        self.bureau_state1 = BureauStateFactory()
-        self.bureau_state2 = BureauStateFactory()
         self.germany = PlaceFactory(country=CountryFactory(name='Germany'))
         self.bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
         us = CountryFactory(name='United States')
@@ -97,14 +98,14 @@ class EmployeeListViewTestCase(TestCase):
         arkansas = BureauStateFactory(name='Arkansas')
         bureau_states = [str(arkansas.pk)]
         response = self.client.get(reverse(self.url), {'clear': 'true', 'bureau_states': bureau_states})
-        for state, selected in response.context['bureau_states']:
+        for _, selected in response.context['bureau_states']:
             self.assertFalse(selected,
                              'If clear was True supplied, no bureau_states should be selected in context')
         # ailments is list of tuples: (ailment, selected)
         gunshot_wound = AilmentFactory(name='Gunshot wound')
         ailments = [str(gunshot_wound.pk)]
         response = self.client.get(reverse(self.url), {'clear': 'true', 'ailments': ailments})
-        for ailment, selected in response.context['ailments']:
+        for _, selected in response.context['ailments']:
             self.assertFalse(selected,
                              'If clear was True supplied, no ailments should be selected in context')
 
@@ -285,19 +286,21 @@ class EmployeeListViewTestCase(TestCase):
         )
 
     def test_get_queryset_by_bureau_states(self):
+        bureau_state1 = BureauStateFactory()
+        bureau_state2 = BureauStateFactory()
         employee_in_state_1 = EmployeeFactory()
-        employee_in_state_1.bureau_states.add(self.bureau_state1)
+        employee_in_state_1.bureau_states.add(bureau_state1)
         employee_in_states_1_and_2 = EmployeeFactory()
-        employee_in_states_1_and_2.bureau_states.add(self.bureau_state1, self.bureau_state2)
+        employee_in_states_1_and_2.bureau_states.add(bureau_state1, bureau_state2)
 
-        request = RequestFactory().get('/', {'bureau_states': [self.bureau_state1.pk, self.bureau_state2.pk]})
+        request = RequestFactory().get('/', {'bureau_states': [bureau_state1.pk, bureau_state2.pk]})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         self.assertSetEqual(
             set(view.get_queryset()), {employee_in_state_1, employee_in_states_1_and_2},
             'If bureau_states specified, EmployeeListView should return employees who worked in at least one'
         )
 
-        request = RequestFactory().get('/', {'bureau_states': [self.bureau_state2.pk]})
+        request = RequestFactory().get('/', {'bureau_states': [bureau_state2.pk]})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
         self.assertSetEqual(
             set(view.get_queryset()), {employee_in_states_1_and_2},
@@ -517,7 +520,7 @@ class EmployeesBornResidedDiedInPlaceViewTestCase(TestCase):
         for key in context_keys:
             self.assertNotIn(
                 key, context_data,
-                "'{}' shouldn't be in context of EmployeesBornResidedDiedInPlaceView if place is None".format(key)
+                f"'{key}' shouldn't be in context of EmployeesBornResidedDiedInPlaceView if place is None"
             )
 
         # If 'place' is found, it should go in context['place']

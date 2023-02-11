@@ -24,7 +24,7 @@ class DateOfBirthFilledListFilter(admin.SimpleListFilter):
         if self.value():
             if self.value() == 'Yes':
                 return queryset.filter(date_of_birth__isnull=False)
-            elif self.value() == 'No':
+            if self.value() == 'No':
                 return queryset.filter(date_of_birth__isnull=True)
         return queryset
 
@@ -40,7 +40,7 @@ class PlaceOfBirthFilledListFilter(admin.SimpleListFilter):
         if self.value():
             if self.value() == 'Yes':
                 return queryset.filter(place_of_birth__isnull=False)
-            elif self.value() == 'No':
+            if self.value() == 'No':
                 return queryset.filter(place_of_birth__isnull=True)
         return queryset
 
@@ -87,7 +87,7 @@ class USCTListFilter(admin.SimpleListFilter):
         if self.value():
             if self.value() == 'Yes':
                 return queryset.filter(regiments__usct__exact=True).distinct()
-            elif self.value() == 'No':
+            if self.value() == 'No':
                 return queryset.filter(regiments__usct__exact=False).distinct()
         return queryset
 
@@ -117,7 +117,7 @@ class EmployeeAdmin(admin.ModelAdmin):
         if form.cleaned_data['regiments'].filter(vrc=True):
             obj.vrc = True
 
-        super(EmployeeAdmin, self).save_model(request, obj, form, change)
+        super().save_model(request, obj, form, change)
 
     def bureau_state(self, obj):
         return obj.bureau_state_list()
