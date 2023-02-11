@@ -2,7 +2,7 @@
 load-plugins=pylint_django
 django-settings-module=config.settings
 ignore=migrations
-init-hook='import sys; sys.path.append("/app/bureau"); sys.path.append("/home/circleci")'
+init-hook='import sys; sys.path.append("/app/bureau"); sys.path.append("/home/circleci/bureau")'
 
 [FORMAT]
 max-line-length=120

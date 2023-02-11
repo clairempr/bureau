@@ -33,6 +33,7 @@ jobs:
         name: 'Linters'
         command: |
           python3 -m flake8
+          ls -al ~/bureau
           python3 -m pylint bureau
     - run:
         name: 'Tests'
