@@ -47,7 +47,7 @@ class BureauStateDetailViewTemplateTestCase(TestCase):
 
         # Stats/assignment places: should be in html
         assignment_place = PlaceFactory(
-            city=CityFactory(name='Vernon', region=self.state), country=CountryFactory(code2='US')
+            city=CityFactory(name='Vernon', region=self.state), country=CountryFactory(name='United States', code2='US')
         )
         context = {'object': self.state,
                    'stats': [('% VRC', '50.0')],

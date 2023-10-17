@@ -41,7 +41,7 @@ class AssignmentListView(ListView):
         """
 
         # StringAgg is Postgres-only
-        return queryset.annotate(concatenated_titles=StringAgg('positions__title', delimiter=''))
+        return queryset.annotate(concatenated_titles=StringAgg('positions__title', delimiter='', default=None))
 
 
 assignment_list_view = AssignmentListView.as_view()
