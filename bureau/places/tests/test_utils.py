@@ -90,7 +90,8 @@ class GeonamesLookupTestCase(TestCase):
                           "countryId": "6252001", "fcl": "P", "population": 2791, "countryCode": "US",
                           "name": "Hamburg",
                           "fclName": "city, village,...", "adminCodes1": {"ISO3166_2": "AR"},
-                          "countryName": "Unknown Country", "fcodeName": "seat of a second-order administrative division",
+                          "countryName": "Unknown Country",
+                          "fcodeName": "seat of a second-order administrative division",
                           "adminName1": "Unknown State", "lat": "33.22818", "fcode": "PPLA2"}]
         }
         with patch('requests.get', autospec=True,
