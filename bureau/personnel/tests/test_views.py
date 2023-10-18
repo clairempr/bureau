@@ -30,10 +30,10 @@ class EmployeeListViewTestCase(TestCase):
         self.germany = PlaceFactory(country=CountryFactory(name='Germany'))
         self.bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
         us = CountryFactory(name='United States')
-        self.virginia = PlaceFactory(region=RegionFactory(name='Virginia'), country=us)
-        self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'), country=us)
+        self.virginia = PlaceFactory(region=RegionFactory(name='Virginia', country=us))
+        self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia', country=us))
         self.philadelphia = PlaceFactory(
-            city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'), country=us
+            city=CityFactory(name='Philadelphia', country=us), region=RegionFactory(name='Pennsylvania')
         )
         self.boolean_keys = ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
                              'former_slave', 'slaveholder']
