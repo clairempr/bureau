@@ -83,6 +83,22 @@ class GeonamesLookupTestCase(TestCase):
             self.assertFalse('featureCode' in args[0],
                              "GeoNames API request shouldn't include feature codes if none passed to geonames_lookup()")
 
+        # If unknown state or country comes back from GeoNames, it should be None in returned results
+        response_content = {
+            "totalResultsCount": 1,
+            "geonames": [{"adminCode1": "AR", "lng": "-91.79763", "geonameId": 4113607, "toponymName": "Hamburg",
+                          "countryId": "6252001", "fcl": "P", "population": 2791, "countryCode": "US",
+                          "name": "Hamburg",
+                          "fclName": "city, village,...", "adminCodes1": {"ISO3166_2": "AR"},
+                          "countryName": "Unknown Country", "fcodeName": "seat of a second-order administrative division",
+                          "adminName1": "Unknown State", "lat": "33.22818", "fcode": "PPLA2"}]
+        }
+        with patch('requests.get', autospec=True,
+                   return_value=Mock(text=json.dumps(response_content), status_code=200)) as mock_requests_get:
+            result = geonames_lookup(search_text, feature_codes=settings.CITIES_LIGHT_INCLUDE_CITY_TYPES)
+            self.assertIsNone(result['country'])
+            self.assertIsNone(result['state'])
+
 
 class GetPlaceOrNoneTestCase(TestCase):
     """
