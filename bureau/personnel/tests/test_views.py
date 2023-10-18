@@ -78,7 +78,7 @@ class EmployeeListViewTestCase(TestCase):
 
         request = RequestFactory().get('/')
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
+        self.assertQuerySetEqual(view.get_queryset(), Employee.objects.all())
 
     def test_get_queryset_clear(self):
         EmployeeFactory()
@@ -86,7 +86,7 @@ class EmployeeListViewTestCase(TestCase):
         # If "clear" is True, search criteria have been cleared and all employees need to be returned
         request = RequestFactory().get('/', {'clear': 'true'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
+        self.assertQuerySetEqual(view.get_queryset(), Employee.objects.all())
 
         # If GET parameter "clear" was true, search criteria shouldn't be filled in context
         for key in self.search_keys + self.boolean_keys:
