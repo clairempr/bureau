@@ -2,14 +2,14 @@
 
 Werkzeug==3.0.0
 ipdb==0.13.13
-Sphinx==5.0.2
+Sphinx==7.2.6
 psycopg2==2.9.9
 
 # Code quality
 # ------------------------------------------------------------------------------
-flake8==4.0.1
-coverage==6.4.1
-pylint==2.16.1
+flake8==6.1.0
+coverage==7.3.2
+pylint==2.17.7
 pylint-django==2.5.3
 
 # Django
