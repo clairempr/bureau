@@ -30,10 +30,10 @@ class EmployeeListViewTestCase(TestCase):
         self.germany = PlaceFactory(country=CountryFactory(name='Germany'))
         self.bavaria = PlaceFactory(country=CountryFactory(name='Bavaria'))
         us = CountryFactory(name='United States')
-        self.virginia = PlaceFactory(region=RegionFactory(name='Virginia'), country=us)
-        self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia'), country=us)
+        self.virginia = PlaceFactory(region=RegionFactory(name='Virginia', country=us))
+        self.west_virginia = PlaceFactory(region=RegionFactory(name='West Virginia', country=us))
         self.philadelphia = PlaceFactory(
-            city=CityFactory(name='Philadelphia'), region=RegionFactory(name='Pennsylvania'), country=us
+            city=CityFactory(name='Philadelphia', country=us), region=RegionFactory(name='Pennsylvania')
         )
         self.boolean_keys = ['vrc', 'union_veteran', 'confederate_veteran', 'colored', 'died_during_assignment',
                              'former_slave', 'slaveholder']
@@ -78,7 +78,7 @@ class EmployeeListViewTestCase(TestCase):
 
         request = RequestFactory().get('/')
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
+        self.assertQuerySetEqual(view.get_queryset(), Employee.objects.all())
 
     def test_get_queryset_clear(self):
         EmployeeFactory()
@@ -86,7 +86,7 @@ class EmployeeListViewTestCase(TestCase):
         # If "clear" is True, search criteria have been cleared and all employees need to be returned
         request = RequestFactory().get('/', {'clear': 'true'})
         view = EmployeeListView(kwargs={}, object_list=[], request=request)
-        self.assertQuerysetEqual(view.get_queryset(), Employee.objects.all())
+        self.assertQuerySetEqual(view.get_queryset(), Employee.objects.all())
 
         # If GET parameter "clear" was true, search criteria shouldn't be filled in context
         for key in self.search_keys + self.boolean_keys:

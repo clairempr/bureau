@@ -2,11 +2,11 @@
 
 -r ./base.txt
 
-gunicorn==20.1.0
-psycopg2==2.9.3
+gunicorn==21.2.0
+psycopg2==2.9.9
 Collectfast==2.2.0
 
 # Django
 # ------------------------------------------------------------------------------
-django-storages[boto3]==1.12.3
-django-anymail[mailgun]==8.6 
+django-storages[boto3]==1.14.2
+django-anymail[mailgun]==10.1

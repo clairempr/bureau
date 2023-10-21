@@ -70,7 +70,6 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    # "rest_framework",
     "cities_light",
     "partial_date",
 ]

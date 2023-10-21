@@ -1,21 +1,21 @@
 -r ./base.txt
 
 Werkzeug==3.0.0
-ipdb==0.13.9
-Sphinx==5.0.2
+ipdb==0.13.13
+Sphinx==7.2.6
 psycopg2==2.9.9
 
 # Code quality
 # ------------------------------------------------------------------------------
-flake8==4.0.1
-coverage==6.4.1
-pylint==2.16.1
+flake8==6.1.0
+coverage==7.3.2
+pylint==2.17.7
 pylint-django==2.5.3
 
 # Django
 # ------------------------------------------------------------------------------
-factory-boy==3.2.1
+factory-boy==3.3.0
 
-django-debug-toolbar==3.4.0
+django-debug-toolbar==4.2.0
 django-extensions==3.2.3
-django-coverage-plugin==2.0.3
+django-coverage-plugin==3.1.0
