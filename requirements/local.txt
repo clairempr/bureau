@@ -1,6 +1,6 @@
 -r ./base.txt
 
-Werkzeug==3.0.0
+Werkzeug==3.0.1
 ipdb==0.13.13
 Sphinx==7.2.6
 psycopg2==2.9.9
